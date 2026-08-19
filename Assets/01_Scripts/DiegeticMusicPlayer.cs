@@ -33,7 +33,6 @@ public class DiegeticMusicPlayer : MonoBehaviour
     [Header("Zoom al abrir")]
     public bool applyCameraZoom = true;
     public float openFovOffset = -4f;
-    public float zoomSharpness = 8f;
 
     [Header("Maqueta musical")]
     [Range(60, 180)] public int bpm = 92;
@@ -180,7 +179,7 @@ public class DiegeticMusicPlayer : MonoBehaviour
             RefreshWorldSpaceCanvases();
         }
 
-        float eased = openAmount * openAmount * (3f - 2f * openAmount);
+        float eased = GetEasedOpenAmount();
         deviceRoot.transform.localPosition = Vector3.Lerp(hiddenLocalPosition, shownLocalPosition, eased);
         deviceRoot.transform.localRotation = Quaternion.Slerp(Quaternion.Euler(hiddenLocalEuler), Quaternion.Euler(shownLocalEuler), eased);
 
@@ -197,20 +196,23 @@ public class DiegeticMusicPlayer : MonoBehaviour
             return;
         }
 
-        float targetOffset = openFovOffset * openAmount;
-        float blend = 1f - Mathf.Exp(-zoomSharpness * Time.deltaTime);
-        currentFovOffset = Mathf.Lerp(currentFovOffset, targetOffset, blend);
+        currentFovOffset = openFovOffset * GetEasedOpenAmount();
 
-        if (Mathf.Abs(currentFovOffset) < 0.01f && Mathf.Abs(targetOffset) < 0.01f)
+        if (Mathf.Abs(currentFovOffset) < 0.01f && !isOpen)
             currentFovOffset = 0f;
 
-        fps.SetThirdPersonFovOffset(currentFovOffset);
+        fps.SetMusicPlayerFovOffset(currentFovOffset);
+    }
+
+    float GetEasedOpenAmount()
+    {
+        return openAmount * openAmount * (3f - 2f * openAmount);
     }
 
     void ClearCameraZoom()
     {
         if (fps != null)
-            fps.SetThirdPersonFovOffset(0f);
+            fps.SetMusicPlayerFovOffset(0f);
 
         currentFovOffset = 0f;
     }

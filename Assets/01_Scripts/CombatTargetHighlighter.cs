@@ -152,7 +152,7 @@ public class CombatTargetHighlighter : MonoBehaviour
         shellFilter.sharedMesh = mesh;
 
         MeshRenderer shellRenderer = shell.AddComponent<MeshRenderer>();
-        ConfigureOutlineRenderer(shellRenderer, material);
+        ConfigureOutlineRenderer(shellRenderer, material, sourceRenderer, mesh);
         targetList.Add(shell);
     }
 
@@ -179,13 +179,21 @@ public class CombatTargetHighlighter : MonoBehaviour
         shellRenderer.rootBone = sourceRenderer.rootBone;
         shellRenderer.localBounds = sourceRenderer.localBounds;
         shellRenderer.updateWhenOffscreen = true;
-        ConfigureOutlineRenderer(shellRenderer, material);
+        ConfigureOutlineRenderer(shellRenderer, material, sourceRenderer, sourceRenderer.sharedMesh);
         targetList.Add(shell);
     }
 
-    void ConfigureOutlineRenderer(Renderer renderer, Material material)
+    void ConfigureOutlineRenderer(Renderer renderer, Material material, Renderer sourceRenderer, Mesh mesh)
     {
-        renderer.sharedMaterial = material;
+        int sourceMaterialCount = sourceRenderer != null ? sourceRenderer.sharedMaterials.Length : 0;
+        int subMeshCount = mesh != null ? mesh.subMeshCount : 0;
+        int materialCount = Mathf.Max(1, sourceMaterialCount, subMeshCount);
+        Material[] materials = new Material[materialCount];
+
+        for (int i = 0; i < materials.Length; i++)
+            materials[i] = material;
+
+        renderer.sharedMaterials = materials;
         renderer.shadowCastingMode = ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         renderer.allowOcclusionWhenDynamic = false;

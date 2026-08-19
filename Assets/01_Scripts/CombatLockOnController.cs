@@ -67,7 +67,7 @@ public class CombatLockOnController : MonoBehaviour
         if (fps != null)
         {
             fps.SetCombatLockPoint(focusPoint);
-            fps.SetThirdPersonFovOffset(lockFovOffset);
+            fps.SetCombatLockFovOffset(lockFovOffset);
         }
     }
 
@@ -214,7 +214,7 @@ public class CombatLockOnController : MonoBehaviour
         if (fps != null)
         {
             fps.SetCombatLockPoint(currentTarget.GetFocusPoint());
-            fps.SetThirdPersonFovOffset(lockFovOffset);
+            fps.SetCombatLockFovOffset(lockFovOffset);
         }
     }
 
@@ -228,7 +228,7 @@ public class CombatLockOnController : MonoBehaviour
         if (fps != null)
         {
             fps.ClearCombatLockPoint();
-            fps.SetThirdPersonFovOffset(0f);
+            fps.SetCombatLockFovOffset(0f);
         }
     }
 

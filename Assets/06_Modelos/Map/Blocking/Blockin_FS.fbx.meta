@@ -3,7 +3,127 @@ guid: 49994e556812df8409353e73e983b9bb
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cajas met
+    second: {fileID: 2100000, guid: 1e10ce3ced59e39498b12da886dc68a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Camino
+    second: {fileID: 2100000, guid: 4da201022a29deb4aa82be1ebefea710, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Edificio1
+    second: {fileID: 2100000, guid: f2186caef97cd6f42bbf01171ec634e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Edificio3
+    second: {fileID: 2100000, guid: 177b37572e0e0d446983ee8105cb5f8e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Edifico2
+    second: {fileID: 2100000, guid: 0c46d95b6f92bea4d858b8c15124ebad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: 5c8052b0492448945b6acd5e354acccc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.003
+    second: {fileID: 2100000, guid: a6db4100c5f68824d86193764a205add, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.004
+    second: {fileID: 2100000, guid: 1c3378610da0d814089d09f50e40bcaa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.005
+    second: {fileID: 2100000, guid: 324cb12f05695994eabf5fef1c86c119, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.006
+    second: {fileID: 2100000, guid: e231e1ceef5b30f4c81a217720ecc180, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.007
+    second: {fileID: 2100000, guid: 8b1f7964205b7a6478eb6eb5d9291870, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.008
+    second: {fileID: 2100000, guid: e2ae3b29ab26f0440af66a0953543284, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.009
+    second: {fileID: 2100000, guid: 35d4e9d6ea6f9f7479e86ccbee630f9b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.010
+    second: {fileID: 2100000, guid: 10c49ad981c840b4f8c32d07bb78b412, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pilares
+    second: {fileID: 2100000, guid: 45c679429d4003b4aafeab59343fd8e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Poste
+    second: {fileID: 2100000, guid: f36366d0befec0b4abb141d8c804e4ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suelo
+    second: {fileID: 2100000, guid: 2acb1f179bdfad34ba17852b69a58ca6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: amarillo
+    second: {fileID: 2100000, guid: 905cb5df400140f4aa390b265cfe5649, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ladrillo
+    second: {fileID: 2100000, guid: 50325de239486554790bcc770a59c4f2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: paradas
+    second: {fileID: 2100000, guid: b5b57d5868ec3ee4e8e5ece05625f13d, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Edificio1
+    second: {fileID: 2800000, guid: b05157535f2ada64bb5187d6182a8df7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Edificio2
+    second: {fileID: 2800000, guid: 9811a9da48c238e4b865bc060c7f0c45, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Edificio3
+    second: {fileID: 2800000, guid: b404cc81db6269847a844e8b3a700e6c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: camino
+    second: {fileID: 2800000, guid: 5e20f15019f1d3b4fa68c7f044628878, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

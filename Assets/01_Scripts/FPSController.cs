@@ -134,6 +134,8 @@ public class FPSController : MonoBehaviour
     float cameraDistanceVelocity;
     float cameraFovVelocity;
     float externalThirdPersonFovOffset;
+    float musicPlayerFovOffset;
+    float combatLockFovOffset;
     float turnVelocity;
     float verticalVelocity;
     float currentPlanarSpeed;
@@ -990,7 +992,8 @@ public class FPSController : MonoBehaviour
     float GetTargetThirdPersonFov()
     {
         float sprintAmount = Mathf.InverseLerp(walkSpeed, sprintSpeed, currentPlanarSpeed);
-        return Mathf.Clamp(Mathf.Lerp(thirdPersonFov, sprintFov, sprintAmount) + externalThirdPersonFovOffset, 35f, 95f);
+        float totalOffset = externalThirdPersonFovOffset + musicPlayerFovOffset + combatLockFovOffset;
+        return Mathf.Clamp(Mathf.Lerp(thirdPersonFov, sprintFov, sprintAmount) + totalOffset, 35f, 95f);
     }
 
     void UpdateCameraFov(float targetFov, float deltaTime)
@@ -1139,6 +1142,16 @@ public class FPSController : MonoBehaviour
     public void SetThirdPersonFovOffset(float offset)
     {
         externalThirdPersonFovOffset = offset;
+    }
+
+    public void SetMusicPlayerFovOffset(float offset)
+    {
+        musicPlayerFovOffset = offset;
+    }
+
+    public void SetCombatLockFovOffset(float offset)
+    {
+        combatLockFovOffset = offset;
     }
 
     public void SetCombatLockPoint(Vector3 worldPoint)

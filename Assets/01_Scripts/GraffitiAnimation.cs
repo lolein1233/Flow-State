@@ -10,9 +10,13 @@ public class GraffitiAnimation : MonoBehaviour
     [SerializeField] float rotationDamping = 17f;
 
     [Header("Idle organico")]
-    [SerializeField] Vector3 idlePositionAmplitude = new Vector3(0.0025f, 0.0035f, 0.0018f);
-    [SerializeField] Vector3 idleRotationAmplitude = new Vector3(0.35f, 0.42f, 0.28f);
+    [SerializeField] Vector3 idlePositionAmplitude = new Vector3(0.0035f, 0.006f, 0.0026f);
+    [SerializeField] Vector3 idleRotationAmplitude = new Vector3(0.65f, 0.8f, 0.72f);
     [SerializeField] float idleNoiseFrequency = 0.32f;
+    [SerializeField, Range(1f, 3f)] float idlePresenceMultiplier = 2f;
+    [SerializeField] Vector3 slowIdlePositionAmplitude = new Vector3(0.002f, 0.0045f, 0.0018f);
+    [SerializeField] Vector3 slowIdleRotationAmplitude = new Vector3(0.35f, 0.45f, 1.1f);
+    [SerializeField] float slowIdleNoiseFrequency = 0.095f;
 
     [Header("Sway de camara")]
     [SerializeField] Vector2 swayRotationAmount = new Vector2(1.8f, 2.25f);
@@ -39,6 +43,13 @@ public class GraffitiAnimation : MonoBehaviour
     [SerializeField] Vector3 shakePositionAmplitude = new Vector3(0.095f, 0.018f, 0.025f);
     [SerializeField] Vector3 shakeRotationAmplitude = new Vector3(6f, 2.5f, 13f);
 
+    [Header("Cambio de lata")]
+    [SerializeField] Vector3 discardPosition = new Vector3(0.16f, -0.62f, 0.12f);
+    [SerializeField] Vector3 discardRotation = new Vector3(28f, -36f, 72f);
+    [SerializeField] Vector3 drawPosition = new Vector3(-0.2f, -0.58f, 0.14f);
+    [SerializeField] Vector3 drawRotation = new Vector3(-18f, 24f, -38f);
+    [SerializeField] float drawSettlingDistance = 0.035f;
+
     Quaternion baseRotation;
     CharacterController characterController;
     Vector3 currentPositionOffset;
@@ -53,7 +64,9 @@ public class GraffitiAnimation : MonoBehaviour
     float recoilTimer;
     bool spraying;
     bool shaking;
+    bool changingCan;
     float shakeTravel;
+    float canChangeProgress;
     float noiseSeed;
 
     void Awake()
@@ -87,7 +100,8 @@ public class GraffitiAnimation : MonoBehaviour
         walkBlend = Mathf.MoveTowards(walkBlend, targetWalkBlend, walkBlendSpeed * deltaTime);
         walkCycle += deltaTime * walkBobFrequency * Mathf.PI * 2f * Mathf.Lerp(0.72f, 1.2f, walkBlend);
 
-        sprayBlend = Mathf.SmoothDamp(sprayBlend, spraying ? 1f : 0f, ref sprayBlendVelocity, spraying ? 0.07f : 0.14f, Mathf.Infinity, deltaTime);
+        bool sprayActive = spraying && !changingCan;
+        sprayBlend = Mathf.SmoothDamp(sprayBlend, sprayActive ? 1f : 0f, ref sprayBlendVelocity, sprayActive ? 0.07f : 0.14f, Mathf.Infinity, deltaTime);
         recoilTimer = Mathf.Max(0f, recoilTimer - deltaTime);
 
         Vector3 targetPosition = BuildPositionOffset(motionTime);
@@ -107,7 +121,13 @@ public class GraffitiAnimation : MonoBehaviour
             SignedPerlin(time * idleNoiseFrequency, noiseSeed),
             SignedPerlin(time * idleNoiseFrequency * 0.83f, noiseSeed + 17f),
             SignedPerlin(time * idleNoiseFrequency * 1.13f, noiseSeed + 31f));
-        idle = Vector3.Scale(idle, idlePositionAmplitude);
+        idle = Vector3.Scale(idle, idlePositionAmplitude) * idlePresenceMultiplier;
+
+        Vector3 slowIdle = new Vector3(
+            SignedPerlin(time * slowIdleNoiseFrequency, noiseSeed + 401f),
+            SignedPerlin(time * slowIdleNoiseFrequency * 0.79f, noiseSeed + 431f),
+            SignedPerlin(time * slowIdleNoiseFrequency * 1.17f, noiseSeed + 463f));
+        idle += Vector3.Scale(slowIdle, slowIdlePositionAmplitude);
 
         Vector3 sway = new Vector3(-currentSway.x * swayPositionAmount.x, -currentSway.y * swayPositionAmount.y, 0f);
         Vector3 bob = new Vector3(
@@ -133,7 +153,8 @@ public class GraffitiAnimation : MonoBehaviour
 
         float recoil = recoilTimer > 0f ? Mathf.Sin((recoilTimer / valveRecoilDuration) * Mathf.PI) * valveRecoilDistance : 0f;
         Vector3 shake = shaking ? Vector3.Scale(shakePositionAmplitude, new Vector3(shakeTravel, Mathf.Abs(shakeTravel), -Mathf.Abs(shakeTravel))) : Vector3.zero;
-        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake;
+        Vector3 canChange = changingCan ? BuildCanChangePosition(canChangeProgress) : Vector3.zero;
+        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake + canChange;
     }
 
     Vector3 BuildRotationOffset(float time)
@@ -142,7 +163,13 @@ public class GraffitiAnimation : MonoBehaviour
             SignedPerlin(time * idleNoiseFrequency * 0.91f, noiseSeed + 191f),
             SignedPerlin(time * idleNoiseFrequency * 1.08f, noiseSeed + 223f),
             SignedPerlin(time * idleNoiseFrequency * 0.74f, noiseSeed + 251f));
-        idle = Vector3.Scale(idle, idleRotationAmplitude);
+        idle = Vector3.Scale(idle, idleRotationAmplitude) * idlePresenceMultiplier;
+
+        Vector3 slowIdle = new Vector3(
+            SignedPerlin(time * slowIdleNoiseFrequency * 0.83f, noiseSeed + 491f),
+            SignedPerlin(time * slowIdleNoiseFrequency * 1.09f, noiseSeed + 521f),
+            SignedPerlin(time * slowIdleNoiseFrequency * 0.61f, noiseSeed + 557f));
+        idle += Vector3.Scale(slowIdle, slowIdleRotationAmplitude);
 
         Vector3 sway = new Vector3(-currentSway.y * swayRotationAmount.x, currentSway.x * swayRotationAmount.y, -currentSway.x * 0.18f);
         Vector3 bob = new Vector3(Mathf.Sin(walkCycle * 2f), Mathf.Sin(walkCycle), Mathf.Cos(walkCycle)) * walkBlend;
@@ -159,7 +186,36 @@ public class GraffitiAnimation : MonoBehaviour
         }
 
         Vector3 shake = shaking ? Vector3.Scale(shakeRotationAmplitude, new Vector3(-shakeTravel, shakeTravel, -shakeTravel)) : Vector3.zero;
-        return idle + sway + bob + vibration + shake;
+        Vector3 canChange = changingCan ? BuildCanChangeRotation(canChangeProgress) : Vector3.zero;
+        return idle + sway + bob + vibration + shake + canChange;
+    }
+
+    Vector3 BuildCanChangePosition(float progress)
+    {
+        if (progress < 0.48f)
+        {
+            float t = Mathf.SmoothStep(0f, 1f, progress / 0.48f);
+            return Vector3.LerpUnclamped(Vector3.zero, discardPosition, t);
+        }
+
+        float enter = Mathf.InverseLerp(0.48f, 1f, progress);
+        float easeOut = 1f - Mathf.Pow(1f - enter, 3f);
+        float settling = Mathf.Sin(enter * Mathf.PI * 3f) * (1f - enter) * drawSettlingDistance;
+        return Vector3.LerpUnclamped(drawPosition, Vector3.zero, easeOut) + Vector3.up * settling;
+    }
+
+    Vector3 BuildCanChangeRotation(float progress)
+    {
+        if (progress < 0.48f)
+        {
+            float t = Mathf.SmoothStep(0f, 1f, progress / 0.48f);
+            return Vector3.LerpUnclamped(Vector3.zero, discardRotation, t);
+        }
+
+        float enter = Mathf.InverseLerp(0.48f, 1f, progress);
+        float easeOut = 1f - Mathf.Pow(1f - enter, 3f);
+        float settling = Mathf.Sin(enter * Mathf.PI * 3f) * (1f - enter);
+        return Vector3.LerpUnclamped(drawRotation, Vector3.zero, easeOut) + new Vector3(0f, 0f, settling * 4f);
     }
 
     float GetHorizontalSpeed()
@@ -196,9 +252,21 @@ public class GraffitiAnimation : MonoBehaviour
 
     public void SetShake(float travel, bool active)
     {
-        shaking = active;
+        shaking = active && !changingCan;
         shakeTravel = active ? Mathf.Clamp(travel, -1f, 1f) : 0f;
         if (active)
             spraying = false;
+    }
+
+    public void SetCanChange(float progress, bool active)
+    {
+        changingCan = active;
+        canChangeProgress = active ? Mathf.Clamp01(progress) : 0f;
+        if (!active)
+            return;
+
+        spraying = false;
+        shaking = false;
+        shakeTravel = 0f;
     }
 }

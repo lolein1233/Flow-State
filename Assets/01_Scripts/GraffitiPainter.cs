@@ -47,6 +47,13 @@ public class GraffitiPainter : MonoBehaviour
     public SprayResourceSystem sprayResources;
     public SprayResourceHUD resourceHUD;
 
+    [Header("Outline de lata")]
+    public bool showSprayCanOutline = true;
+    public Color sprayCanOutlineColor = Color.white;
+    public float sprayCanOutlineWidth = 0.006f;
+    public float sprayCanShadowWidth = 0.0015f;
+    [Range(0f, 1f)] public float sprayCanOutlinePulse = 0.12f;
+
     [Header("UI")]
     public float uiFadeSpeed = 3f;
     public float uiVisibleTime = 6f;
@@ -74,7 +81,7 @@ public class GraffitiPainter : MonoBehaviour
     GameObject[] autoGraffitiOnlyUI = new GameObject[0];
 
     public bool IsPainting => isPainting;
-    public bool CanEmitPaint => isPainting && emissionAllowed && sprayResources != null && sprayResources.HasPaint && !sprayResources.IsShaking;
+    public bool CanEmitPaint => isPainting && emissionAllowed && sprayResources != null && sprayResources.HasPaint && !sprayResources.IsShaking && !sprayResources.IsChangingCan;
 
     void Start()
     {
@@ -113,7 +120,23 @@ public class GraffitiPainter : MonoBehaviour
             resourceHUD.SetVisible(graffitiModeActive);
 
         if (sprayCan != null && sprayResources != null)
+        {
             sprayCan.SetShake(sprayResources.GetShakeTravel(), sprayResources.IsShaking);
+            sprayCan.SetCanChange(sprayResources.CanChangeNormalized, sprayResources.IsChangingCan);
+        }
+
+        if (graffitiModeActive && !menuOpen && sprayResources != null && Input.GetKeyDown(sprayResources.ChangeCanKey) && sprayResources.CanStartCanChange)
+        {
+            if (isPainting)
+                StopPainting();
+
+            if (sprayResources.TryStartCanChange())
+            {
+                if (sprayCan != null)
+                    sprayCan.SetCanChange(0f, true);
+                return;
+            }
+        }
 
         if (graffitiModeActive && !menuOpen && sprayResources != null && Input.GetKeyDown(sprayResources.ShakeKey))
         {
@@ -126,7 +149,7 @@ public class GraffitiPainter : MonoBehaviour
             return;
         }
 
-        if (menuOpen || !graffitiModeActive || (sprayResources != null && sprayResources.IsShaking))
+        if (menuOpen || !graffitiModeActive || (sprayResources != null && (sprayResources.IsShaking || sprayResources.IsChangingCan)))
         {
             targetAlpha = 0f;
             uiTimer = 0f;
@@ -187,6 +210,19 @@ public class GraffitiPainter : MonoBehaviour
             canvas = FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
 
         resourceHUD.Bind(sprayResources, canvas, paintText != null ? paintText.font : null);
+        EnsureSprayCanOutline();
+    }
+
+    void EnsureSprayCanOutline()
+    {
+        if (!showSprayCanOutline || sprayCan == null)
+            return;
+
+        CombatTargetHighlighter highlighter = sprayCan.GetComponent<CombatTargetHighlighter>();
+        if (highlighter == null)
+            highlighter = sprayCan.gameObject.AddComponent<CombatTargetHighlighter>();
+
+        highlighter.ConfigurePersistent(sprayCanOutlineColor, sprayCanOutlineWidth, sprayCanShadowWidth, sprayCanOutlinePulse);
     }
 
     static Canvas FindNozzleHintCanvas()
@@ -206,7 +242,7 @@ public class GraffitiPainter : MonoBehaviour
 
     void StartPainting()
     {
-        if (raycastUI == null || !raycastUI.CanPaint())
+        if (raycastUI == null || !raycastUI.CanPaint() || (sprayResources != null && sprayResources.IsChangingCan))
             return;
 
         RaycastHit hit = raycastUI.GetHit();

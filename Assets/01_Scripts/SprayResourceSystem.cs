@@ -30,16 +30,30 @@ public sealed class SprayResourceSystem : MonoBehaviour
     [SerializeField] AudioClip airOnlyClip;
     [SerializeField] AudioClip muffledSprayClip;
     [SerializeField] AudioClip rattleClip;
+    [SerializeField] bool muteSprayAudio = true;
     [SerializeField, Range(0f, 1f)] float sprayVolume = 0.42f;
     [SerializeField, Range(0f, 1f)] float rattleVolume = 0.55f;
+
+    [Header("Cambio de lata")]
+    [SerializeField] KeyCode changeCanKey = KeyCode.F;
+    [SerializeField, Range(0.6f, 1f)] float changeCanDuration = 0.82f;
+    [SerializeField] bool infiniteCanSupply = true;
+    [SerializeField, Min(0)] int startingSpareCans = 3;
+    [SerializeField, Range(0f, 100f)] float newCanStartingMixture = 100f;
+    [SerializeField] AudioClip discardCanClip;
+    [SerializeField] AudioClip drawCanClip;
+    [SerializeField, Range(0f, 1f)] float canChangeVolume = 0.65f;
 
     AudioSource spraySource;
     AudioSource rattleSource;
     float paint;
     float mixture;
     float shakeTimer;
+    float canChangeTimer;
     int previousShakeBeat = -1;
+    int remainingSpareCans;
     bool spraying;
+    bool drawSoundPlayed;
     GraffitiNozzleShape activeNozzle;
 
     public float Paint => paint;
@@ -49,11 +63,19 @@ public sealed class SprayResourceSystem : MonoBehaviour
     public float CriticalPaintLevel => criticalPaintLevel;
     public float UnstableMixtureLevel => unstableMixtureLevel;
     public KeyCode ShakeKey => shakeKey;
+    public KeyCode ChangeCanKey => changeCanKey;
     public bool IsShaking => shakeTimer > 0f;
+    public bool IsChangingCan => canChangeTimer > 0f;
     public bool IsSpraying => spraying;
     public bool HasPaint => paint > 0.001f;
     public bool NeedsShake => mixture <= unstableMixtureLevel;
     public float ShakeNormalized => IsShaking ? 1f - Mathf.Clamp01(shakeTimer / shakeDuration) : 0f;
+    public float CanChangeNormalized => IsChangingCan ? 1f - Mathf.Clamp01(canChangeTimer / changeCanDuration) : 0f;
+    public bool HasCanAvailable => infiniteCanSupply || remainingSpareCans > 0;
+    public bool CanStartCanChange => !HasPaint && !IsChangingCan && HasCanAvailable;
+    public int RemainingSpareCans => remainingSpareCans;
+    public bool InfiniteCanSupply => infiniteCanSupply;
+    public bool IsSprayAudioMuted => muteSprayAudio;
 
     public float Instability
     {
@@ -75,11 +97,18 @@ public sealed class SprayResourceSystem : MonoBehaviour
     {
         paint = Mathf.Clamp(startingPaint, 0f, 100f);
         mixture = Mathf.Clamp(startingMixture, 0f, 100f);
+        remainingSpareCans = Mathf.Max(0, startingSpareCans);
         EnsureAudioSources();
     }
 
     void Update()
     {
+        if (IsChangingCan)
+        {
+            UpdateCanChange(Time.deltaTime);
+            return;
+        }
+
         if (IsShaking)
         {
             UpdateShake(Time.deltaTime);
@@ -92,7 +121,7 @@ public sealed class SprayResourceSystem : MonoBehaviour
 
     public void BeginSpray(GraffitiNozzleShape nozzle)
     {
-        if (IsShaking)
+        if (IsShaking || IsChangingCan)
             return;
 
         activeNozzle = nozzle;
@@ -102,7 +131,7 @@ public sealed class SprayResourceSystem : MonoBehaviour
 
     public bool TickSpray(float deltaTime, GraffitiNozzleShape nozzle)
     {
-        if (IsShaking || deltaTime <= 0f)
+        if (IsShaking || IsChangingCan || deltaTime <= 0f)
             return false;
 
         activeNozzle = nozzle;
@@ -127,7 +156,7 @@ public sealed class SprayResourceSystem : MonoBehaviour
 
     public bool CanEmitAt(float time)
     {
-        if (!HasPaint || IsShaking)
+        if (!HasPaint || IsShaking || IsChangingCan)
             return false;
 
         float dropout = DropoutChance;
@@ -140,12 +169,27 @@ public sealed class SprayResourceSystem : MonoBehaviour
 
     public bool TryStartShake()
     {
-        if (IsShaking)
+        if (IsShaking || IsChangingCan)
             return false;
 
+        EnsureRattleAudio();
         EndSpray();
         shakeTimer = shakeDuration;
         previousShakeBeat = -1;
+        return true;
+    }
+
+    public bool TryStartCanChange()
+    {
+        if (HasPaint || IsChangingCan || !HasCanAvailable)
+            return false;
+
+        EndSpray();
+        shakeTimer = 0f;
+        previousShakeBeat = -1;
+        canChangeTimer = changeCanDuration;
+        drawSoundPlayed = false;
+        PlayOptionalOneShot(discardCanClip, canChangeVolume);
         return true;
     }
 
@@ -211,13 +255,36 @@ public sealed class SprayResourceSystem : MonoBehaviour
         }
     }
 
+    void UpdateCanChange(float deltaTime)
+    {
+        canChangeTimer = Mathf.Max(0f, canChangeTimer - deltaTime);
+        float progress = 1f - Mathf.Clamp01(canChangeTimer / changeCanDuration);
+        if (!drawSoundPlayed && progress >= 0.48f)
+        {
+            drawSoundPlayed = true;
+            PlayOptionalOneShot(drawCanClip, canChangeVolume);
+        }
+
+        if (canChangeTimer > 0f)
+            return;
+
+        // TODO: connect this counter to the future inventory/equipment system.
+        if (!infiniteCanSupply)
+            remainingSpareCans = Mathf.Max(0, remainingSpareCans - 1);
+
+        paint = 100f;
+        mixture = Mathf.Clamp(newCanStartingMixture, 0f, 100f);
+        drawSoundPlayed = false;
+        RefreshSprayAudio();
+    }
+
     void EnsureAudioSources()
     {
         spraySource = gameObject.AddComponent<AudioSource>();
         spraySource.playOnAwake = false;
         spraySource.loop = true;
         spraySource.spatialBlend = 0f;
-        spraySource.volume = sprayVolume;
+        spraySource.volume = muteSprayAudio ? 0f : sprayVolume;
 
         rattleSource = gameObject.AddComponent<AudioSource>();
         rattleSource.playOnAwake = false;
@@ -230,16 +297,21 @@ public sealed class SprayResourceSystem : MonoBehaviour
             airOnlyClip = CreateNoiseClip("Spray Air - Procedural", 1.2f, 0.55f, 0.04f);
         if (muffledSprayClip == null)
             muffledSprayClip = CreateNoiseClip("Spray Muffled - Procedural", 1.2f, 0.28f, 0.18f);
-        if (rattleClip == null)
-            rattleClip = CreateRattleClip();
-
-        rattleSource.clip = rattleClip;
+        EnsureRattleAudio();
     }
 
     void RefreshSprayAudio()
     {
         if (spraySource == null || !spraying)
             return;
+
+        if (muteSprayAudio)
+        {
+            spraySource.volume = 0f;
+            if (spraySource.isPlaying)
+                spraySource.Stop();
+            return;
+        }
 
         AudioClip desired = !HasPaint ? airOnlyClip : NeedsShake ? muffledSprayClip : paintSprayClip;
         if (spraySource.clip != desired)
@@ -254,6 +326,28 @@ public sealed class SprayResourceSystem : MonoBehaviour
 
         spraySource.volume = !HasPaint ? sprayVolume * 0.72f : sprayVolume;
         spraySource.pitch = Mathf.Lerp(0.86f, 1.04f, Mixture01) * Mathf.Lerp(0.96f, 1.03f, (int)activeNozzle / 4f);
+    }
+
+    void PlayOptionalOneShot(AudioClip clip, float volume)
+    {
+        if (rattleSource != null && clip != null)
+            rattleSource.PlayOneShot(clip, volume);
+    }
+
+    void EnsureRattleAudio()
+    {
+        if (rattleSource == null)
+        {
+            rattleSource = gameObject.AddComponent<AudioSource>();
+            rattleSource.playOnAwake = false;
+            rattleSource.loop = false;
+            rattleSource.spatialBlend = 0f;
+        }
+
+        if (rattleClip == null)
+            rattleClip = CreateRattleClip();
+
+        rattleSource.clip = rattleClip;
     }
 
     static AudioClip CreateNoiseClip(string clipName, float seconds, float smoothing, float lowPulse)

@@ -13,6 +13,7 @@ public class CombatTargetHighlighter : MonoBehaviour
     public float ringWidth = 0.018f;
     public float fadeSpeed = 8f;
     public float pulseSpeed = 3.2f;
+    [Range(0f, 1f)] public float pulseStrength = 1f;
     public float orbitalSpinSpeed = 28f;
     public int ringSegments = 96;
 
@@ -25,6 +26,7 @@ public class CombatTargetHighlighter : MonoBehaviour
     Material ringMaterial;
     Transform ringRoot;
     bool locked;
+    bool alwaysVisible;
     bool built;
     float visualAmount;
 
@@ -43,18 +45,19 @@ public class CombatTargetHighlighter : MonoBehaviour
         if (target == null)
             target = GetComponent<CombatTarget>();
 
-        float goal = locked ? 1f : 0f;
+        float goal = locked || alwaysVisible ? 1f : 0f;
         visualAmount = Mathf.MoveTowards(visualAmount, goal, fadeSpeed * Time.deltaTime);
 
         bool visible = visualAmount > 0.01f;
         SetVisualsActive(visible);
 
-        if (!visible || target == null)
+        if (!visible)
             return;
 
         EnsureBuilt();
         UpdateMaterials();
-        UpdateRings();
+        if (target != null)
+            UpdateRings();
     }
 
     public void SetLocked(bool value)
@@ -66,6 +69,20 @@ public class CombatTargetHighlighter : MonoBehaviour
             EnsureBuilt();
             SetVisualsActive(true);
         }
+    }
+
+    public void ConfigurePersistent(Color color, float width, float shadowWidth, float outlinePulseStrength)
+    {
+        lockColor = color;
+        outlineWidth = Mathf.Max(0.0001f, width);
+        outerShadowWidth = Mathf.Max(0f, shadowWidth);
+        pulseStrength = Mathf.Clamp01(outlinePulseStrength);
+        showLockRings = false;
+        alwaysVisible = true;
+        visualAmount = 1f;
+        EnsureBuilt();
+        UpdateMaterials();
+        SetVisualsActive(true);
     }
 
     void EnsureBuilt()
@@ -234,15 +251,17 @@ public class CombatTargetHighlighter : MonoBehaviour
     {
         float pulse = 0.5f + Mathf.Sin(Time.time * pulseSpeed) * 0.5f;
         Color color = lockColor;
-        color.a = Mathf.Lerp(0.42f, 0.95f, pulse) * visualAmount;
+        color.a = Mathf.Lerp(0.9f, Mathf.Lerp(0.42f, 0.95f, pulse), pulseStrength) * visualAmount;
+        float outlineScale = Mathf.Lerp(1f, Mathf.Lerp(0.92f, 1.08f, pulse), pulseStrength);
+        float shadowScale = Mathf.Lerp(1f, Mathf.Lerp(0.96f, 1.04f, pulse), pulseStrength);
 
         if (outlineMaterial != null)
-            ApplyOutlineMaterial(outlineMaterial, color, outlineWidth * Mathf.Lerp(0.92f, 1.08f, pulse));
+            ApplyOutlineMaterial(outlineMaterial, color, outlineWidth * outlineScale);
 
         if (shadowMaterial != null)
         {
             Color shadowColor = new Color(0f, 0f, 0f, 0.55f * visualAmount);
-            ApplyOutlineMaterial(shadowMaterial, shadowColor, (outlineWidth + outerShadowWidth) * Mathf.Lerp(0.96f, 1.04f, pulse));
+            ApplyOutlineMaterial(shadowMaterial, shadowColor, (outlineWidth + outerShadowWidth) * shadowScale);
         }
 
         if (!showLockRings)

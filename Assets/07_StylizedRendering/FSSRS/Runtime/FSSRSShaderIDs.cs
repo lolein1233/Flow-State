@@ -10,6 +10,8 @@ namespace FlowState.Rendering
         public static readonly int MidColor = Shader.PropertyToID("_FSSRS_MidColor");
         public static readonly int HighlightColor = Shader.PropertyToID("_FSSRS_HighlightColor");
         public static readonly int AccentColor = Shader.PropertyToID("_FSSRS_AccentColor");
+        public static readonly int EmotionIndex = Shader.PropertyToID("_FSSRS_EmotionIndex");
+        public static readonly int EmotionEnergy = Shader.PropertyToID("_FSSRS_EmotionEnergy");
         public static readonly int PaletteInfluence = Shader.PropertyToID("_FSSRS_PaletteInfluence");
 
         public static readonly int OutlineColor = Shader.PropertyToID("_OutlineColor");
@@ -19,10 +21,13 @@ namespace FlowState.Rendering
         public static readonly int NormalThreshold = Shader.PropertyToID("_NormalThreshold");
         public static readonly int LumaThreshold = Shader.PropertyToID("_LumaThreshold");
         public static readonly int PosterizeSteps = Shader.PropertyToID("_PosterizeSteps");
-        public static readonly int GrainIntensity = Shader.PropertyToID("_GrainIntensity");
+        public static readonly int InkFleckIntensity = Shader.PropertyToID("_InkFleckIntensity");
         public static readonly int HalftoneIntensity = Shader.PropertyToID("_HalftoneIntensity");
         public static readonly int HalftoneScale = Shader.PropertyToID("_HalftoneScale");
         public static readonly int HatchIntensity = Shader.PropertyToID("_HatchIntensity");
+        public static readonly int PaperLift = Shader.PropertyToID("_PaperLift");
+        public static readonly int ColorSaturation = Shader.PropertyToID("_ColorSaturation");
+        public static readonly int AccentBoost = Shader.PropertyToID("_AccentBoost");
         public static readonly int DebugMode = Shader.PropertyToID("_DebugMode");
     }
 }

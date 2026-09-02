@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7bf56cb30de8e4da0d42bcc03f2603, type: 3}
   m_Name: FSSRS_Punk
   m_EditorClassIdentifier: 
-  outlineIntensity: 1
-  outlineThickness: 1.9
+  outlineIntensity: 0.95
+  outlineThickness: 1.6
   depthThreshold: 0.012
   normalThreshold: 0.22
   lumaThreshold: 0.17
   posterizeSteps: 4
-  grainIntensity: 0.16
-  halftoneIntensity: 0.16
+  inkFleckIntensity: 0
+  halftoneIntensity: 0
   halftoneScale: 4
-  hatchIntensity: 0.25
-  paletteInfluence: 0.4
+  hatchIntensity: 0.22
+  paletteInfluence: 0.6
+  paperLift: 0.38
+  colorSaturation: 0.42
+  accentBoost: 0.5

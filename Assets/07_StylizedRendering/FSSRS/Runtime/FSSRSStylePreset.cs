@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace FlowState.Rendering
 {
@@ -12,11 +13,15 @@ namespace FlowState.Rendering
         [Range(0.01f, 1f)] public float normalThreshold = 0.22f;
         [Range(0.01f, 1f)] public float lumaThreshold = 0.16f;
         [Range(0, 16)] public int posterizeSteps = 6;
-        [Range(0f, 1f)] public float grainIntensity = 0.12f;
+        [FormerlySerializedAs("grainIntensity")]
+        [Range(0f, 1f)] public float inkFleckIntensity = 0.015f;
         [Range(0f, 1f)] public float halftoneIntensity = 0.1f;
         [Range(1f, 12f)] public float halftoneScale = 3f;
         [Range(0f, 1f)] public float hatchIntensity = 0.12f;
         [Range(0f, 1f)] public float paletteInfluence = 0.28f;
+        [Range(0f, 1f)] public float paperLift = 0.3f;
+        [Range(0f, 1f)] public float colorSaturation = 0.25f;
+        [Range(0f, 1f)] public float accentBoost = 0.25f;
 
         public void ApplyTo(FSSRSVolumeComponent target)
         {
@@ -29,11 +34,14 @@ namespace FlowState.Rendering
             Set(target.normalThreshold, normalThreshold);
             Set(target.lumaThreshold, lumaThreshold);
             Set(target.posterizeSteps, posterizeSteps);
-            Set(target.grainIntensity, grainIntensity);
+            Set(target.inkFleckIntensity, inkFleckIntensity);
             Set(target.halftoneIntensity, halftoneIntensity);
             Set(target.halftoneScale, halftoneScale);
             Set(target.hatchIntensity, hatchIntensity);
             Set(target.paletteInfluence, paletteInfluence);
+            Set(target.paperLift, paperLift);
+            Set(target.colorSaturation, colorSaturation);
+            Set(target.accentBoost, accentBoost);
         }
 
         private static void Set<T>(VolumeParameter<T> parameter, T value)

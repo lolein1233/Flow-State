@@ -7,6 +7,8 @@ half4 _FSSRS_ShadowColor;
 half4 _FSSRS_MidColor;
 half4 _FSSRS_HighlightColor;
 half4 _FSSRS_AccentColor;
+half _FSSRS_EmotionIndex;
+half _FSSRS_EmotionEnergy;
 
 inline half FSSRS_Luminance(half3 color)
 {

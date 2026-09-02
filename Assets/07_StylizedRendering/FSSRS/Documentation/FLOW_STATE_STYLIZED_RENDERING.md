@@ -2,16 +2,17 @@
 
 ## Visual premise
 
-FSSRS treats the world as an incomplete industrial print. The environment is restrained and structured, the player carries unresolved color registration, and graffiti remains the most saturated and authored layer.
+FSSRS treats the world as an incomplete industrial print. Paper and ink establish the value structure, while cyan, magenta, acid yellow, and coral act as emotional color plates. Graffiti remains the most saturated and authored layer.
 
 ## Render order
 
 1. URP shadows, depth, normals, opaque geometry, and DBuffer decals.
 2. `FLOWSTATE/FSSRS/Stylized Lit` quantizes lighting and applies stable print patterns.
-3. `FSSRSRendererFeature` composites depth, normal, and luminance outlines before transparencies.
-4. Transparent graffiti and particles render over the print treatment.
-5. A restrained URP Volume performs final post-processing.
-6. UI renders without FSSRS treatment.
+3. `FSSRSRendererFeature` composites depth, normal, luminance, and restrained color-registration edges before transparencies.
+4. `PlayerComicBorder` draws paper, emotional color, and broken-ink silhouette plates for the player.
+5. Other transparent graffiti and particles render over the print treatment.
+6. A restrained URP Volume performs final post-processing.
+7. UI renders without FSSRS treatment.
 
 ## Isolation
 
@@ -24,16 +25,17 @@ FSSRS treats the world as an incomplete industrial print. The environment is res
 ## Core controls
 
 - A `FlowPaletteProfile` defines the six color plates: paper, ink, shadow, mid, highlight, and accent.
-- `FlowStatePaletteController` blends palette profiles without owning gameplay state.
+- `FlowStatePaletteController` blends palette profiles and exposes the five visual emotions without owning gameplay logic.
 - `FSSRSStylePreset` configures outline, print density, posterization, and palette influence.
 - `FSSRSVolumeComponent` exposes the renderer controls and diagnostic views.
+- `PlayerComicBorder` is player-only. It is intentionally separate from combat target outlines.
 
 ## Quality guidance
 
-- Clean: silhouette and restrained grain.
+- Clean: silhouette with no print texture.
 - Comic: stronger internal edges and value quantization.
 - Street: balanced production target for PC.
-- Punk: high-density print texture for authored impact beats.
+- Punk: high-density halftone, hatching, and sparse ink flecks for authored impact beats.
 - Identity: stronger palette convergence and halftone.
 
 Do not use Punk as a permanent global state. It is intentionally designed for short, high-energy moments.
@@ -48,6 +50,17 @@ Do not use Punk as a permanent global state. It is intentionally designed for sh
 
 ## Extension points
 
-- Gameplay calls `FlowStatePaletteController.SetPalette` when an emotional state changes.
+- Gameplay calls `FlowStatePaletteController.SetEmotion(FlowEmotion emotion)` when an emotional state changes. This updates the world palette and player border together.
+- The controller Inspector exposes four live preview buttons: `Normal`, `B/N`, `Ira`, and `Flow max`. The selected preview is stored in the scene and is also used as the starting state in Play Mode.
+- Parameterless methods `SetNormalState`, `SetMonochromeState`, `SetAngerState`, and `SetFlowMaximumState` can be connected directly to UnityEvents, animation events, or gameplay triggers.
+- The player border uses compact paper, color, ink, and broken chromatic echo plates. The echo grows in traveling bands around the silhouette instead of separating the whole border from the mesh.
+- Ink flecks and halftone dots are disabled in the current art direction; hatching and material breakup remain available without the scattered point noise.
+- `SetPalette` remains available for non-emotional scripted color transitions.
 - A future impact controller should add temporary impulses over the base palette instead of replacing it.
 - Graffiti response and the proposed Ink Debt effect should remain separate render modules.
+
+```csharp
+paletteController.SetEmotion(FlowEmotion.Doubt);
+paletteController.SetEmotion(FlowEmotion.Anger, 0.2f);
+paletteController.SetEmotion(FlowEmotion.CreativeFlow, 0.65f);
+```

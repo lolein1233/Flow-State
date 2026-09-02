@@ -209,11 +209,19 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
                 half3 ramp = FSSRS_PaletteRamp(band, shadowColor, midColor, highlightColor);
 
                 half3 lightTint = lerp(1.0h, saturate(lighting.color + inputData.bakedGI), _LightColorStrength);
-                half valueRamp = lerp(0.46h, 1.12h, band);
+                half valueRamp = lerp(0.68h, 1.18h, band);
                 half rampLuma = max(FSSRS_Luminance(ramp), 0.2h);
-                half3 chromaRamp = lerp(1.0h, ramp / rampLuma, paletteMix * 0.48h);
+                half3 chromaRamp = lerp(1.0h, ramp / rampLuma, paletteMix * 0.62h);
                 half3 color = baseSample.rgb * valueRamp * chromaRamp * lightTint;
-                color += baseSample.rgb * inputData.bakedGI * 0.12h;
+                color += baseSample.rgb * (0.12h + _AmbientStrength * 0.16h);
+
+                half baseMaximum = max(baseSample.r, max(baseSample.g, baseSample.b));
+                half baseMinimum = min(baseSample.r, min(baseSample.g, baseSample.b));
+                half baseSaturation = (baseMaximum - baseMinimum) / max(baseMaximum, 0.08h);
+                half baseLuma = FSSRS_Luminance(baseSample.rgb);
+                half3 printedPlate = ramp * lerp(0.62h, 1.18h, baseLuma);
+                half printedPlateMix = paletteMix * lerp(0.5h, 0.24h, saturate(baseSaturation));
+                color = lerp(color, printedPlate, printedPlateMix);
 
                 float2 pixelPosition = input.positionCS.xy;
                 half hatch = FSSRS_CrossHatch(pixelPosition, _HatchScale, 1.0h - band);
@@ -226,12 +234,14 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
 
                 float2 inkUV = (input.positionWS.xz + input.positionWS.xy * 0.37) * _InkTiling;
                 half inkTexture = SAMPLE_TEXTURE2D(_InkTexture, sampler_InkTexture, inkUV).r;
-                half breakup = lerp(1.0h, lerp(0.72h, 1.08h, inkTexture), _InkBreakup);
+                half breakup = lerp(1.0h, lerp(0.92h, 1.06h, inkTexture), _InkBreakup);
                 color = lerp(color, _FSSRS_InkColor.rgb, saturate(hatchAmount + dotAmount));
                 color *= breakup;
 
                 half rim = pow(saturate(1.0h - dot(normalWS, inputData.viewDirectionWS)), _RimPower) * _RimStrength;
-                color += _RimColor.rgb * rim + _EmissionColor.rgb;
+                half3 emotionalRim = lerp(_RimColor.rgb, _FSSRS_AccentColor.rgb,
+                    paletteMix * (0.58h + _FSSRS_EmotionEnergy * 0.28h));
+                color += emotionalRim * rim + _EmissionColor.rgb;
                 color = MixFog(color, input.fogFactor);
                 return half4(color, baseSample.a);
             }

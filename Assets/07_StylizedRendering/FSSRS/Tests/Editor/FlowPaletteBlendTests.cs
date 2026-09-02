@@ -28,6 +28,17 @@ namespace FlowState.Rendering.Tests
             Assert.That(result.accent.r, Is.EqualTo(0.5f).Within(0.0001f));
         }
 
+        [Test]
+        public void EmotionEnergy_PutsDoubtBelowFlowAndAnger()
+        {
+            float doubt = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.Doubt);
+            float flow = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.CreativeFlow);
+            float anger = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.Anger);
+
+            Assert.That(doubt, Is.LessThan(flow));
+            Assert.That(flow, Is.LessThan(anger));
+        }
+
         private static FlowPaletteState Solid(Color color)
         {
             return new FlowPaletteState

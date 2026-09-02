@@ -76,7 +76,7 @@ public class FPSController : MonoBehaviour
     [Header("Parkour")]
     public LayerMask parkourMask = ~0;
     public float wallCheckDistance = 1.15f;
-    public float wallCheckHeight = 1.05f;
+    public float wallCheckHeight = 0.6f;
     public float vaultMaxHeight = 1.15f;
     public float climbMaxHeight = 2.6f;
     public float vaultForwardDistance = 1.35f;
@@ -86,11 +86,26 @@ public class FPSController : MonoBehaviour
     public float vaultArcHeight = 0.55f;
     public float climbArcHeight = 0.25f;
     public float landingProbeHeight = 2.4f;
+    public float wallProbeRadius = 0.16f;
+    public float landingClearance = 0.06f;
+    public float minimumGroundNormal = 0.55f;
+
+    [Header("Variantes de vault")]
+    public float lowVaultMaxHeight = 0.65f;
+    public float mediumVaultMaxHeight = 0.95f;
+    public float lowVaultDuration = 0.5f;
+    public float highVaultDuration = 0.84f;
+    public float lowVaultArcHeight = 0.32f;
+    public float highVaultArcHeight = 0.78f;
 
     [Header("Subida al borde")]
-    public float wallTopOutDuration = 0.58f;
-    public float wallTopOutArcHeight = 0.18f;
+    public float wallTopOutDuration = 1.55f;
+    public float wallTopOutArcHeight = 0.04f;
     public float wallTopOutForwardOffset = 0.85f;
+    [Range(0f, 1f)] public float wallTopOutVerticalStart = 0.36f;
+    [Range(0f, 1f)] public float wallTopOutVerticalEnd = 0.82f;
+    [Range(0f, 1f)] public float wallTopOutForwardStart = 0.68f;
+    [Range(0f, 1f)] public float wallTopOutForwardEnd = 0.95f;
 
     [Header("Escalada continua")]
     public bool enableClimbing = true;
@@ -105,6 +120,29 @@ public class FPSController : MonoBehaviour
     public float climbTopForwardOffset = 0.75f;
     public float climbAutoTopOutInput = 0.65f;
     public float climbMaxSurfaceAngle = 0.35f;
+    public float climbInputDeadZone = 0.08f;
+    public float climbAnimationResponse = 10f;
+    public float climbContactGraceTime = 0.12f;
+
+    [Header("Salto entre paredes")]
+    public bool enableWallJump = true;
+    public float wallJumpDistance = 4.25f;
+    public float wallJumpDuration = 0.58f;
+    public float wallJumpArcHeight = 0.72f;
+    public float wallJumpVerticalRise = 0.2f;
+    [Range(0f, 1f)] public float wallJumpSideSteer = 0.55f;
+    public float wallJumpProbeRadius = 0.2f;
+
+    [Header("Caida y aterrizaje")]
+    public float fallingAnimationVelocity = -0.85f;
+    public float minimumFallingAirTime = 0.12f;
+    public float landingAnimationLeadTime = 0.34f;
+    public float landingAnimationProbeDistance = 4f;
+
+    [Header("Rodada aerea")]
+    public bool enableAirRoll = true;
+    public float airRollDoubleTapWindow = 0.38f;
+    public float airRollDuration = 0.8f;
 
     [Header("Visual y animacion")]
     public Transform visualRoot;
@@ -120,6 +158,7 @@ public class FPSController : MonoBehaviour
     public float maxFootGroundSnap = 0.35f;
 
     CharacterController controller;
+    CapsuleCollider legacyCapsuleCollider;
     Camera playerCamera;
     Transform cameraTransform;
     readonly HashSet<int> animatorParameters = new HashSet<int>();
@@ -155,7 +194,17 @@ public class FPSController : MonoBehaviour
     bool climbAllowSideways = true;
     float climbSpeedMultiplier = 1f;
     float climbInput;
+    float climbAnimationInput;
+    float climbContactLostTimer;
+    float lastAirborneVerticalSpeed;
+    float airborneAnimationTime;
+    float lastJumpStartedTime = -999f;
+    float airRollEndTime = -999f;
     Vector3 climbNormal;
+    Collider climbCollider;
+    bool wasGrounded;
+    bool landingAnimationQueued;
+    bool isAirRolling;
     bool hasCombatLockPoint;
     Vector3 combatLockPoint;
 
@@ -167,14 +216,20 @@ public class FPSController : MonoBehaviour
     static readonly int ClimbingHash = Animator.StringToHash("Climbing");
     static readonly int ClimbInputHash = Animator.StringToHash("ClimbInput");
     static readonly int JumpHash = Animator.StringToHash("Jump");
-    static readonly int VaultHash = Animator.StringToHash("Vault");
-    static readonly int ClimbHash = Animator.StringToHash("Climb");
+    static readonly int VaultLowHash = Animator.StringToHash("VaultLow");
+    static readonly int VaultMediumHash = Animator.StringToHash("VaultMedium");
+    static readonly int VaultHighHash = Animator.StringToHash("VaultHigh");
+    static readonly int TopOutHash = Animator.StringToHash("TopOut");
     static readonly int HangHash = Animator.StringToHash("Hang");
+    static readonly int FallingHash = Animator.StringToHash("Falling");
+    static readonly int LandHash = Animator.StringToHash("Land");
+    static readonly int RollHash = Animator.StringToHash("Roll");
     static readonly int PaintHash = Animator.StringToHash("Paint");
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        legacyCapsuleCollider = GetComponent<CapsuleCollider>();
         ResolveReferences();
         CacheAnimatorParameters();
     }
@@ -191,8 +246,16 @@ public class FPSController : MonoBehaviour
         graffitiMode = startInGraffitiMode;
         jumpPressedTime = -999f;
         lastGroundedTime = -999f;
+        wasGrounded = controller.isGrounded;
+        landingAnimationQueued = false;
+        lastAirborneVerticalSpeed = 0f;
+        airborneAnimationTime = 0f;
+        lastJumpStartedTime = -999f;
+        airRollEndTime = -999f;
+        isAirRolling = false;
         ConfigureGroundContact();
         ApplyModeInstant();
+        CacheAnimatorParameters();
         ResetMovementAnimator();
         groundAlignmentFramesRemaining = alignFeetToGroundOnStart ? 12 : 0;
         UpdateCursorState();
@@ -261,11 +324,17 @@ public class FPSController : MonoBehaviour
             return;
 
         ResetAnimatorTrigger(JumpHash);
-        ResetAnimatorTrigger(VaultHash);
-        ResetAnimatorTrigger(ClimbHash);
+        ResetAnimatorTrigger(VaultLowHash);
+        ResetAnimatorTrigger(VaultMediumHash);
+        ResetAnimatorTrigger(VaultHighHash);
+        ResetAnimatorTrigger(TopOutHash);
         ResetAnimatorTrigger(HangHash);
+        ResetAnimatorTrigger(LandHash);
+        ResetAnimatorTrigger(RollHash);
         SetAnimatorBool(ParkourHash, false);
         SetAnimatorBool(ClimbingHash, false);
+        SetAnimatorBool(FallingHash, false);
+        climbAnimationInput = 0f;
         SetAnimatorFloat(ClimbInputHash, 0f);
         SetAnimatorFloat(SpeedHash, 0f);
         SetAnimatorFloat(VerticalSpeedHash, 0f);
@@ -475,12 +544,17 @@ public class FPSController : MonoBehaviour
 
         if (Input.GetKeyDown(jumpKey))
         {
-            Vector3 forward = GetPlanarCameraForward();
+            bool startedAirRoll = TryStartAirRoll(grounded);
 
-            if (!graffitiMode && TryStartParkour(rawInput.sqrMagnitude > 0.01f ? GetThirdPersonMoveDirection(rawInput) : forward))
-                return;
+            if (!startedAirRoll)
+            {
+                Vector3 forward = GetPlanarCameraForward();
 
-            jumpPressedTime = Time.time;
+                if (!graffitiMode && TryStartParkour(rawInput.sqrMagnitude > 0.01f ? GetThirdPersonMoveDirection(rawInput) : forward))
+                    return;
+
+                jumpPressedTime = Time.time;
+            }
         }
 
         Vector3 moveDirection = graffitiMode ? GetFirstPersonMoveDirection(rawInput) : GetThirdPersonMoveDirection(rawInput);
@@ -508,11 +582,32 @@ public class FPSController : MonoBehaviour
         {
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
             jumpPressedTime = -999f;
+            lastJumpStartedTime = Time.time;
+            isAirRolling = false;
             TriggerAnimator(JumpHash);
         }
 
         verticalVelocity += gravity * Time.deltaTime;
         controller.Move((planarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
+    }
+
+    bool TryStartAirRoll(bool grounded)
+    {
+        float timeSinceJump = Time.time - lastJumpStartedTime;
+        bool insideDoubleTapWindow =
+            timeSinceJump >= 0.04f &&
+            timeSinceJump <= Mathf.Max(0.08f, airRollDoubleTapWindow);
+
+        if (!enableAirRoll || grounded || !insideDoubleTapWindow || graffitiMode || isParkouring || isClimbing || isAirRolling || landingAnimationQueued)
+            return false;
+
+        isAirRolling = true;
+        airRollEndTime = Time.time + Mathf.Max(0.1f, airRollDuration);
+        lastJumpStartedTime = -999f;
+        jumpPressedTime = -999f;
+        SetAnimatorBool(FallingHash, false);
+        TriggerAnimator(RollHash);
+        return true;
     }
 
     Vector3 GetThirdPersonMoveDirection(Vector2 rawInput)
@@ -570,7 +665,7 @@ public class FPSController : MonoBehaviour
 
     bool TryStartParkour(Vector3 desiredForward)
     {
-        if (!canMove || isParkouring)
+        if (!canMove || isParkouring || isClimbing)
             return false;
 
         desiredForward.y = 0f;
@@ -580,24 +675,36 @@ public class FPSController : MonoBehaviour
 
         desiredForward.Normalize();
 
-        Vector3 origin = transform.position + Vector3.up * wallCheckHeight;
+        Vector3 origin = transform.position;
+        origin.y = GetControllerBottomY() + wallCheckHeight;
 
         if (!TryFindParkourWall(origin, desiredForward, out RaycastHit wallHit))
             return false;
 
         Bounds bounds = wallHit.collider.bounds;
-        float obstacleHeight = bounds.max.y - transform.position.y;
+        float obstacleHeight = bounds.max.y - GetControllerBottomY();
 
         if (obstacleHeight <= vaultMaxHeight)
         {
-            Vector3 landing = wallHit.point + desiredForward * vaultForwardDistance;
+            Vector3 extents = bounds.extents;
+            float projectedCenter = Vector3.Dot(bounds.center - wallHit.point, desiredForward);
+            float projectedExtent =
+                Mathf.Abs(desiredForward.x) * extents.x +
+                Mathf.Abs(desiredForward.y) * extents.y +
+                Mathf.Abs(desiredForward.z) * extents.z;
+            float obstacleDepth = Mathf.Max(0f, projectedCenter + projectedExtent);
+            float landingDistance = Mathf.Max(
+                vaultForwardDistance,
+                obstacleDepth + GetControllerWorldRadius() + landingClearance);
+            Vector3 landing = wallHit.point + desiredForward * landingDistance;
 
-            if (TryFindGround(landing, out Vector3 groundPoint))
-                landing = groundPoint;
-            else
-                landing.y = transform.position.y;
+            if (!TryFindGround(landing, out Vector3 groundPoint))
+                return false;
 
-            StartCoroutine(ParkourMove(landing, wallTopOutDuration, wallTopOutArcHeight, VaultHash));
+            landing = groundPoint;
+
+            SelectVaultProfile(obstacleHeight, out float duration, out float arcHeight, out int triggerHash);
+            StartCoroutine(ParkourMove(landing, duration, arcHeight, triggerHash, desiredForward));
             return true;
         }
 
@@ -606,10 +713,12 @@ public class FPSController : MonoBehaviour
             Vector3 topProbe = wallHit.point + desiredForward * wallTopOutForwardOffset;
             topProbe.y = bounds.max.y + 0.1f;
 
-            if (TryFindGround(topProbe, out Vector3 climbPoint))
-                topProbe = climbPoint;
+            if (!TryFindGround(topProbe, out Vector3 climbPoint))
+                return TryEnterClimb(wallHit);
 
-            StartCoroutine(ParkourMove(topProbe, wallTopOutDuration, wallTopOutArcHeight, ClimbHash));
+            topProbe = climbPoint;
+
+            StartCoroutine(TopOutMove(topProbe, desiredForward));
             return true;
         }
 
@@ -618,6 +727,32 @@ public class FPSController : MonoBehaviour
 
         TriggerAnimator(HangHash);
         return false;
+    }
+
+    void SelectVaultProfile(float obstacleHeight, out float duration, out float arcHeight, out int triggerHash)
+    {
+        float lowThreshold = Mathf.Min(lowVaultMaxHeight, vaultMaxHeight);
+        float mediumThreshold = Mathf.Clamp(mediumVaultMaxHeight, lowThreshold, vaultMaxHeight);
+
+        if (obstacleHeight <= lowThreshold)
+        {
+            duration = Mathf.Max(0.1f, lowVaultDuration);
+            arcHeight = Mathf.Max(0f, lowVaultArcHeight);
+            triggerHash = VaultLowHash;
+            return;
+        }
+
+        if (obstacleHeight <= mediumThreshold)
+        {
+            duration = Mathf.Max(0.1f, vaultDuration);
+            arcHeight = Mathf.Max(0f, vaultArcHeight);
+            triggerHash = VaultMediumHash;
+            return;
+        }
+
+        duration = Mathf.Max(0.1f, highVaultDuration);
+        arcHeight = Mathf.Max(0f, highVaultArcHeight);
+        triggerHash = VaultHighHash;
     }
 
     bool TryEnterClimb(RaycastHit wallHit)
@@ -635,26 +770,37 @@ public class FPSController : MonoBehaviour
         if (climbable != null && !climbable.canClimb)
             return false;
 
+        EnterClimb(wallHit, climbable, true);
+        return true;
+    }
+
+    void EnterClimb(RaycastHit wallHit, ClimbableSurface climbable, bool snapToSurface)
+    {
         isClimbing = true;
         isParkouring = false;
         climbNormal = wallHit.normal;
+        climbCollider = wallHit.collider;
         climbAllowSideways = climbable == null || climbable.allowSideways;
         climbSpeedMultiplier = climbable != null ? Mathf.Max(0.1f, climbable.speedMultiplier) : 1f;
         verticalVelocity = 0f;
         currentPlanarSpeed = 0f;
         climbInput = 0f;
+        climbAnimationInput = 0f;
+        climbContactLostTimer = 0f;
 
         transform.rotation = Quaternion.LookRotation(-climbNormal, Vector3.up);
-        SnapToClimbSurface(wallHit.point);
+        if (snapToSurface)
+            SnapToClimbSurface(wallHit.point);
+
         SetAnimatorBool(ClimbingHash, true);
         SetAnimatorFloat(ClimbInputHash, 0f);
         TriggerAnimator(HangHash);
-        return true;
     }
 
     bool TryFindParkourWall(Vector3 origin, Vector3 desiredForward, out RaycastHit bestHit)
     {
-        RaycastHit[] hits = Physics.RaycastAll(origin, desiredForward, wallCheckDistance, parkourMask, QueryTriggerInteraction.Ignore);
+        float probeRadius = Mathf.Max(0.01f, wallProbeRadius);
+        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, desiredForward, wallCheckDistance, parkourMask, QueryTriggerInteraction.Ignore);
         float bestDistance = float.MaxValue;
         bestHit = default;
 
@@ -687,18 +833,65 @@ public class FPSController : MonoBehaviour
 
         foreach (RaycastHit hit in hits)
         {
-            if (IsSelf(hit.collider))
+            if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
                 continue;
 
-            if (hit.distance < bestDistance)
+            Vector3 candidate = BuildGroundedRootPosition(hit.point);
+            if (hit.distance < bestDistance && HasParkourClearance(candidate, hit.collider))
             {
                 bestDistance = hit.distance;
-                groundPoint = hit.point + Vector3.up * 0.05f;
+                groundPoint = candidate;
                 found = true;
             }
         }
 
         return found;
+    }
+
+    float GetControllerBottomY()
+    {
+        float worldRadius = GetControllerWorldRadius();
+        float halfHeight = Mathf.Max(controller.height * Mathf.Abs(transform.lossyScale.y) * 0.5f, worldRadius);
+        float centerOffset = Vector3.Dot(transform.TransformVector(controller.center), Vector3.up);
+        return transform.position.y + centerOffset - halfHeight;
+    }
+
+    float GetControllerWorldRadius()
+    {
+        Vector3 scale = transform.lossyScale;
+        return controller.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+    }
+
+    Vector3 BuildGroundedRootPosition(Vector3 groundPoint)
+    {
+        float worldRadius = GetControllerWorldRadius();
+        float halfHeight = Mathf.Max(controller.height * Mathf.Abs(transform.lossyScale.y) * 0.5f, worldRadius);
+        float centerOffset = Vector3.Dot(transform.TransformVector(controller.center), Vector3.up);
+
+        Vector3 groundedPosition = groundPoint;
+        groundedPosition.y = groundPoint.y + halfHeight - centerOffset + Mathf.Max(0.01f, landingClearance);
+        return groundedPosition;
+    }
+
+    bool HasParkourClearance(Vector3 rootPosition, Collider supportCollider)
+    {
+        float radius = Mathf.Max(0.05f, GetControllerWorldRadius() - controller.skinWidth);
+        float height = Mathf.Max(controller.height * Mathf.Abs(transform.lossyScale.y), radius * 2f);
+        Vector3 center = rootPosition + transform.TransformVector(controller.center);
+        float segmentHalfHeight = Mathf.Max(0f, height * 0.5f - radius);
+        Vector3 top = center + Vector3.up * segmentHalfHeight;
+        Vector3 bottom = center - Vector3.up * segmentHalfHeight;
+        Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, parkourMask, QueryTriggerInteraction.Ignore);
+
+        foreach (Collider overlap in overlaps)
+        {
+            if (overlap == null || overlap == supportCollider || IsSelf(overlap))
+                continue;
+
+            return false;
+        }
+
+        return true;
     }
 
     void HandleClimbing()
@@ -709,35 +902,53 @@ public class FPSController : MonoBehaviour
             return;
         }
 
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        float h = ApplyClimbDeadZone(Input.GetAxisRaw("Horizontal"));
+        float v = ApplyClimbDeadZone(Input.GetAxisRaw("Vertical"));
         climbInput = Mathf.Clamp(v, -1f, 1f);
+        float requestedSideInput = climbAllowSideways ? Mathf.Clamp(h, -1f, 1f) : 0f;
+        float requestedAnimationInput = Mathf.Abs(climbInput) > 0f ? climbInput : Mathf.Abs(requestedSideInput);
+        climbAnimationInput = Mathf.MoveTowards(climbAnimationInput, requestedAnimationInput, climbAnimationResponse * Time.deltaTime);
 
         if (Input.GetKeyDown(jumpKey))
         {
             if (TryFindClimbTop(out Vector3 topOutPoint))
             {
+                Vector3 topOutForward = -climbNormal;
                 ExitClimb(false);
-                StartCoroutine(ParkourMove(topOutPoint, wallTopOutDuration, wallTopOutArcHeight, ClimbHash));
+                StartCoroutine(TopOutMove(topOutPoint, topOutForward));
                 return;
             }
 
+            if (TryStartWallJump(requestedSideInput))
+                return;
+
             ExitClimb(true);
+            TriggerAnimator(JumpHash);
             return;
         }
 
         if (climbInput > climbAutoTopOutInput && TryFindClimbTop(out Vector3 autoTopOutPoint))
         {
+            Vector3 topOutForward = -climbNormal;
             ExitClimb(false);
-            StartCoroutine(ParkourMove(autoTopOutPoint, wallTopOutDuration, wallTopOutArcHeight, ClimbHash));
+            StartCoroutine(TopOutMove(autoTopOutPoint, topOutForward));
             return;
         }
 
-        Vector3 climbSide = Vector3.Cross(Vector3.up, climbNormal);
+        Vector3 climbSide = Vector3.Cross(climbNormal, Vector3.up);
         if (climbSide.sqrMagnitude > 0.001f)
             climbSide.Normalize();
 
-        float sideInput = climbAllowSideways ? h : 0f;
+        float sideInput = requestedSideInput;
+        Vector3 sideDisplacement = climbSide * (sideInput * climbSideSpeed * climbSpeedMultiplier * Time.deltaTime);
+
+        if (sideDisplacement.sqrMagnitude > 0.000001f)
+        {
+            Vector3 nextProbeOrigin = transform.position + sideDisplacement + Vector3.up * wallCheckHeight;
+            if (!TryFindClimbSurface(nextProbeOrigin, transform.forward, out _, out _))
+                sideInput = 0f;
+        }
+
         Vector3 climbVelocity =
             Vector3.up * (climbInput * climbMoveSpeed * climbSpeedMultiplier) +
             climbSide * (sideInput * climbSideSpeed * climbSpeedMultiplier);
@@ -746,25 +957,147 @@ public class FPSController : MonoBehaviour
 
         if (!TryFindClimbSurface(transform.position + Vector3.up * wallCheckHeight, transform.forward, out RaycastHit surfaceHit, out ClimbableSurface climbable))
         {
-            ExitClimb(false);
+            climbContactLostTimer += Time.deltaTime;
+            if (climbContactLostTimer >= climbContactGraceTime)
+                ExitClimb(false);
             return;
         }
 
+        climbContactLostTimer = 0f;
         climbNormal = Vector3.Slerp(climbNormal, surfaceHit.normal, 1f - Mathf.Exp(-climbSnapSpeed * Time.deltaTime));
+        climbCollider = surfaceHit.collider;
         climbAllowSideways = climbable == null || climbable.allowSideways;
         climbSpeedMultiplier = climbable != null ? Mathf.Max(0.1f, climbable.speedMultiplier) : 1f;
 
-        transform.rotation = Quaternion.LookRotation(-climbNormal, Vector3.up);
+        Quaternion targetRotation = Quaternion.LookRotation(-climbNormal, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1f - Mathf.Exp(-climbSnapSpeed * Time.deltaTime));
         SnapToClimbSurface(surfaceHit.point, false);
 
         SetAnimatorBool(ClimbingHash, true);
-        SetAnimatorFloat(ClimbInputHash, climbInput);
-        SetAnimatorFloat(SpeedHash, Mathf.Abs(climbInput));
+        SetAnimatorFloat(ClimbInputHash, climbAnimationInput);
+        SetAnimatorFloat(SpeedHash, Mathf.Abs(climbAnimationInput));
+    }
+
+    float ApplyClimbDeadZone(float value)
+    {
+        return Mathf.Abs(value) >= climbInputDeadZone ? value : 0f;
+    }
+
+    bool TryStartWallJump(float sideInput)
+    {
+        if (!enableWallJump || isParkouring)
+            return false;
+
+        Vector3 climbSide = Vector3.Cross(climbNormal, Vector3.up);
+        if (climbSide.sqrMagnitude > 0.001f)
+            climbSide.Normalize();
+
+        Vector3 jumpDirection = climbNormal + climbSide * (sideInput * wallJumpSideSteer);
+        jumpDirection.y = 0f;
+        jumpDirection.Normalize();
+
+        Vector3 origin = transform.position + Vector3.up * wallCheckHeight + jumpDirection * 0.05f;
+        bool foundTarget = TryFindWallJumpTarget(origin, jumpDirection, out RaycastHit targetHit, out ClimbableSurface targetClimbable);
+
+        if (!foundTarget && Mathf.Abs(sideInput) > 0.01f)
+        {
+            jumpDirection = climbNormal;
+            jumpDirection.y = 0f;
+            jumpDirection.Normalize();
+            origin = transform.position + Vector3.up * wallCheckHeight + jumpDirection * 0.05f;
+            foundTarget = TryFindWallJumpTarget(origin, jumpDirection, out targetHit, out targetClimbable);
+        }
+
+        if (!foundTarget)
+            return false;
+
+        Vector3 endPosition = targetHit.point + targetHit.normal * GetClimbSurfaceOffset();
+        endPosition.y = transform.position.y + wallJumpVerticalRise;
+
+        if (!HasParkourClearance(endPosition, targetHit.collider))
+            return false;
+
+        StartCoroutine(WallJumpMove(targetHit, targetClimbable, endPosition));
+        return true;
+    }
+
+    bool TryFindWallJumpTarget(Vector3 origin, Vector3 direction, out RaycastHit bestHit, out ClimbableSurface climbable)
+    {
+        float probeRadius = Mathf.Max(0.05f, wallJumpProbeRadius);
+        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, direction, wallJumpDistance, parkourMask, QueryTriggerInteraction.Ignore);
+        float bestDistance = float.MaxValue;
+        bestHit = default;
+        climbable = null;
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider == climbCollider || !IsValidClimbHit(hit, out ClimbableSurface candidate))
+                continue;
+
+            if (Vector3.Dot(hit.normal, -direction) < 0.35f)
+                continue;
+
+            if (hit.distance < bestDistance)
+            {
+                bestDistance = hit.distance;
+                bestHit = hit;
+                climbable = candidate;
+            }
+        }
+
+        return bestDistance < float.MaxValue;
+    }
+
+    IEnumerator WallJumpMove(RaycastHit targetHit, ClimbableSurface targetClimbable, Vector3 endPosition)
+    {
+        Vector3 startPosition = transform.position;
+        Quaternion startRotation = transform.rotation;
+        Quaternion endRotation = Quaternion.LookRotation(-targetHit.normal, Vector3.up);
+        bool controllerWasEnabled = controller.enabled;
+        bool capsuleWasEnabled = legacyCapsuleCollider != null && legacyCapsuleCollider.enabled;
+
+        ExitClimb(false);
+        isParkouring = true;
+        SetAnimatorBool(ParkourHash, true);
+        TriggerAnimator(JumpHash);
+        controller.enabled = false;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = false;
+
+        float timer = 0f;
+        while (timer < wallJumpDuration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / Mathf.Max(0.01f, wallJumpDuration));
+            float eased = SmoothStep01(t);
+            float rotationT = SmoothStep01(Mathf.InverseLerp(0.18f, 0.82f, t));
+            Vector3 arc = Vector3.up * Mathf.Sin(eased * Mathf.PI) * wallJumpArcHeight;
+
+            transform.position = Vector3.Lerp(startPosition, endPosition, eased) + arc;
+            transform.rotation = Quaternion.Slerp(startRotation, endRotation, rotationT);
+            yield return null;
+        }
+
+        transform.position = endPosition;
+        transform.rotation = endRotation;
+        Physics.SyncTransforms();
+        controller.enabled = controllerWasEnabled;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = capsuleWasEnabled;
+
+        isParkouring = false;
+        SetAnimatorBool(ParkourHash, false);
+        EnterClimb(targetHit, targetClimbable, false);
     }
 
     bool TryFindClimbSurface(Vector3 origin, Vector3 direction, out RaycastHit bestHit, out ClimbableSurface climbable)
     {
-        RaycastHit[] hits = Physics.RaycastAll(origin, direction, climbSurfaceOffset + climbDetectDistance, parkourMask, QueryTriggerInteraction.Ignore);
+        direction = direction.sqrMagnitude > 0.001f ? direction.normalized : transform.forward;
+        float probeRadius = Mathf.Max(0.01f, wallProbeRadius);
+        float contactOffset = GetClimbSurfaceOffset();
+        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, direction, contactOffset + climbDetectDistance, parkourMask, QueryTriggerInteraction.Ignore);
         float bestDistance = float.MaxValue;
         bestHit = default;
         climbable = null;
@@ -804,7 +1137,7 @@ public class FPSController : MonoBehaviour
 
     void SnapToClimbSurface(Vector3 wallPoint, bool instant = true)
     {
-        Vector3 target = wallPoint + climbNormal * climbSurfaceOffset;
+        Vector3 target = wallPoint + climbNormal * GetClimbSurfaceOffset();
         target.y = transform.position.y;
         Vector3 delta = target - transform.position;
         delta.y = 0f;
@@ -815,6 +1148,11 @@ public class FPSController : MonoBehaviour
         controller.Move(delta);
     }
 
+    float GetClimbSurfaceOffset()
+    {
+        return Mathf.Max(climbSurfaceOffset, GetControllerWorldRadius() + controller.skinWidth);
+    }
+
     bool TryFindClimbTop(out Vector3 topOutPoint)
     {
         topOutPoint = transform.position;
@@ -823,15 +1161,26 @@ public class FPSController : MonoBehaviour
         if (TryFindClimbSurface(highProbe, -climbNormal, out _, out _))
             return false;
 
-        Vector3 groundProbe = transform.position - climbNormal * climbTopForwardOffset + Vector3.up * (climbTopProbeHeight + 0.25f);
-        if (!TryFindGround(groundProbe, out Vector3 groundPoint))
-            return false;
+        float worldRadius = GetControllerWorldRadius();
+        float minimumForwardDistance = Mathf.Max(climbTopForwardOffset, worldRadius + landingClearance);
+        float probeStep = Mathf.Max(0.2f, worldRadius * 0.5f);
 
-        if (groundPoint.y < transform.position.y + 0.25f)
-            return false;
+        for (int probeIndex = 0; probeIndex < 4; probeIndex++)
+        {
+            float forwardDistance = minimumForwardDistance + probeStep * probeIndex;
+            Vector3 groundProbe = transform.position - climbNormal * forwardDistance + Vector3.up * (climbTopProbeHeight + 0.25f);
 
-        topOutPoint = groundPoint;
-        return true;
+            if (!TryFindGround(groundProbe, out Vector3 groundPoint))
+                continue;
+
+            if (groundPoint.y < transform.position.y + 0.25f)
+                continue;
+
+            topOutPoint = groundPoint;
+            return true;
+        }
+
+        return false;
     }
 
     void ExitClimb(bool pushAway)
@@ -841,6 +1190,9 @@ public class FPSController : MonoBehaviour
 
         isClimbing = false;
         climbInput = 0f;
+        climbAnimationInput = 0f;
+        climbContactLostTimer = 0f;
+        climbCollider = null;
         verticalVelocity = -2f;
         currentPlanarSpeed = 0f;
         SetAnimatorBool(ClimbingHash, false);
@@ -850,20 +1202,109 @@ public class FPSController : MonoBehaviour
             controller.Move(climbNormal * 0.25f);
     }
 
-    IEnumerator ParkourMove(Vector3 endPosition, float duration, float arcHeight, int triggerHash)
+    IEnumerator TopOutMove(Vector3 endPosition, Vector3 facingDirection)
+    {
+        isParkouring = true;
+        SetAnimatorBool(ParkourHash, true);
+        TriggerAnimator(TopOutHash);
+
+        bool controllerWasEnabled = controller.enabled;
+        bool capsuleWasEnabled = legacyCapsuleCollider != null && legacyCapsuleCollider.enabled;
+        controller.enabled = false;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = false;
+
+        Vector3 startPosition = transform.position;
+        Vector3 horizontalTravel = endPosition - startPosition;
+        horizontalTravel.y = 0f;
+        Quaternion startRotation = transform.rotation;
+        facingDirection.y = 0f;
+        Quaternion endRotation = facingDirection.sqrMagnitude > 0.01f
+            ? Quaternion.LookRotation(facingDirection.normalized, Vector3.up)
+            : startRotation;
+        float timer = 0f;
+
+        while (timer < wallTopOutDuration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / Mathf.Max(0.01f, wallTopOutDuration));
+            float verticalT = SmoothStep01(Mathf.InverseLerp(wallTopOutVerticalStart, wallTopOutVerticalEnd, t));
+            float forwardT = SmoothStep01(Mathf.InverseLerp(wallTopOutForwardStart, wallTopOutForwardEnd, t));
+            Vector3 position = startPosition + horizontalTravel * forwardT;
+            position.y = Mathf.Lerp(startPosition.y, endPosition.y, verticalT);
+            position.y += Mathf.Sin(forwardT * Mathf.PI) * wallTopOutArcHeight;
+
+            transform.position = position;
+            transform.rotation = Quaternion.Slerp(startRotation, endRotation, verticalT);
+            yield return null;
+        }
+
+        transform.position = endPosition;
+        transform.rotation = endRotation;
+        Physics.SyncTransforms();
+        controller.enabled = controllerWasEnabled;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = capsuleWasEnabled;
+
+        if (controllerWasEnabled)
+            SettleControllerAfterTopOut();
+
+        verticalVelocity = -2f;
+        currentPlanarSpeed = 0f;
+        airborneAnimationTime = 0f;
+        lastAirborneVerticalSpeed = 0f;
+        landingAnimationQueued = false;
+        isAirRolling = false;
+        SetAnimatorBool(FallingHash, false);
+        ResetAnimatorTrigger(LandHash);
+        isParkouring = false;
+        SetAnimatorBool(ParkourHash, false);
+    }
+
+    void SettleControllerAfterTopOut()
+    {
+        float snapDistance = Mathf.Max(0.12f, landingClearance + controller.skinWidth + 0.05f);
+        CollisionFlags collision = controller.Move(Vector3.down * snapDistance);
+        bool grounded = (collision & CollisionFlags.Below) != 0 || controller.isGrounded;
+
+        if (!grounded && TryFindGround(transform.position, out Vector3 groundedPosition))
+        {
+            controller.enabled = false;
+            transform.position = groundedPosition;
+            Physics.SyncTransforms();
+            controller.enabled = true;
+            collision = controller.Move(Vector3.down * snapDistance);
+            grounded = (collision & CollisionFlags.Below) != 0 || controller.isGrounded;
+        }
+
+        wasGrounded = grounded;
+    }
+
+    float SmoothStep01(float value)
+    {
+        value = Mathf.Clamp01(value);
+        return value * value * (3f - 2f * value);
+    }
+
+    IEnumerator ParkourMove(Vector3 endPosition, float duration, float arcHeight, int triggerHash, Vector3 facingDirection)
     {
         isParkouring = true;
         SetAnimatorBool(ParkourHash, true);
         TriggerAnimator(triggerHash);
 
         bool controllerWasEnabled = controller.enabled;
+        bool capsuleWasEnabled = legacyCapsuleCollider != null && legacyCapsuleCollider.enabled;
         controller.enabled = false;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = false;
 
         Vector3 startPosition = transform.position;
         Quaternion startRotation = transform.rotation;
-        Vector3 travel = endPosition - startPosition;
-        travel.y = 0f;
-        Quaternion endRotation = travel.sqrMagnitude > 0.01f ? Quaternion.LookRotation(travel.normalized, Vector3.up) : startRotation;
+        facingDirection.y = 0f;
+        Quaternion endRotation = facingDirection.sqrMagnitude > 0.01f ? Quaternion.LookRotation(facingDirection.normalized, Vector3.up) : startRotation;
         float timer = 0f;
 
         while (timer < duration)
@@ -882,7 +1323,15 @@ public class FPSController : MonoBehaviour
         transform.position = endPosition;
         transform.rotation = endRotation;
 
+        Physics.SyncTransforms();
         controller.enabled = controllerWasEnabled;
+
+        if (legacyCapsuleCollider != null)
+            legacyCapsuleCollider.enabled = capsuleWasEnabled;
+
+        if (controllerWasEnabled)
+            controller.Move(Vector3.down * Mathf.Max(0.01f, landingClearance * 0.5f));
+
         verticalVelocity = -2f;
         currentPlanarSpeed = 0f;
         isParkouring = false;
@@ -1095,13 +1544,98 @@ public class FPSController : MonoBehaviour
         if (animator == null)
             return;
 
-        SetAnimatorFloat(SpeedHash, currentPlanarSpeed);
+        UpdateAirborneAnimator();
+        SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : currentPlanarSpeed);
         SetAnimatorFloat(VerticalSpeedHash, verticalVelocity);
         SetAnimatorBool(GroundedHash, controller.isGrounded);
         SetAnimatorBool(GraffitiModeHash, graffitiMode);
         SetAnimatorBool(ParkourHash, isParkouring);
         SetAnimatorBool(ClimbingHash, isClimbing);
-        SetAnimatorFloat(ClimbInputHash, climbInput);
+        SetAnimatorFloat(ClimbInputHash, climbAnimationInput);
+    }
+
+    void UpdateAirborneAnimator()
+    {
+        bool grounded = controller.isGrounded;
+        bool canUseAirborneAnimations = !graffitiMode && !isParkouring && !isClimbing;
+
+        if (isAirRolling && (grounded || !canUseAirborneAnimations || Time.time >= airRollEndTime))
+            isAirRolling = false;
+
+        if (grounded)
+            airborneAnimationTime = 0f;
+        else
+            airborneAnimationTime += Time.deltaTime;
+
+        bool falling =
+            canUseAirborneAnimations &&
+            !grounded &&
+            airborneAnimationTime >= Mathf.Max(0f, minimumFallingAirTime) &&
+            verticalVelocity <= fallingAnimationVelocity;
+
+        if (!grounded)
+            lastAirborneVerticalSpeed = verticalVelocity;
+
+        if (falling && !landingAnimationQueued && IsLandingImminent())
+        {
+            isAirRolling = false;
+            landingAnimationQueued = true;
+            TriggerAnimator(LandHash);
+        }
+
+        if (grounded && !wasGrounded)
+        {
+            isAirRolling = false;
+
+            if (canUseAirborneAnimations && !landingAnimationQueued && lastAirborneVerticalSpeed <= fallingAnimationVelocity)
+                TriggerAnimator(LandHash);
+
+            landingAnimationQueued = false;
+        }
+        else if (!canUseAirborneAnimations)
+        {
+            landingAnimationQueued = false;
+        }
+
+        SetAnimatorBool(FallingHash, falling && !landingAnimationQueued && !isAirRolling);
+        wasGrounded = grounded;
+    }
+
+    bool IsLandingImminent()
+    {
+        float maxDistance = Mathf.Max(0.1f, landingAnimationProbeDistance);
+        float probePadding = Mathf.Max(0.02f, landingClearance);
+        Vector3 origin = transform.position;
+        origin.y = GetControllerBottomY() + probePadding;
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            origin,
+            Vector3.down,
+            maxDistance + probePadding,
+            parkourMask,
+            QueryTriggerInteraction.Ignore);
+
+        float closestGroundDistance = float.MaxValue;
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
+                continue;
+
+            float distance = Mathf.Max(0f, origin.y - hit.point.y - probePadding);
+            closestGroundDistance = Mathf.Min(closestGroundDistance, distance);
+        }
+
+        if (closestGroundDistance == float.MaxValue)
+            return false;
+
+        float downwardSpeed = Mathf.Max(0.01f, -verticalVelocity);
+        float gravityMagnitude = Mathf.Max(0.01f, -gravity);
+        float timeToImpact =
+            (-downwardSpeed + Mathf.Sqrt(downwardSpeed * downwardSpeed + 2f * gravityMagnitude * closestGroundDistance)) /
+            gravityMagnitude;
+
+        return timeToImpact <= Mathf.Max(0.05f, landingAnimationLeadTime);
     }
 
     void UpdateVisualState()

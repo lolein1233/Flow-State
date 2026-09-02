@@ -3,6 +3,15 @@ using UnityEngine.Rendering;
 
 namespace FlowState.Rendering
 {
+    public enum FlowEmotion
+    {
+        Neutral,
+        Doubt,
+        Anger,
+        CreativeFlow,
+        Clarity
+    }
+
     [ExecuteAlways]
     [DisallowMultipleComponent]
     public sealed class FlowStatePaletteController : MonoBehaviour
@@ -10,6 +19,12 @@ namespace FlowState.Rendering
         [SerializeField] private FlowPaletteProfile initialPalette;
         [SerializeField] private FSSRSStylePreset initialStyle;
         [SerializeField] private Volume targetVolume;
+        [SerializeField] private FlowEmotion initialEmotion = FlowEmotion.CreativeFlow;
+        [SerializeField] private FlowPaletteProfile neutralPalette;
+        [SerializeField] private FlowPaletteProfile doubtPalette;
+        [SerializeField] private FlowPaletteProfile angerPalette;
+        [SerializeField] private FlowPaletteProfile creativeFlowPalette;
+        [SerializeField] private FlowPaletteProfile clarityPalette;
         [SerializeField, Min(0.01f)] private float defaultTransitionDuration = 0.65f;
         [SerializeField] private AnimationCurve transitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
@@ -20,23 +35,52 @@ namespace FlowState.Rendering
         private float transitionTime;
         private bool transitioning;
 
+        public FlowEmotion CurrentEmotion { get; private set; }
+
         private void OnEnable()
         {
+            CurrentEmotion = initialEmotion;
+            FlowPaletteProfile emotionPalette = PaletteFor(CurrentEmotion);
+            if (emotionPalette != null)
+                initialPalette = emotionPalette;
+
             if (initialPalette != null)
             {
                 current = initialPalette.State;
                 Apply(current);
             }
 
+            ApplyEmotion(CurrentEmotion);
             ApplyStyle(initialStyle);
+        }
+
+        private void OnValidate()
+        {
+            if (Application.isPlaying)
+                return;
+
+            CurrentEmotion = initialEmotion;
+            FlowPaletteProfile previewPalette = PaletteFor(CurrentEmotion);
+            if (previewPalette != null)
+            {
+                initialPalette = previewPalette;
+                current = previewPalette.State;
+                Apply(current);
+            }
+
+            ApplyEmotion(CurrentEmotion);
         }
 
         private void Update()
         {
             if (!Application.isPlaying)
             {
-                if (initialPalette != null)
+                FlowPaletteProfile previewPalette = PaletteFor(CurrentEmotion);
+                if (previewPalette != null)
+                    Apply(previewPalette.State);
+                else if (initialPalette != null)
                     Apply(initialPalette.State);
+                ApplyEmotion(CurrentEmotion);
                 return;
             }
 
@@ -75,6 +119,38 @@ namespace FlowState.Rendering
             transitioning = true;
         }
 
+        public void SetEmotion(FlowEmotion emotion)
+        {
+            SetEmotion(emotion, defaultTransitionDuration);
+        }
+
+        public void SetEmotion(FlowEmotion emotion, float duration)
+        {
+            CurrentEmotion = emotion;
+            ApplyEmotion(emotion);
+            SetPalette(PaletteFor(emotion), duration);
+        }
+
+        public void SetNormalState()
+        {
+            SetEmotion(FlowEmotion.Clarity);
+        }
+
+        public void SetMonochromeState()
+        {
+            SetEmotion(FlowEmotion.Neutral);
+        }
+
+        public void SetAngerState()
+        {
+            SetEmotion(FlowEmotion.Anger);
+        }
+
+        public void SetFlowMaximumState()
+        {
+            SetEmotion(FlowEmotion.CreativeFlow);
+        }
+
         public void ApplyStyle(FSSRSStylePreset preset)
         {
             if (preset == null || targetVolume == null || targetVolume.profile == null)
@@ -93,6 +169,56 @@ namespace FlowState.Rendering
                 OnEnable();
         }
 
+        public void ConfigureEmotionPalettes(
+            FlowPaletteProfile neutral,
+            FlowPaletteProfile doubt,
+            FlowPaletteProfile anger,
+            FlowPaletteProfile creativeFlow,
+            FlowPaletteProfile clarity,
+            FlowEmotion startingEmotion)
+        {
+            neutralPalette = neutral;
+            doubtPalette = doubt;
+            angerPalette = anger;
+            creativeFlowPalette = creativeFlow;
+            clarityPalette = clarity;
+            initialEmotion = startingEmotion;
+            CurrentEmotion = startingEmotion;
+
+            FlowPaletteProfile palette = PaletteFor(startingEmotion);
+            if (palette != null)
+                initialPalette = palette;
+
+            if (isActiveAndEnabled)
+                OnEnable();
+        }
+
+        public FlowPaletteProfile PaletteFor(FlowEmotion emotion)
+        {
+            return emotion switch
+            {
+                FlowEmotion.Neutral => neutralPalette,
+                FlowEmotion.Doubt => doubtPalette,
+                FlowEmotion.Anger => angerPalette,
+                FlowEmotion.CreativeFlow => creativeFlowPalette,
+                FlowEmotion.Clarity => clarityPalette,
+                _ => initialPalette
+            };
+        }
+
+        public static float GetEmotionEnergy(FlowEmotion emotion)
+        {
+            return emotion switch
+            {
+                FlowEmotion.Doubt => 0.22f,
+                FlowEmotion.Neutral => 0.42f,
+                FlowEmotion.Clarity => 0.62f,
+                FlowEmotion.CreativeFlow => 0.86f,
+                FlowEmotion.Anger => 1f,
+                _ => 0.42f
+            };
+        }
+
         private static void Apply(in FlowPaletteState state)
         {
             Shader.SetGlobalColor(FSSRSShaderIDs.PaperColor, state.paper);
@@ -101,6 +227,12 @@ namespace FlowState.Rendering
             Shader.SetGlobalColor(FSSRSShaderIDs.MidColor, state.mid);
             Shader.SetGlobalColor(FSSRSShaderIDs.HighlightColor, state.highlight);
             Shader.SetGlobalColor(FSSRSShaderIDs.AccentColor, state.accent);
+        }
+
+        private static void ApplyEmotion(FlowEmotion emotion)
+        {
+            Shader.SetGlobalFloat(FSSRSShaderIDs.EmotionIndex, (float)emotion);
+            Shader.SetGlobalFloat(FSSRSShaderIDs.EmotionEnergy, GetEmotionEnergy(emotion));
         }
     }
 }

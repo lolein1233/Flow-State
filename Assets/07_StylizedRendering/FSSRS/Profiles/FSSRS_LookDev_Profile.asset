@@ -18,10 +18,10 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0.8
+    m_Value: 0.9
   intensity:
     m_OverrideState: 1
-    m_Value: 0.35
+    m_Value: 0.28
   scatter:
     m_OverrideState: 1
     m_Value: 0.7
@@ -91,6 +91,35 @@ MonoBehaviour:
   - {fileID: 435249989098177545}
   - {fileID: 8600755069718682599}
   - {fileID: 2171662208953563434}
+  - {fileID: 210019387222093755}
+--- !u!114 &210019387222093755
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f335fb1ffd8684294ad653bf1c7564, type: 3}
+  m_Name: ColorAdjustments
+  m_EditorClassIdentifier: 
+  active: 1
+  postExposure:
+    m_OverrideState: 1
+    m_Value: 0.5
+  contrast:
+    m_OverrideState: 1
+    m_Value: 9
+  colorFilter:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  hueShift:
+    m_OverrideState: 1
+    m_Value: 0
+  saturation:
+    m_OverrideState: 1
+    m_Value: 22
 --- !u!114 &435249989098177545
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -128,10 +157,10 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.16
+    m_Value: 0.035
   smoothness:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 0.24
   rounded:
     m_OverrideState: 1
     m_Value: 0
@@ -156,10 +185,10 @@ MonoBehaviour:
     m_Value: {r: 0.06666667, g: 0.0627451, b: 0.08235294, a: 1}
   outlineIntensity:
     m_OverrideState: 1
-    m_Value: 0.88
+    m_Value: 0.92
   outlineThickness:
     m_OverrideState: 1
-    m_Value: 1.4
+    m_Value: 1.45
   depthThreshold:
     m_OverrideState: 1
     m_Value: 0.012
@@ -171,22 +200,31 @@ MonoBehaviour:
     m_Value: 0.17
   posterizeSteps:
     m_OverrideState: 1
-    m_Value: 6
-  grainIntensity:
+    m_Value: 5
+  inkFleckIntensity:
     m_OverrideState: 1
-    m_Value: 0.055
+    m_Value: 0
   halftoneIntensity:
     m_OverrideState: 1
-    m_Value: 0.06
+    m_Value: 0
   halftoneScale:
     m_OverrideState: 1
     m_Value: 4
   hatchIntensity:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 0.18
   paletteInfluence:
     m_OverrideState: 1
-    m_Value: 0.24
+    m_Value: 0.56
+  paperLift:
+    m_OverrideState: 1
+    m_Value: 0.36
+  colorSaturation:
+    m_OverrideState: 1
+    m_Value: 0.36
+  accentBoost:
+    m_OverrideState: 1
+    m_Value: 0.46
   debugMode:
     m_OverrideState: 1
     m_Value: 0

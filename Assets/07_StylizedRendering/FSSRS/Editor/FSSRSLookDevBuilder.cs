@@ -21,7 +21,7 @@ namespace FlowState.Rendering.Editor
         private const string PipelineAssetPath = "Assets/Settings/PC_RPAsset.asset";
         private const string LookDevProfilePath = Root + "/Profiles/FSSRS_LookDev_Profile.asset";
 
-        [MenuItem("FLOW STATE/FSSRS/Build LookDev V1")]
+        [MenuItem("FLOW STATE/FSSRS/Build LookDev V2 - Comic Color")]
         public static void BuildLookDev()
         {
             try
@@ -34,12 +34,12 @@ namespace FlowState.Rendering.Editor
                 CreatePrintTextures();
                 Dictionary<string, FlowPaletteProfile> palettes = CreatePalettes();
                 Dictionary<string, FSSRSStylePreset> presets = CreatePresets();
-                VolumeProfile profile = CreateLookDevProfile(presets["Street"]);
+                VolumeProfile profile = CreateLookDevProfile(presets["Identity"]);
                 UniversalRendererData rendererData = CreateRenderer();
                 int rendererIndex = RegisterRenderer(rendererData);
                 Scene lookDevScene = CreateOrOpenLookDevScene();
 
-                ConfigureScene(lookDevScene, rendererIndex, profile, palettes["CreativeFlow"], presets["Street"]);
+                ConfigureScene(lookDevScene, rendererIndex, profile, palettes, presets["Identity"]);
                 ConvertLookDevMaterials();
 
                 EditorSceneManager.MarkSceneDirty(lookDevScene);
@@ -47,7 +47,7 @@ namespace FlowState.Rendering.Editor
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(LookDevScene);
-                Debug.Log("FSSRS LookDev V1 built successfully. Original scene and materials were not modified.");
+                Debug.Log("FSSRS LookDev V2 built successfully. Comic color and emotional player border are active.");
             }
             catch (Exception exception)
             {
@@ -164,11 +164,11 @@ namespace FlowState.Rendering.Editor
         {
             return new Dictionary<string, FlowPaletteProfile>
             {
-                ["Neutral"] = CreatePalette("FP_Neutral_Unfinished", "E8E1D2", "111015", "253247", "76AFC0", "E7E1CE", "E7AF24"),
-                ["Doubt"] = CreatePalette("FP_Doubt", "D8D6D1", "15131A", "28304B", "687787", "C9C6BA", "B54863"),
-                ["Anger"] = CreatePalette("FP_Anger", "E2D9CF", "100C0C", "3A1518", "C1392F", "F4C663", "FF3B1F"),
-                ["CreativeFlow"] = CreatePalette("FP_CreativeFlow", "E7DFC4", "0E1017", "2F1851", "C02FA8", "F7E33B", "16C9D5"),
-                ["Clarity"] = CreatePalette("FP_Clarity", "F0E9D7", "11100F", "2C5862", "6CC5C0", "F5E36B", "E84A32")
+                ["Neutral"] = CreatePalette("FP_Neutral_Unfinished", "F5F3EC", "08080A", "242429", "85858C", "F7F7F2", "C8C8CE"),
+                ["Doubt"] = CreatePalette("FP_Doubt", "E9E6E1", "0A0910", "25263B", "6556A9", "8AD5E0", "D93683"),
+                ["Anger"] = CreatePalette("FP_Anger", "F1D9DA", "0A0508", "300711", "C90C2E", "FF3B47", "FF003C"),
+                ["CreativeFlow"] = CreatePalette("FP_CreativeFlow", "F7F2DD", "08070C", "281244", "00BBD4", "F5E61B", "F01883"),
+                ["Clarity"] = CreatePalette("FP_Clarity", "F8F4E6", "080B10", "14313D", "19C6C1", "F7EA58", "FF4A54")
             };
         }
 
@@ -213,11 +213,11 @@ namespace FlowState.Rendering.Editor
         {
             return new Dictionary<string, FSSRSStylePreset>
             {
-                ["Clean"] = CreatePreset("FSSRS_Clean", 0.55f, 1f, 0, 0.04f, 0f, 0f, 0.12f),
-                ["Comic"] = CreatePreset("FSSRS_Comic", 0.88f, 1.25f, 6, 0.08f, 0.1f, 0.14f, 0.24f),
-                ["Street"] = CreatePreset("FSSRS_Street", 0.88f, 1.4f, 6, 0.055f, 0.06f, 0.1f, 0.24f),
-                ["Punk"] = CreatePreset("FSSRS_Punk", 1f, 1.9f, 4, 0.16f, 0.16f, 0.25f, 0.4f),
-                ["Identity"] = CreatePreset("FSSRS_Identity", 0.96f, 1.55f, 5, 0.1f, 0.18f, 0.2f, 0.42f)
+                ["Clean"] = CreatePreset("FSSRS_Clean", 0.5f, 1f, 0, 0f, 0f, 0f, 0.12f, 0.1f, 0.08f, 0.08f),
+                ["Comic"] = CreatePreset("FSSRS_Comic", 0.82f, 1.2f, 5, 0f, 0f, 0.12f, 0.42f, 0.24f, 0.18f, 0.2f),
+                ["Street"] = CreatePreset("FSSRS_Street", 0.84f, 1.25f, 5, 0f, 0f, 0.14f, 0.48f, 0.3f, 0.28f, 0.32f),
+                ["Punk"] = CreatePreset("FSSRS_Punk", 0.95f, 1.6f, 4, 0f, 0f, 0.22f, 0.6f, 0.38f, 0.42f, 0.5f),
+                ["Identity"] = CreatePreset("FSSRS_Identity", 0.92f, 1.45f, 5, 0f, 0f, 0.18f, 0.56f, 0.36f, 0.36f, 0.46f)
             };
         }
 
@@ -226,10 +226,13 @@ namespace FlowState.Rendering.Editor
             float outline,
             float thickness,
             int posterize,
-            float grain,
+            float inkFlecks,
             float halftone,
             float hatch,
-            float paletteInfluence)
+            float paletteInfluence,
+            float paperLift,
+            float colorSaturation,
+            float accentBoost)
         {
             string path = Root + "/Presets/" + name + ".asset";
             FSSRSStylePreset preset = AssetDatabase.LoadAssetAtPath<FSSRSStylePreset>(path);
@@ -246,16 +249,19 @@ namespace FlowState.Rendering.Editor
             preset.normalThreshold = 0.22f;
             preset.lumaThreshold = 0.17f;
             preset.posterizeSteps = posterize;
-            preset.grainIntensity = grain;
+            preset.inkFleckIntensity = inkFlecks;
             preset.halftoneIntensity = halftone;
             preset.halftoneScale = 4f;
             preset.hatchIntensity = hatch;
             preset.paletteInfluence = paletteInfluence;
+            preset.paperLift = paperLift;
+            preset.colorSaturation = colorSaturation;
+            preset.accentBoost = accentBoost;
             EditorUtility.SetDirty(preset);
             return preset;
         }
 
-        private static VolumeProfile CreateLookDevProfile(FSSRSStylePreset streetPreset)
+        private static VolumeProfile CreateLookDevProfile(FSSRSStylePreset identityPreset)
         {
             VolumeProfile profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(LookDevProfilePath);
             if (profile == null)
@@ -270,11 +276,16 @@ namespace FlowState.Rendering.Editor
             FSSRSVolumeComponent fssrs = GetOrAdd<FSSRSVolumeComponent>(profile);
             fssrs.enabledEffect.Override(true);
             fssrs.outlineColor.Override(ParseColor("111015"));
-            streetPreset.ApplyTo(fssrs);
+            identityPreset.ApplyTo(fssrs);
+
+            ColorAdjustments color = GetOrAdd<ColorAdjustments>(profile);
+            color.postExposure.Override(0.5f);
+            color.contrast.Override(9f);
+            color.saturation.Override(22f);
 
             Bloom bloom = GetOrAdd<Bloom>(profile);
-            bloom.intensity.Override(0.35f);
-            bloom.threshold.Override(0.8f);
+            bloom.intensity.Override(0.28f);
+            bloom.threshold.Override(0.9f);
 
             MotionBlur motionBlur = GetOrAdd<MotionBlur>(profile);
             motionBlur.intensity.Override(0f);
@@ -286,8 +297,8 @@ namespace FlowState.Rendering.Editor
             filmGrain.intensity.Override(0f);
 
             Vignette vignette = GetOrAdd<Vignette>(profile);
-            vignette.intensity.Override(0.16f);
-            vignette.smoothness.Override(0.3f);
+            vignette.intensity.Override(0.035f);
+            vignette.smoothness.Override(0.24f);
 
             EditorUtility.SetDirty(profile);
             return profile;
@@ -376,7 +387,7 @@ namespace FlowState.Rendering.Editor
             Scene scene,
             int rendererIndex,
             VolumeProfile profile,
-            FlowPaletteProfile palette,
+            Dictionary<string, FlowPaletteProfile> palettes,
             FSSRSStylePreset preset)
         {
             Camera camera = UnityEngine.Object.FindFirstObjectByType<Camera>(FindObjectsInactive.Include);
@@ -387,6 +398,22 @@ namespace FlowState.Rendering.Editor
             cameraData.SetRenderer(rendererIndex);
             cameraData.antialiasing = AntialiasingMode.SubpixelMorphologicalAntiAliasing;
             cameraData.antialiasingQuality = AntialiasingQuality.High;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = ParseColor("100D18");
+
+            RenderSettings.ambientMode = AmbientMode.Flat;
+            RenderSettings.ambientLight = ParseColor("737C8E");
+            RenderSettings.ambientIntensity = 1.15f;
+
+            GameObject keyLightObject = GameObject.Find("Scene Shadow Key Light");
+            if (keyLightObject != null && keyLightObject.TryGetComponent(out Light keyLight))
+            {
+                keyLightObject.SetActive(true);
+                keyLight.color = ParseColor("FFF1D2");
+                keyLight.intensity = 1.3f;
+                keyLight.shadows = LightShadows.Soft;
+                EditorUtility.SetDirty(keyLight);
+            }
 
             GameObject root = GameObject.Find("FSSRS LookDev");
             if (root == null)
@@ -403,7 +430,24 @@ namespace FlowState.Rendering.Editor
             FlowStatePaletteController controller = root.GetComponent<FlowStatePaletteController>();
             if (controller == null)
                 controller = root.AddComponent<FlowStatePaletteController>();
-            controller.Configure(palette, preset, volume);
+            controller.Configure(palettes["CreativeFlow"], preset, volume);
+            controller.ConfigureEmotionPalettes(
+                palettes["Neutral"],
+                palettes["Doubt"],
+                palettes["Anger"],
+                palettes["CreativeFlow"],
+                palettes["Clarity"],
+                FlowEmotion.Clarity);
+
+            GameObject playerVisual = GameObject.Find("MAIKOL_Visual");
+            if (playerVisual != null)
+            {
+                PlayerComicBorder border = playerVisual.GetComponent<PlayerComicBorder>();
+                if (border == null)
+                    border = playerVisual.AddComponent<PlayerComicBorder>();
+                border.Configure(playerVisual.transform);
+                EditorUtility.SetDirty(border);
+            }
 
             SceneManager.MoveGameObjectToScene(root, scene);
             EditorUtility.SetDirty(cameraData);
@@ -438,7 +482,16 @@ namespace FlowState.Rendering.Editor
                 for (int index = 0; index < materials.Length; index++)
                 {
                     Material source = materials[index];
-                    if (source == null || source.shader == null || source.shader.name != "Universal Render Pipeline/Lit")
+                    if (source == null || source.shader == null)
+                        continue;
+
+                    if (source.shader == shader)
+                    {
+                        ConfigureLookDevMaterial(source, character, ink, hatch);
+                        continue;
+                    }
+
+                    if (source.shader.name != "Universal Render Pipeline/Lit")
                         continue;
 
                     if (!converted.TryGetValue(source, out Material replacement))
@@ -483,18 +536,25 @@ namespace FlowState.Rendering.Editor
                 AssetDatabase.CreateAsset(material, destination);
             }
 
+            ConfigureLookDevMaterial(material, character, ink, hatch);
+            return material;
+        }
+
+        private static void ConfigureLookDevMaterial(Material material, bool character, Texture ink, Texture hatch)
+        {
             material.SetTexture("_InkTexture", ink);
             material.SetTexture("_HatchTexture", hatch);
             material.SetFloat("_BandCount", character ? 3f : 4f);
-            material.SetFloat("_PaletteInfluence", character ? 0.82f : 0.58f);
-            material.SetFloat("_HatchStrength", character ? 0.24f : 0.18f);
-            material.SetFloat("_HalftoneStrength", character ? 0.12f : 0.06f);
-            material.SetFloat("_InkBreakup", character ? 0.1f : 0.18f);
-            material.SetFloat("_RimStrength", character ? 0.55f : 0.08f);
-            material.SetColor("_RimColor", character ? ParseColor("16C9D5") : ParseColor("E7AF24"));
+            material.SetFloat("_PaletteInfluence", character ? 0.88f : 0.68f);
+            material.SetFloat("_AmbientStrength", character ? 0.74f : 0.58f);
+            material.SetFloat("_LightColorStrength", character ? 0.38f : 0.28f);
+            material.SetFloat("_HatchStrength", character ? 0.18f : 0.12f);
+            material.SetFloat("_HalftoneStrength", 0f);
+            material.SetFloat("_InkBreakup", character ? 0.06f : 0.08f);
+            material.SetFloat("_RimStrength", character ? 0.82f : 0.12f);
+            material.SetColor("_RimColor", character ? ParseColor("00BBD4") : ParseColor("F5E61B"));
             CoreUtils.SetKeyword(material, "_NORMALMAP", material.GetTexture("_BumpMap") != null);
             EditorUtility.SetDirty(material);
-            return material;
         }
 
         private static string SanitizeFileName(string value)

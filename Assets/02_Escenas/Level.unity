@@ -4463,9 +4463,22 @@ MonoBehaviour:
   vaultArcHeight: 0.55
   climbArcHeight: 0.25
   landingProbeHeight: 2.4
+  wallProbeRadius: 0.16
+  landingClearance: 0.06
+  minimumGroundNormal: 0.55
+  lowVaultMaxHeight: 0.65
+  mediumVaultMaxHeight: 0.95
+  lowVaultDuration: 0.5
+  highVaultDuration: 0.84
+  lowVaultArcHeight: 0.32
+  highVaultArcHeight: 0.78
   wallTopOutDuration: 0.58
   wallTopOutArcHeight: 0.18
   wallTopOutForwardOffset: 0.85
+  wallTopOutVerticalStart: 0.36
+  wallTopOutVerticalEnd: 0.82
+  wallTopOutForwardStart: 0.68
+  wallTopOutForwardEnd: 0.95
   enableClimbing: 1
   requireClimbableMarker: 0
   dropClimbKey: 306
@@ -4478,6 +4491,23 @@ MonoBehaviour:
   climbTopForwardOffset: 0.75
   climbAutoTopOutInput: 0.65
   climbMaxSurfaceAngle: 0.35
+  climbInputDeadZone: 0.08
+  climbAnimationResponse: 10
+  climbContactGraceTime: 0.12
+  enableWallJump: 1
+  wallJumpDistance: 4.25
+  wallJumpDuration: 0.58
+  wallJumpArcHeight: 0.72
+  wallJumpVerticalRise: 0.2
+  wallJumpSideSteer: 0.55
+  wallJumpProbeRadius: 0.2
+  fallingAnimationVelocity: -0.85
+  minimumFallingAirTime: 0.12
+  landingAnimationLeadTime: 0.34
+  landingAnimationProbeDistance: 4
+  enableAirRoll: 1
+  airRollDoubleTapWindow: 0.38
+  airRollDuration: 0.8
   visualRoot: {fileID: 1969941081}
   animator: {fileID: 1969941080}
   hideVisualInGraffitiMode: 1

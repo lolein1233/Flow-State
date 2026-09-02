@@ -12,14 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7bf56cb30de8e4da0d42bcc03f2603, type: 3}
   m_Name: FSSRS_Identity
   m_EditorClassIdentifier: 
-  outlineIntensity: 0.96
-  outlineThickness: 1.55
+  outlineIntensity: 0.92
+  outlineThickness: 1.45
   depthThreshold: 0.012
   normalThreshold: 0.22
   lumaThreshold: 0.17
   posterizeSteps: 5
-  grainIntensity: 0.1
-  halftoneIntensity: 0.18
+  inkFleckIntensity: 0
+  halftoneIntensity: 0
   halftoneScale: 4
-  hatchIntensity: 0.2
-  paletteInfluence: 0.42
+  hatchIntensity: 0.18
+  paletteInfluence: 0.56
+  paperLift: 0.36
+  colorSaturation: 0.36
+  accentBoost: 0.46

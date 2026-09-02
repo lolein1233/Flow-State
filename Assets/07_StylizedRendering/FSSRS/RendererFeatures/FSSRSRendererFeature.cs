@@ -76,11 +76,14 @@ namespace FlowState.Rendering
                 material.SetFloat(FSSRSShaderIDs.NormalThreshold, settings.normalThreshold.value);
                 material.SetFloat(FSSRSShaderIDs.LumaThreshold, settings.lumaThreshold.value);
                 material.SetFloat(FSSRSShaderIDs.PosterizeSteps, settings.posterizeSteps.value);
-                material.SetFloat(FSSRSShaderIDs.GrainIntensity, settings.grainIntensity.value);
+                material.SetFloat(FSSRSShaderIDs.InkFleckIntensity, settings.inkFleckIntensity.value);
                 material.SetFloat(FSSRSShaderIDs.HalftoneIntensity, settings.halftoneIntensity.value);
                 material.SetFloat(FSSRSShaderIDs.HalftoneScale, settings.halftoneScale.value);
                 material.SetFloat(FSSRSShaderIDs.HatchIntensity, settings.hatchIntensity.value);
                 material.SetFloat(FSSRSShaderIDs.PaletteInfluence, settings.paletteInfluence.value);
+                material.SetFloat(FSSRSShaderIDs.PaperLift, settings.paperLift.value);
+                material.SetFloat(FSSRSShaderIDs.ColorSaturation, settings.colorSaturation.value);
+                material.SetFloat(FSSRSShaderIDs.AccentBoost, settings.accentBoost.value);
                 material.SetInteger(FSSRSShaderIDs.DebugMode, (int)settings.debugMode.value);
             }
 

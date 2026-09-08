@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bccf183389efdb34792ab81cd94735f5, type: 3}
+  m_Name: "01_GALER\xCDA"
+  m_EditorClassIdentifier: 
+  optionId: "GALER\xCDA"
+  displayName: "GALER\xCDA"
+  action: 1
+  scenePath: Assets/02_Escenas/Game.unity
+  visualState: 2
+  palette: {fileID: 11400000, guid: 94eddf2a7943f434496f1f5aebf354d1, type: 2}
+  wordMask: {fileID: 2800000, guid: 65062881bc0285745bf264688492a718, type: 3}
+  paintColor: {r: 0.035, g: 0.03, b: 0.045, a: 1}
+  accentColor: {r: 0.93, g: 0.15, b: 0.1, a: 1}
+  grain: 0.38
+  drips: 0.95
+  halftone: 0.3
+  turnDuration: 0.53
+  sprayDuration: 0.42
+  cameraImpulse: 0.6
+  pressure: 1
+  rattle: {fileID: 8300000, guid: 91ecbc91536cddf4fa35049b6b880181, type: 3}
+  clack: {fileID: 8300000, guid: a592327ca9b3b7f419a0e2257a1c6caf, type: 3}
+  spray: {fileID: 8300000, guid: bc147d8ff11bb5d4884fea5fb03b13c9, type: 3}
+  volume: 0.65
+  pitch: 1.15
+  transitionDuration: 0.85
+  onConfirmed:
+    m_PersistentCalls:
+      m_Calls: []

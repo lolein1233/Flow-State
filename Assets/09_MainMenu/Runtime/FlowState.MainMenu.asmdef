@@ -1,0 +1,1 @@
+{"name":"FlowState.MainMenu","references":["FlowState.StylizedRendering","Unity.InputSystem","Unity.TextMeshPro","Unity.RenderPipelines.Universal.Runtime","Unity.RenderPipelines.Core.Runtime"]}

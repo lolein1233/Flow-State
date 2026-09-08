@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bccf183389efdb34792ab81cd94735f5, type: 3}
+  m_Name: 02_CONFIG
+  m_EditorClassIdentifier: 
+  optionId: CONFIG
+  displayName: CONFIG
+  action: 2
+  scenePath: Assets/02_Escenas/Game.unity
+  visualState: 4
+  palette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
+  wordMask: {fileID: 2800000, guid: 218b397b8671cf54299f844538ab9d81, type: 3}
+  paintColor: {r: 0.035, g: 0.03, b: 0.045, a: 1}
+  accentColor: {r: 0.24, g: 0.32, b: 0.88, a: 1}
+  grain: 0.16
+  drips: 0.4
+  halftone: 0.3
+  turnDuration: 0.65
+  sprayDuration: 0.42
+  cameraImpulse: 0.6
+  pressure: 0.7
+  rattle: {fileID: 8300000, guid: 91ecbc91536cddf4fa35049b6b880181, type: 3}
+  clack: {fileID: 8300000, guid: a592327ca9b3b7f419a0e2257a1c6caf, type: 3}
+  spray: {fileID: 8300000, guid: bc147d8ff11bb5d4884fea5fb03b13c9, type: 3}
+  volume: 0.65
+  pitch: 1
+  transitionDuration: 0.85
+  onConfirmed:
+    m_PersistentCalls:
+      m_Calls: []

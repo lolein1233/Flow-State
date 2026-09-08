@@ -99,7 +99,8 @@ Shader "Hidden/FLOWSTATE/FSSRS Composite"
                 half resultLuma = FSSRS_Luminance(result);
                 result = lerp(resultLuma.xxx, result, 1.0h + _ColorSaturation);
 
-                half monochromeState = 1.0h - step(0.5h, abs(_FSSRS_EmotionIndex));
+                // Integer gameplay states are unchanged; menu rotations may blend between them.
+                half monochromeState = 1.0h - smoothstep(0.0h, 0.5h, abs(_FSSRS_EmotionIndex));
                 resultLuma = FSSRS_Luminance(result);
                 result = lerp(result, resultLuma.xxx, monochromeState * 0.94h);
 

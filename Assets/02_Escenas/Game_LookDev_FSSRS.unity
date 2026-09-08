@@ -1361,7 +1361,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &43618999
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2270,7 +2270,7 @@ Transform:
   m_GameObject: {fileID: 71293784}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.999867, z: -0, w: -0.016309876}
-  m_LocalPosition: {x: -42.97, y: 0.70000005, z: -62.41}
+  m_LocalPosition: {x: -49.69, y: 0.93, z: -66.92}
   m_LocalScale: {x: 1.5130402, y: 1.5130402, z: 1.5130402}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10738,6 +10738,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prueba01
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1045480277441068502, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -10774,6 +10778,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 6cd76cb228297024491bf47fcc8887f7, type: 2}
+    - target: {fileID: 6507901977716847365, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6600845228570921215, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -10789,7 +10797,7 @@ PrefabInstance:
     - target: {fileID: 7339356831882890532, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: ee70cf2ff1e123f4fb61bf47fdb178d0, type: 2}
+      objectReference: {fileID: 2100000, guid: b741d7d5253b60b48afa923e517c1007, type: 2}
     - target: {fileID: 8540430807943611755, guid: 8f1b39435e433c94aabd217a6813dd49, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -12650,6 +12658,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 49994e556812df8409353e73e983b9bb, type: 3}
       propertyPath: m_Name
       value: Blockin_FS
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 49994e556812df8409353e73e983b9bb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 975643347676739371, guid: 49994e556812df8409353e73e983b9bb, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

@@ -107,3 +107,10 @@
 - `Assets/02_Escenas/Game_LookDev_FSSRS.unity`
 
 <!-- unity-onboarding:generated:end -->
+
+## Main menu addition - 2026-09-08
+
+- `Assets/02_Escenas/MainMenu_FlowState.unity` is the new first enabled build scene; JUGAR transitions to the existing `Game.unity`.
+- `Assets/09_MainMenu` contains the isolated `FlowState.MainMenu` runtime assembly, Editor builder, option assets, stencil/accumulation shaders and tests. It references the existing FSSRS runtime and Input System UI map.
+- The menu uses the official `Assets/LATA/Spray Test update.fbx`, OWNED font and YakuzaStudio_FLOWSTATE texture. Painting is consolidated into two fixed-size RenderTextures with an independently legible current stroke.
+- See `Docs/AI/MainMenu.md` for asset mappings, controls, architecture, validation and limitations. Existing gameplay and LookDev scenes were not edited by this feature.

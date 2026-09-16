@@ -15,7 +15,7 @@ MonoBehaviour:
   optionId: JUGAR
   displayName: JUGAR
   action: 0
-  scenePath: Assets/02_Escenas/Game.unity
+  scenePath: Assets/02_Escenas/Gameplay.unity
   visualState: 3
   palette: {fileID: 11400000, guid: 6d08c4c418b18764f9d8b3950b3793bf, type: 2}
   wordMask: {fileID: 2800000, guid: 06222f634e8bf6e48a7400eae16e52c9, type: 3}

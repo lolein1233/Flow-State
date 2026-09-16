@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/02_Escenas/MainMenu_FlowState.unity
     guid: 2d82caf97aa038343a4b4e60a2b19b07
   - enabled: 1
-    path: Assets/02_Escenas/Game.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/02_Escenas/Gameplay.unity
+    guid: 8bc7d503ba8c82d4995514165461b5de
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

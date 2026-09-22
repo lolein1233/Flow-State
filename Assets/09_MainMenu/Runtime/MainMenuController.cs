@@ -17,9 +17,14 @@ namespace FlowState.Menu
         public MenuSubmenu submenu;
         public TMP_Text legend,exitTag;
         public GameObject previewWord;
+        public FlowStateIntroDirector introDirector;
+        public event System.Action MenuEntered;
         readonly Queue<int> queue=new Queue<int>(4);
         enum Phase{Ready,Turning,Painting,Leaving}
         Phase phase;
+        bool prepared, entered;
+        public bool IsLocked { get; private set; } = true;
+        public bool HasEntered => entered;
         bool pendingConfirm,exitArmed;
         float exitDeadline;
         CursorLockMode previousLock;
@@ -27,22 +32,44 @@ namespace FlowState.Menu
         bool previousBackground;
         public int SelectedIndex {get;private set;}
         public int QueuedInputs=>queue.Count;
-        public bool IsReady=>phase==Phase.Ready;
+        public bool IsReady=>!IsLocked&&phase==Phase.Ready;
         public string SelectedName=>options[SelectedIndex].displayName;
         void OnEnable(){input.Navigate+=Navigate;input.Confirm+=Confirm;input.Back+=Back;}
         void Start()
         {
-            if(options==null||options.Length!=4){Debug.LogError("Main menu needs four option assets.",this);enabled=false;return;}
+            if(!Prepare())return;
+            // Old menu scenes still work without a director. A wired director owns boot.
+            if(!introDirector || !introDirector.isActiveAndEnabled) EnterMenu();
+        }
+        public bool Prepare()
+        {
+            if(prepared)return true;
+            if(options==null||options.Length!=4){Debug.LogError("Main menu needs four option assets.",this);enabled=false;return false;}
             previousLock=Cursor.lockState;previousCursor=Cursor.visible;
             previousBackground=Application.runInBackground;Application.runInBackground=true;
-            Cursor.lockState=CursorLockMode.None;Cursor.visible=false;
+            // Absolute-position ambient look requires a free, visible pointer. Gameplay may leave it locked.
+            Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
             if(previewWord)previewWord.SetActive(false);
             exitTag.gameObject.SetActive(false);
+            prepared=true;
+            return true;
+        }
+        public void LockMenu()
+        {
+            IsLocked=true;queue.Clear();pendingConfirm=false;
+            input.SetNavigationEnabled(false);
+        }
+        public void EnterMenu()
+        {
+            if(entered || !Prepare())return;
+            entered=true;IsLocked=false;
+            input.SetNavigationEnabled(true);
             visual.Apply(options[0],.01f);Paint();
+            MenuEntered?.Invoke();
         }
         public void Navigate(int direction)
         {
-            if(direction==0||phase==Phase.Leaving)return;
+            if(IsLocked||direction==0||phase==Phase.Leaving)return;
             if(submenu.IsOpen){submenu.Navigate(direction);return;}
             DisarmExit();pendingConfirm=false;
             // Bounded queue retains chronological taps; once full the latest intent wins.
@@ -63,10 +90,11 @@ namespace FlowState.Menu
             var option=options[SelectedIndex];phase=Phase.Painting;
             painter.Begin(option,SelectedIndex);motion.Spray();spray.Fire(option);
             audioFeedback.Spray(option);cameraFeedback.Impulse(-.22f*option.cameraImpulse);
-            legend.text="←  →   GIRAR     ENTER / A   PINTAR EL CAMINO";
+            if(legend)legend.text="←  →   GIRAR     ENTER / A   PINTAR EL CAMINO";
         }
         void Update()
         {
+            if(IsLocked)return;
             if(exitArmed&&Time.unscaledTime>exitDeadline)DisarmExit();
             if(phase==Phase.Turning&&!motion.IsTurning)Paint();
             else if(phase==Phase.Painting&&!painter.IsPainting)
@@ -77,7 +105,7 @@ namespace FlowState.Menu
         }
         public void Confirm()
         {
-            if(phase==Phase.Leaving)return;
+            if(IsLocked||phase==Phase.Leaving)return;
             if(submenu.IsOpen){submenu.Confirm();return;}
             if(phase!=Phase.Ready||queue.Count>0){pendingConfirm=true;return;}
             var option=options[SelectedIndex];
@@ -98,6 +126,7 @@ namespace FlowState.Menu
         }
         public void Back()
         {
+            if(IsLocked)return;
             pendingConfirm=false;queue.Clear();DisarmExit();
             if(submenu.IsOpen)submenu.Close();
         }
@@ -106,8 +135,11 @@ namespace FlowState.Menu
         {
             input.Navigate-=Navigate;input.Confirm-=Confirm;input.Back-=Back;
             queue.Clear();pendingConfirm=false;
-            Cursor.lockState=previousLock;Cursor.visible=previousCursor;
-            Application.runInBackground=previousBackground;
+            if(prepared)
+            {
+                Cursor.lockState=previousLock;Cursor.visible=previousCursor;
+                Application.runInBackground=previousBackground;
+            }
         }
     }
 }

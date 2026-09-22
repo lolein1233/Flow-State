@@ -2301,7 +2301,7 @@ Transform:
   m_GameObject: {fileID: 71293784}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.999867, z: -0, w: -0.016309876}
-  m_LocalPosition: {x: 55.8, y: 0.93, z: 126.7}
+  m_LocalPosition: {x: 69.2, y: 1.53, z: 143.16}
   m_LocalScale: {x: 1.5130402, y: 1.5130402, z: 1.5130402}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30565,10 +30565,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3661c5572eb42ef42b9ebdfb81bc4aaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialPalette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
+  initialPalette: {fileID: 11400000, guid: 94eddf2a7943f434496f1f5aebf354d1, type: 2}
   initialStyle: {fileID: 11400000, guid: d35cffe6f2770b94397179851b9c7406, type: 2}
   targetVolume: {fileID: 888366251}
-  initialEmotion: 4
+  initialEmotion: 2
   neutralPalette: {fileID: 11400000, guid: bbdc80386d590f142832d1dc89ea39d2, type: 2}
   doubtPalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
   angerPalette: {fileID: 11400000, guid: 94eddf2a7943f434496f1f5aebf354d1, type: 2}
@@ -51521,6 +51521,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0fb242e6c3fc03f47a8110e0af7bfbd8, type: 2}
+    - target: {fileID: 1716509061251278913, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 1c9360e6ab87da64d98f373aa442d8c9, type: 2}
     - target: {fileID: 1732533412120902543, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

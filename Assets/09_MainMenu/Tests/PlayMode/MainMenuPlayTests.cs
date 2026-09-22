@@ -75,7 +75,7 @@ namespace FlowState.Menu.Tests
         {
             menu.Confirm();Assert.That(menu.transition.IsBusy,Is.True);
             yield return new WaitForSecondsRealtime(5);
-            Assert.That(SceneManager.GetActiveScene().path,Is.EqualTo("Assets/02_Escenas/Game.unity"));
+            Assert.That(SceneManager.GetActiveScene().path,Is.EqualTo("Assets/02_Escenas/Gameplay.unity"));
             Assert.That(Object.FindFirstObjectByType<MenuTransition>(),Is.Null);
         }
     }

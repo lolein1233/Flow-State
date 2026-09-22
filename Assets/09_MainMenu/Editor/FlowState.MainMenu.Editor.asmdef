@@ -1,1 +1,1 @@
-{"name":"FlowState.MainMenu.Editor","references":["FlowState.MainMenu","FlowState.StylizedRendering","Unity.InputSystem","Unity.TextMeshPro","Unity.RenderPipelines.Universal.Runtime","Unity.RenderPipelines.Core.Runtime"],"includePlatforms":["Editor"]}
+{"name":"FlowState.MainMenu.Editor","references":["FlowState.MainMenu","FlowState.StylizedRendering","Unity.InputSystem","Unity.TextMeshPro","Unity.RenderPipelines.Universal.Runtime","Unity.RenderPipelines.Core.Runtime","Unity.Timeline"],"includePlatforms":["Editor"]}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57,5287907">
+  <test-suite type="TestSuite" id="1024" name="FLOWSTATE" fullname="FLOWSTATE" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57.528791" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1017" name="FlowState.MainMenu.PlayTests.dll" fullname="C:/Users/alons/FLOWSTATE/Library/ScriptAssemblies/FlowState.MainMenu.PlayTests.dll" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57.521674" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1018" name="FlowState" fullname="FlowState" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57.518809" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1019" name="Menu" fullname="FlowState.Menu" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57.516807" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1020" name="Tests" fullname="FlowState.Menu.Tests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:04:09Z" duration="57.513681" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="MainMenuPlayTests" fullname="FlowState.Menu.Tests.MainMenuPlayTests" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:03:34Z" duration="22.146414" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1005" name="CancelClosesSubmenuAndReloadResetsWall" fullname="FlowState.Menu.Tests.MainMenuPlayTests.CancelClosesSubmenuAndReloadResetsWall" methodname="CancelClosesSubmenuAndReloadResetsWall" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" seed="41325454" result="Passed" start-time="2026-09-21 18:03:12Z" end-time="2026-09-21 18:03:15Z" duration="3.477337" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="HundredsOfPaintingsKeepFixedTexturesAndObjects" fullname="FlowState.Menu.Tests.MainMenuPlayTests.HundredsOfPaintingsKeepFixedTexturesAndObjects" methodname="HundredsOfPaintingsKeepFixedTexturesAndObjects" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" seed="1439396039" result="Passed" start-time="2026-09-21 18:03:15Z" end-time="2026-09-21 18:03:17Z" duration="1.496521" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="KeyboardAndGamepadNavigateTheProjectActionMap" fullname="FlowState.Menu.Tests.MainMenuPlayTests.KeyboardAndGamepadNavigateTheProjectActionMap" methodname="KeyboardAndGamepadNavigateTheProjectActionMap" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" seed="1746999393" result="Passed" start-time="2026-09-21 18:03:17Z" end-time="2026-09-21 18:03:20Z" duration="3.549633" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="PlayUsesPaintTransitionAndLoadsGameplay" fullname="FlowState.Menu.Tests.MainMenuPlayTests.PlayUsesPaintTransitionAndLoadsGameplay" methodname="PlayUsesPaintTransitionAndLoadsGameplay" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" seed="1124590348" result="Passed" start-time="2026-09-21 18:03:20Z" end-time="2026-09-21 18:03:26Z" duration="5.899177" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[MainCamera: 1 camera overlay no longer exists and will be removed from the camera stack.
+]]></output>
+              </test-case>
+              <test-case id="1003" name="SpamStaysBoundedAndFinishesCoherently" fullname="FlowState.Menu.Tests.MainMenuPlayTests.SpamStaysBoundedAndFinishesCoherently" methodname="SpamStaysBoundedAndFinishesCoherently" classname="FlowState.Menu.Tests.MainMenuPlayTests" runstate="Runnable" seed="1458765402" result="Passed" start-time="2026-09-21 18:03:26Z" end-time="2026-09-21 18:03:34Z" duration="7.705362" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1007" name="MenuFoundationsPlayTests" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-09-21 18:03:34Z" end-time="2026-09-21 18:04:09Z" duration="35.363340" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1011" name="AllKeyboardSkipBindingsAreConsumed" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.AllKeyboardSkipBindingsAreConsumed" methodname="AllKeyboardSkipBindingsAreConsumed" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="5899043" result="Passed" start-time="2026-09-21 18:03:34Z" end-time="2026-09-21 18:03:40Z" duration="6.264330" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="CanEventsProduceBoundedFollowThroughAndCanBeDisabled" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.CanEventsProduceBoundedFollowThroughAndCanBeDisabled" methodname="CanEventsProduceBoundedFollowThroughAndCanBeDisabled" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="2077751912" result="Passed" start-time="2026-09-21 18:03:40Z" end-time="2026-09-21 18:03:45Z" duration="4.663806" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="DisabledAndRepeatedCompletionPaintExactlyOnce" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.DisabledAndRepeatedCompletionPaintExactlyOnce" methodname="DisabledAndRepeatedCompletionPaintExactlyOnce" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="102832838" result="Passed" start-time="2026-09-21 18:03:45Z" end-time="2026-09-21 18:03:47Z" duration="1.654492" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="FullLocksAndSouthSkipDoesNotSubmitPlay" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.FullLocksAndSouthSkipDoesNotSubmitPlay" methodname="FullLocksAndSouthSkipDoesNotSubmitPlay" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="616376612" result="Passed" start-time="2026-09-21 18:03:47Z" end-time="2026-09-21 18:03:50Z" duration="2.993284" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="LeftStickAndWasdStillNavigate" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.LeftStickAndWasdStillNavigate" methodname="LeftStickAndWasdStillNavigate" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="698145031" result="Passed" start-time="2026-09-21 18:03:50Z" end-time="2026-09-21 18:03:54Z" duration="3.872714" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="MouseMovesCameraThenIdleReturnsAndMotionZeroStops" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.MouseMovesCameraThenIdleReturnsAndMotionZeroStops" methodname="MouseMovesCameraThenIdleReturnsAndMotionZeroStops" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="762888866" result="Passed" start-time="2026-09-21 18:03:54Z" end-time="2026-09-21 18:03:57Z" duration="3.474169" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="RightStickMovesCameraWithoutNavigationAndReturns" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.RightStickMovesCameraWithoutNavigationAndReturns" methodname="RightStickMovesCameraWithoutNavigationAndReturns" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="1707456473" result="Passed" start-time="2026-09-21 18:03:57Z" end-time="2026-09-21 18:04:01Z" duration="3.665700" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="SettingsStillOpenAndParallaxUsesRealDistances" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.SettingsStillOpenAndParallaxUsesRealDistances" methodname="SettingsStillOpenAndParallaxUsesRealDistances" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="1145623767" result="Passed" start-time="2026-09-21 18:04:01Z" end-time="2026-09-21 18:04:06Z" duration="4.956855" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="ShortAndDebugCompletionUseCommonFinalState" fullname="FlowState.Menu.Tests.MenuFoundationsPlayTests.ShortAndDebugCompletionUseCommonFinalState" methodname="ShortAndDebugCompletionUseCommonFinalState" classname="FlowState.Menu.Tests.MenuFoundationsPlayTests" runstate="Runnable" seed="830752563" result="Passed" start-time="2026-09-21 18:04:06Z" end-time="2026-09-21 18:04:09Z" duration="3.811911" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/alons/AppData/LocalLow/DefaultCompany/FLOWSTATE\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -38,12 +38,11 @@ namespace FlowState.Menu
         }
         RenderTexture CreateRT(string label)
         {
-            var rt=new RenderTexture(textureWidth,textureHeight,0,RenderTextureFormat.ARGB32,RenderTextureReadWrite.Linear){name=label,wrapMode=TextureWrapMode.Clamp,useMipMap=false};
-            rt.Create(); return rt;
+            return PaintRenderSurface.Create(textureWidth,textureHeight,label);
         }
         static void Clear(RenderTexture rt)
         {
-            var previous=RenderTexture.active; RenderTexture.active=rt; GL.Clear(false,true,Color.clear); RenderTexture.active=previous;
+            PaintRenderSurface.Clear(rt);
         }
         public void Begin(MenuOptionData option,int index)
         {

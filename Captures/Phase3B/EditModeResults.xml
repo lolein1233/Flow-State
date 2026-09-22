@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0,2704344">
+  <test-suite type="TestSuite" id="1000" name="FLOWSTATE" fullname="FLOWSTATE" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.270434" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1005" name="FlowState.MainMenu.EditorTests.dll" fullname="C:/Users/alons/FLOWSTATE/Library/ScriptAssemblies/FlowState.MainMenu.EditorTests.dll" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.263176" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25408" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1006" name="FlowState" fullname="FlowState" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.262649" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1007" name="Menu" fullname="FlowState.Menu" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.262412" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1008" name="Tests" fullname="FlowState.Menu.Tests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.262167" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="GraffitiPlacementTests" fullname="FlowState.Menu.Tests.GraffitiPlacementTests" classname="FlowState.Menu.Tests.GraffitiPlacementTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.261091" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1002" name="CarouselWrapsInBothDirections" fullname="FlowState.Menu.Tests.GraffitiPlacementTests.CarouselWrapsInBothDirections" methodname="CarouselWrapsInBothDirections" classname="FlowState.Menu.Tests.GraffitiPlacementTests" runstate="Runnable" seed="515274044" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.017493" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="LongSessionsRespectLogoAndCanRegions" fullname="FlowState.Menu.Tests.GraffitiPlacementTests.LongSessionsRespectLogoAndCanRegions" methodname="LongSessionsRespectLogoAndCanRegions" classname="FlowState.Menu.Tests.GraffitiPlacementTests" runstate="Runnable" seed="1925707350" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.222267" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="SeedReproducesCompositionAndRepeatedWordsVary" fullname="FlowState.Menu.Tests.GraffitiPlacementTests.SeedReproducesCompositionAndRepeatedWordsVary" methodname="SeedReproducesCompositionAndRepeatedWordsVary" classname="FlowState.Menu.Tests.GraffitiPlacementTests" runstate="Runnable" seed="617592454" result="Passed" start-time="2026-09-21 18:39:21Z" end-time="2026-09-21 18:39:21Z" duration="0.005519" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[<b><color=#2EA3FF>MCP-FOR-UNITY</color></b>: [TestRunnerNoThrottle] Restored Interaction Mode after test run.
+Saving results to: C:/Users/alons/AppData/LocalLow/DefaultCompany/FLOWSTATE\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

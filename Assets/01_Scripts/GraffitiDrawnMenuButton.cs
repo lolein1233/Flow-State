@@ -30,6 +30,7 @@ public class GraffitiDrawnMenuButton : MonoBehaviour
     public float hoverScale = 1.15f;
 
     Vector3 originalScale;
+    GraffitiNozzleVisual nozzleVisual;
 
     void Awake()
     {
@@ -37,6 +38,8 @@ public class GraffitiDrawnMenuButton : MonoBehaviour
 
         if (visualRenderer == null)
             visualRenderer = GetComponent<Renderer>();
+
+        nozzleVisual = GetComponent<GraffitiNozzleVisual>();
     }
 
     void Start()
@@ -83,6 +86,9 @@ public class GraffitiDrawnMenuButton : MonoBehaviour
     public void SetHover(bool value)
     {
         transform.localScale = value ? originalScale * hoverScale : originalScale;
+
+        if (nozzleVisual != null)
+            nozzleVisual.SetHover(value);
     }
 
     public void Apply(GraffitiPainter painter, GraffitiMenuDrawer drawer)
@@ -106,6 +112,9 @@ public class GraffitiDrawnMenuButton : MonoBehaviour
                 nozzleShape,
                 nozzleTexture
             );
+
+            if (nozzleVisual != null)
+                nozzleVisual.PulseSelection();
         }
         else if (buttonType == ButtonType.Close)
         {

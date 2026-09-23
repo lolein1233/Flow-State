@@ -17,7 +17,13 @@ namespace FlowState.Menu
             aerosol.clip=data.spray; aerosol.volume=data.volume*data.pressure;
             aerosol.Play();
         }
-        public void StopSpray() { aerosol.Stop(); }
+        public void StartIntroSpray(MenuOptionData placeholder)
+        {
+            if(placeholder.clack)metal.PlayOneShot(placeholder.clack,placeholder.volume*.4f);
+            aerosol.clip=placeholder.spray;aerosol.pitch=1;
+            aerosol.volume=placeholder.volume*.55f;aerosol.loop=true;aerosol.Play();
+        }
+        public void StopSpray() { aerosol.Stop();aerosol.loop=false; }
         void OnDisable() { metal.Stop(); aerosol.Stop(); music.Stop(); }
     }
 }

@@ -12,12 +12,15 @@ namespace FlowState.Menu
         Quaternion rest;
         float yaw, from, target, elapsed, duration, sprayKick;
         bool turning;
+        public event System.Action<int,float> RotationStarted;
+        public event System.Action RotationCompleted;
         public float Progress => turning?Mathf.Clamp01(elapsed/duration):1;
         public bool IsTurning => turning;
         void Awake() { origin=can.localPosition; rest=can.localRotation; if(nozzle) nozzleOrigin=nozzle.localPosition; }
         public void Turn(int direction,float seconds)
         {
             from=yaw; target=yaw+90*direction; elapsed=0; duration=Mathf.Max(.15f,seconds); turning=true;
+            RotationStarted?.Invoke(direction,duration);
         }
         public void Spray() { sprayKick=1; }
         void Update()
@@ -27,7 +30,7 @@ namespace FlowState.Menu
             {
                 elapsed+=dt;
                 yaw=Mathf.LerpUnclamped(from,target,turnCurve.Evaluate(Progress));
-                if(elapsed>=duration) { yaw=target%360; turning=false; }
+                if(elapsed>=duration) { yaw=target%360; turning=false; RotationCompleted?.Invoke(); }
             }
             sprayKick=Mathf.MoveTowards(sprayKick,0,dt*5);
             float t=Time.unscaledTime;

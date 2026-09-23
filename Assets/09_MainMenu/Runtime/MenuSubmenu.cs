@@ -4,6 +4,7 @@ namespace FlowState.Menu
 {
     public sealed class MenuSubmenu : MonoBehaviour
     {
+        public const float ReducedMotionScale=.6f;
         public GameObject presentation;
         public TMP_Text heading,body;
         public Renderer artwork;
@@ -18,7 +19,12 @@ namespace FlowState.Menu
         void Awake()
         {
             artMaterial=new Material(artwork.sharedMaterial);artwork.sharedMaterial=artMaterial;
-            motion.motionScale=cameraFeedback.motionScale=PlayerPrefs.GetFloat("FS.Menu.Motion",1);
+            float savedMotion=PlayerPrefs.GetFloat("FS.Menu.Motion",1);
+            float motionScale=savedMotion<.8f?ReducedMotionScale:1;
+            motion.motionScale=cameraFeedback.motionScale=motionScale;
+            // Older builds stored zero for the UI label "REDUCIDO", which disabled
+            // the reactive camera completely. Persist the corrected reduced value.
+            if(!Mathf.Approximately(savedMotion,motionScale))PlayerPrefs.SetFloat("FS.Menu.Motion",motionScale);
             AudioListener.volume=PlayerPrefs.GetFloat("FS.Audio.Master",1);
             presentation.SetActive(false);
         }
@@ -28,7 +34,7 @@ namespace FlowState.Menu
         {
             if(mode==MenuAction.Gallery){Navigate(1);return;}
             if(selected==0){AudioListener.volume=AudioListener.volume>.99f?0:Mathf.Min(1,AudioListener.volume+.25f);PlayerPrefs.SetFloat("FS.Audio.Master",AudioListener.volume);}
-            else if(selected==1){float value=motion.motionScale>.5f?0:1;motion.motionScale=cameraFeedback.motionScale=value;PlayerPrefs.SetFloat("FS.Menu.Motion",value);}
+            else if(selected==1){float value=motion.motionScale>.8f?ReducedMotionScale:1;motion.motionScale=cameraFeedback.motionScale=value;PlayerPrefs.SetFloat("FS.Menu.Motion",value);}
             else Close();
             Refresh();
         }

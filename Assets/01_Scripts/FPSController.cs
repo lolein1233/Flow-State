@@ -188,6 +188,7 @@ public class FPSController : MonoBehaviour
     Vector3 cameraLookAhead;
     Vector3 cameraLookAheadVelocity;
     bool cameraStateInitialized;
+    bool teleportTransitionActive;
     bool graffitiMode;
     bool isParkouring;
     bool isClimbing;
@@ -263,6 +264,7 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
+        if (teleportTransitionActive) return;
         ResolveReferences();
         HandleModeInput();
         UpdateCursorState();
@@ -279,6 +281,7 @@ public class FPSController : MonoBehaviour
 
     void LateUpdate()
     {
+        if (teleportTransitionActive) return;
         UpdateCamera();
         UpdateInitialGroundAlignment();
     }
@@ -1671,6 +1674,42 @@ public class FPSController : MonoBehaviour
     {
         if (animatorParameters.Contains(hash))
             animator.SetTrigger(hash);
+    }
+
+    public void SetTeleportTransition(bool active)
+    {
+        teleportTransitionActive = active;
+        if (!active) return;
+        StopAllCoroutines();
+        ExitClimb(false);
+        isParkouring = false;
+        ResetMovementAnimator();
+    }
+
+    public void TeleportTo(Vector3 position, Quaternion rotation)
+    {
+        StopAllCoroutines();
+        ExitClimb(false);
+        isParkouring = false;
+        isAirRolling = false;
+        airRollEndTime = -999f;
+        verticalVelocity = 0f;
+        currentPlanarSpeed = 0f;
+        turnVelocity = 0f;
+        jumpPressedTime = lastGroundedTime = -999f;
+        groundAlignmentFramesRemaining = 0;
+        airborneAnimationTime = lastAirborneVerticalSpeed = 0f;
+        landingAnimationQueued = false;
+        hasCombatLockPoint = false;
+        if (controller == null) controller = GetComponent<CharacterController>();
+        bool wasEnabled = controller.enabled;
+        controller.enabled = false;
+        transform.SetPositionAndRotation(position, rotation);
+        controller.enabled = wasEnabled;
+        Physics.SyncTransforms();
+        orbitYaw = rotation.eulerAngles.y;
+        ResetMovementAnimator();
+        ApplyModeInstant();
     }
 
     public void SetThirdPersonFovOffset(float offset)

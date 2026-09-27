@@ -119,6 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+<<<<<<< HEAD
 --- !u!1 &31560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2715,6 +2716,9 @@ PrefabInstance:
       addedObject: {fileID: 2038334939}
   m_SourcePrefab: {fileID: 100100000, guid: c180f9988e56095449de414ff5a89fe5, type: 3}
 --- !u!1 &91107525
+=======
+--- !u!1 &103104679 stripped
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: -3130508818517778376, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
@@ -7353,6 +7357,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206311439}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+<<<<<<< HEAD
 --- !u!1 &207517752
 GameObject:
   m_ObjectHideFlags: 0
@@ -7811,6 +7816,9 @@ BoxCollider:
   m_Size: {x: 0.023430798, y: 0.020503836, z: 0.028596716}
   m_Center: {x: 0.000000007450584, y: -1.1913717e-10, z: 0.0041447454}
 --- !u!1 &238831109
+=======
+--- !u!1 &254516497 stripped
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 8586934613415647874, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
@@ -8571,6 +8579,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 259689677}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1 &261252873
 GameObject:
   m_ObjectHideFlags: 0
@@ -10353,6 +10362,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 341004482}
   m_Mesh: {fileID: 7144741085151771414, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
+=======
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 --- !u!1001 &341262611
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10453,6 +10464,7 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1969941080}
   m_SourcePrefab: {fileID: 100100000, guid: 814511c3ab261674681e59c9b8187556, type: 3}
+<<<<<<< HEAD
 --- !u!1 &349130387
 GameObject:
   m_ObjectHideFlags: 0
@@ -11878,6 +11890,9 @@ MeshCollider:
   m_CookingOptions: 30
   m_Mesh: {fileID: 4549055681695420159, guid: c180f9988e56095449de414ff5a89fe5, type: 3}
 --- !u!1 &388782927
+=======
+--- !u!1 &446926891 stripped
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: -4589698382795925361, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
@@ -25777,6 +25792,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 798642719}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+<<<<<<< HEAD
 --- !u!1 &810644141
 GameObject:
   m_ObjectHideFlags: 0
@@ -27187,6 +27203,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 849492360}
   m_Mesh: {fileID: -355236308763522423, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
+=======
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 --- !u!1 &853133161
 GameObject:
   m_ObjectHideFlags: 0
@@ -33702,6 +33720,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.49005, y: 0.019999996, z: 0.15999998}
   m_Center: {x: -0.235025, y: 0, z: 0.070000015}
+<<<<<<< HEAD
 --- !u!4 &1052322208
 Transform:
   m_ObjectHideFlags: 0
@@ -36912,6 +36931,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1152826445}
   m_Mesh: {fileID: 8529971742808166602, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
+=======
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 --- !u!1 &1157512915
 GameObject:
   m_ObjectHideFlags: 0
@@ -60297,6 +60318,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2024486995}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD
 --- !u!1 &2027488657
 GameObject:
   m_ObjectHideFlags: 0
@@ -60582,6 +60604,8 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045177485}
   m_Mesh: {fileID: 8385836491182413749, guid: e8e1086db06e67c48b2a040eff1f0368, type: 3}
+=======
+>>>>>>> 2f4aa57da37539fedb4cacf2043921a834ae9425
 --- !u!1 &2050063749
 GameObject:
   m_ObjectHideFlags: 0
@@ -64317,7 +64341,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 2066424537}
-  - {fileID: 86743256}
   - {fileID: 1265236816}
   - {fileID: 684375018}
   - {fileID: 2136972141}

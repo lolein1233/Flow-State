@@ -7870,7 +7870,7 @@ MonoBehaviour:
   menu: {fileID: 1619861819}
   input: {fileID: 1619861821}
   cameraController: {fileID: 2028984082}
-  mode: 0
+  mode: 2
   debugCompleteOnStart: 0
   prototypePaint: {fileID: 1619861831}
   contentProvider: {fileID: 1619861830}

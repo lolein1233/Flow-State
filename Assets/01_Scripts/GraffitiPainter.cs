@@ -286,7 +286,10 @@ public class GraffitiPainter : MonoBehaviour
 
         currentGraffiti.AddPaint(Time.deltaTime * paintSpeed);
         if (currentGraffiti.IsComplete())
+        {
+            ReputationSystem.AddCityImpact(5f);
             StopPainting();
+        }
     }
 
     void StopPainting()

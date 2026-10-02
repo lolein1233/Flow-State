@@ -4,6 +4,9 @@ Shader "FLOWSTATE/UI/GrungeResourceBar"
     {
         [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Tint", Color) = (1, 1, 1, 1)
+        _HudTime ("HUD Animation Time", Float) = 0
+        _MotionStrength ("Comic Motion", Range(0, 2)) = 0
+        _SpriteUVRect ("Sprite UV Rect", Vector) = (0, 0, 1, 1)
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
         _StencilOp ("Stencil Operation", Float) = 0
@@ -74,6 +77,9 @@ Shader "FLOWSTATE/UI/GrungeResourceBar"
             sampler2D _MainTex;
             fixed4 _Color;
             float4 _ClipRect;
+            float _HudTime;
+            float _MotionStrength;
+            float4 _SpriteUVRect;
 
             v2f vert(appdata_t input)
             {
@@ -92,7 +98,15 @@ Shader "FLOWSTATE/UI/GrungeResourceBar"
                 fixed4 source = tex2D(_MainTex, input.texcoord);
                 fixed luminance = dot(source.rgb, fixed3(0.299, 0.587, 0.114));
                 fixed detail = lerp(0.56, 1.18, saturate(luminance * 1.35));
-                fixed4 color = fixed4(input.color.rgb * detail, source.a * input.color.a);
+                fixed4 color = fixed4(input.color.rgb * detail, input.color.a);
+                // Trama de impresion y pasada de luz dentro del relleno real de la barra.
+                float2 localUV = (input.texcoord - _SpriteUVRect.xy) / max(_SpriteUVRect.zw, float2(0.0001, 0.0001));
+                float2 cell = frac(localUV * float2(65, 6)) - 0.5;
+                float dots = 1.0 - smoothstep(0.12, 0.24, length(cell));
+                float sweepPosition = frac(_HudTime * 0.28) * 1.5 - 0.25;
+                float sweep = 1.0 - smoothstep(0.025, 0.12, abs(localUV.x + localUV.y * 0.08 - sweepPosition));
+                color.rgb *= 1.0 - dots * 0.16 * min(_MotionStrength, 1.0);
+                color.rgb = lerp(color.rgb, fixed3(1, 1, 0.94), sweep * 0.48 * min(_MotionStrength, 1.0));
 
                 #ifdef UNITY_UI_CLIP_RECT
                     color.a *= UnityGet2DClipping(input.worldPosition.xy, _ClipRect);

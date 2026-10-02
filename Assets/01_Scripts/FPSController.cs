@@ -19,12 +19,17 @@ public class FPSController : MonoBehaviour
 
     [Header("Modo graffiti")]
     public bool startInGraffitiMode = false;
-    public KeyCode graffitiModeKey = KeyCode.E;
+    public KeyCode graffitiModeKey = KeyCode.Q;
     public KeyCode exitGraffitiKey = KeyCode.Escape;
+    public GameObject graffitiCursorCanvas;
     public GraffitiRaycastUI graffitiRaycast;
     public bool requirePaintableToEnterGraffiti = true;
     public bool allowMovementInGraffitiMode = true;
     public float graffitiMoveSpeed = 2.25f;
+
+    [Header("Vista vertical de graffiti")]
+    [Range(-89f, 0f)] public float graffitiMinPitch = -85f;
+    [Range(0f, 89f)] public float graffitiMaxPitch = 85f;
 
     [Header("Movimiento tercera persona")]
     public float walkSpeed = 4.5f;
@@ -190,6 +195,7 @@ public class FPSController : MonoBehaviour
     bool cameraStateInitialized;
     bool teleportTransitionActive;
     bool graffitiMode;
+    int lastGraffitiModeEnterFrame = -1;
     bool isParkouring;
     bool isClimbing;
     bool climbAllowSideways = true;
@@ -480,7 +486,7 @@ public class FPSController : MonoBehaviour
         if (!requirePaintableToEnterGraffiti)
             return true;
 
-        return graffitiRaycast == null || graffitiRaycast.CanPaint();
+        return graffitiRaycast == null || graffitiRaycast.CanDetectGraffitiSurface();
     }
 
     void HandleLook()
@@ -491,7 +497,9 @@ public class FPSController : MonoBehaviour
         if (graffitiMode)
         {
             pitch -= mouseY;
-            pitch = Mathf.Clamp(pitch, focusMode ? focusMinY : minY, focusMode ? focusMaxY : maxY);
+            float minimumPitch = Mathf.Min(graffitiMinPitch, graffitiMaxPitch);
+            float maximumPitch = Mathf.Max(graffitiMinPitch, graffitiMaxPitch);
+            pitch = Mathf.Clamp(pitch, minimumPitch, maximumPitch);
 
         orbitYaw += mouseX;
         transform.rotation = Quaternion.Euler(0f, orbitYaw, 0f);
@@ -1654,6 +1662,8 @@ public class FPSController : MonoBehaviour
 
     void UpdateCursorState()
     {
+        if (graffitiCursorCanvas != null && graffitiCursorCanvas.activeSelf != graffitiMode)
+            graffitiCursorCanvas.SetActive(graffitiMode);
         Cursor.lockState = graffitiMode ? CursorLockMode.Locked : CursorLockMode.Confined;
         Cursor.visible = graffitiMode;
     }
@@ -1751,10 +1761,14 @@ public class FPSController : MonoBehaviour
 
     public void EnterGraffitiMode()
     {
+        bool enteringNewMode = !graffitiMode;
+
         if (isClimbing)
             ExitClimb(false);
 
         graffitiMode = true;
+        if (enteringNewMode)
+            lastGraffitiModeEnterFrame = Time.frameCount;
         orbitYaw = transform.eulerAngles.y;
         cameraYaw = orbitYaw;
         cameraPitch = pitch;
@@ -1788,6 +1802,11 @@ public class FPSController : MonoBehaviour
     public bool IsGraffitiMode()
     {
         return graffitiMode;
+    }
+
+    public bool EnteredGraffitiModeThisFrame()
+    {
+        return graffitiMode && lastGraffitiModeEnterFrame == Time.frameCount;
     }
 
     public bool IsInFirstPerson()

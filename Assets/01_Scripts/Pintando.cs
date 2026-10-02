@@ -258,7 +258,13 @@ public class Pintando : MonoBehaviour
             Color color = mainPainter.GetPaintColorWithVariation(dripDuration / count, Mathf.Lerp(0.95f, 0.5f, t));
             Vector4 profile = new Vector4(0.72f, 0.92f, 0.1f, Random.Range(0.001f, 999f));
             Vector4 spray = mainPainter.GetSpraySettings();
-            canvas.AddStamp(point, normal, horizontal, baseWidth * taper, baseWidth * 1.8f, color, profile, spray);
+            if (!canvas.AddStamp(point, normal, horizontal, baseWidth * taper, baseWidth * 1.8f, color, profile, spray))
+            {
+                Transform surface = canvas.transform.parent;
+                canvas = GraffitiSurfaceCanvas.GetOrCreate(surface, sprayMaterial);
+                if (canvas == null || !canvas.AddStamp(point, normal, horizontal, baseWidth * taper, baseWidth * 1.8f, color, profile, spray))
+                    yield break;
+            }
             yield return new WaitForSeconds(dripDuration / count);
         }
     }

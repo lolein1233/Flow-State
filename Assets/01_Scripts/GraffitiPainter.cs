@@ -103,7 +103,8 @@ public class GraffitiPainter : MonoBehaviour
 
         CacheAutoGraffitiOnlyUI();
         bool active = IsGraffitiModeActive();
-        SetPaintUIVisible(active);
+        bool promptAvailable = raycastUI != null && !raycastUI.isPainting && (active ? raycastUI.CanPaint() : raycastUI.CanDetectGraffitiSurface());
+        SetPaintUIVisible(active || promptAvailable, active);
         SetGraffitiToolVisible(active);
         if (resourceHUD != null)
             resourceHUD.SetVisible(active);
@@ -113,7 +114,8 @@ public class GraffitiPainter : MonoBehaviour
     {
         UpdateUIFade();
         bool graffitiModeActive = IsGraffitiModeActive();
-        SetPaintUIVisible(graffitiModeActive);
+        bool promptAvailable = raycastUI != null && !raycastUI.isPainting && (graffitiModeActive ? raycastUI.CanPaint() : raycastUI.CanDetectGraffitiSurface());
+        SetPaintUIVisible(graffitiModeActive || promptAvailable, graffitiModeActive);
         SetGraffitiToolVisible(graffitiModeActive);
 
         if (resourceHUD != null)
@@ -149,9 +151,18 @@ public class GraffitiPainter : MonoBehaviour
             return;
         }
 
-        if (menuOpen || !graffitiModeActive || (sprayResources != null && (sprayResources.IsShaking || sprayResources.IsChangingCan)))
+        if (menuOpen || (sprayResources != null && (sprayResources.IsShaking || sprayResources.IsChangingCan)))
         {
             targetAlpha = 0f;
+            uiTimer = 0f;
+            if (isPainting)
+                StopPainting();
+            return;
+        }
+
+        if (!graffitiModeActive)
+        {
+            targetAlpha = promptAvailable ? 1f : 0f;
             uiTimer = 0f;
             if (isPainting)
                 StopPainting();
@@ -545,15 +556,15 @@ public class GraffitiPainter : MonoBehaviour
             sprayCan.gameObject.SetActive(visible);
     }
 
-    void SetPaintUIVisible(bool visible)
+    void SetPaintUIVisible(bool promptVisible, bool graffitiModeVisible)
     {
         if (!hidePaintUIOutsideGraffiti)
             return;
 
-        if (paintUI != null && paintUI.activeSelf != visible)
-            paintUI.SetActive(visible);
-        SetUIGroupVisible(extraGraffitiOnlyUI, visible);
-        SetUIGroupVisible(autoGraffitiOnlyUI, visible);
+        if (paintUI != null && paintUI.activeSelf != promptVisible)
+            paintUI.SetActive(promptVisible);
+        SetUIGroupVisible(extraGraffitiOnlyUI, graffitiModeVisible);
+        SetUIGroupVisible(autoGraffitiOnlyUI, graffitiModeVisible);
     }
 
     static void SetUIGroupVisible(GameObject[] objects, bool visible)

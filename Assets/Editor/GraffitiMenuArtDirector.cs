@@ -14,8 +14,8 @@ public static class GraffitiMenuArtDirector
     const string RuntimePreviewName = "__TEMP_NEO_SPRAY_LAB_PREVIEW__";
     const string AssetFolder = "Assets/04_Materiales e Imagenes/GraffitiMenuRedesign";
 
-    static readonly Color Ink = Hex("111018");
-    static readonly Color Plum = Hex("291324");
+    static readonly Color Ink = Hex("191A1B");
+    static readonly Color Plum = Hex("353533");
     static readonly Color Paper = Hex("EEE9DC");
     static readonly Color Cyan = Hex("00E5FF");
     static readonly Color Magenta = Hex("FF1478");
@@ -25,15 +25,20 @@ public static class GraffitiMenuArtDirector
     static readonly Color Coral = Hex("FF3D34");
     static readonly Color Mint = Hex("19F2BE");
     static readonly Color Steel = Hex("777B8B");
+    static readonly Color Ochre = Hex("D6AF66");
 
     [MenuItem("Flow State/Graffiti Menu/Build Neo Spray Lab")]
     public static void Build()
     {
         EnsureFolder(AssetFolder);
 
-        Material ink = MaterialAsset("M_Menu_Ink", Ink, false, 0f, 0.18f);
-        Material plum = MaterialAsset("M_Menu_Plum", Plum, false, 0f, 0.2f);
-        Material paper = MaterialAsset("M_Menu_Paper", Paper, false, 0f, 0.1f);
+        Material ink = MaterialAsset("M_Menu_Ink", Ink, true, 0f, 0.18f);
+        Material plum = MaterialAsset("M_Menu_Plum", Plum, true, 0f, 0.2f);
+        Material paper = MaterialAsset("M_Menu_Paper", Paper, true, 0f, 0.1f);
+        Material accent = MaterialAsset("M_Menu_Ochre", Ochre, true, 0f, 0.2f);
+        Material hologram = FoilMaterial("M_Menu_HolographicFoil", false);
+        Material projection = FoilMaterial("M_Nozzle_Projection", false);
+        projection.SetFloat("_SurfaceMode", 2f);
         Material cyan = MaterialAsset("M_Menu_Cyan", Cyan, true, 0f, 0.26f);
         Material magenta = MaterialAsset("M_Menu_Magenta", Magenta, true, 0f, 0.25f);
         Material acid = MaterialAsset("M_Menu_Acid", Acid, true, 0f, 0.2f);
@@ -41,11 +46,8 @@ public static class GraffitiMenuArtDirector
         Material violet = MaterialAsset("M_Menu_Violet", Violet, true, 0f, 0.3f);
         Material coral = MaterialAsset("M_Menu_Coral", Coral, true, 0f, 0.26f);
         Material mint = MaterialAsset("M_Menu_Mint", Mint, true, 0f, 0.24f);
-        Material steel = MaterialAsset("M_Nozzle_Steel", Steel, false, 0.78f, 0.56f);
+        Material steel = FoilMaterial("M_Nozzle_HolographicSatin", true);
         Material blackMetal = MaterialAsset("M_Nozzle_Black", Hex("17171E"), false, 0.62f, 0.4f);
-        steel.EnableKeyword("_EMISSION");
-        steel.SetColor("_EmissionColor", Steel * 0.32f);
-        EditorUtility.SetDirty(steel);
 
         GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
         try
@@ -62,15 +64,17 @@ public static class GraffitiMenuArtDirector
                 legacyNozzleLabel.gameObject.SetActive(false);
 
             Transform art = NewRoot(ArtRootName, root.transform);
-            BuildBackdrop(root.transform, art, ink, plum, paper, cyan, magenta, acid, orange, violet, coral, mint);
-            BuildColorLab(root.transform, art, ink, paper, cyan, magenta, acid);
-            BuildNozzleRack(root.transform, art, ink, paper, steel, blackMetal, cyan, magenta, acid, orange, violet);
+            BuildBackdrop(root.transform, art, ink, plum, paper, accent);
+            BuildColorLab(root.transform, art, ink, paper, plum);
+            BuildNozzleRack(root.transform, art, ink, paper, steel, blackMetal, plum, accent, projection);
+            art.Find("Ink slab").GetComponent<Renderer>().sharedMaterial = hologram;
+            BuildComicFrame(root.transform);
 
             GraffitiDrawMenu drawMenu = root.GetComponent<GraffitiDrawMenu>();
             if (drawMenu != null)
             {
                 drawMenu.visualRoot = root.transform;
-                drawMenu.drawTime = 0.48f;
+                drawMenu.drawTime = 0.32f;
             }
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
@@ -223,7 +227,7 @@ public static class GraffitiMenuArtDirector
         Selection.activeObject = null;
     }
 
-    static void BuildBackdrop(Transform root, Transform art, Material ink, Material plum, Material paper, Material cyan, Material magenta, Material acid, Material orange, Material violet, Material coral, Material mint)
+    static void BuildBackdrop(Transform root, Transform art, Material ink, Material plum, Material paper, Material accent)
     {
         Transform background = root.Find("Fondo");
         if (background != null)
@@ -237,15 +241,9 @@ public static class GraffitiMenuArtDirector
         }
 
         CreateBlock("Ink slab", art, new Vector3(0.02f, -0.005f, 0.02f), new Vector3(2.96f, 1.62f, 0.035f), new Vector3(0f, 0f, 0.8f), ink);
-        CreateBlock("Magenta torn edge", art, new Vector3(-1.43f, 0.08f, -0.015f), new Vector3(0.1f, 1.36f, 0.025f), new Vector3(0f, 0f, -7f), magenta);
-        CreateBlock("Cyan torn edge", art, new Vector3(1.43f, -0.08f, -0.016f), new Vector3(0.08f, 1.28f, 0.026f), new Vector3(0f, 0f, 5f), cyan);
-        CreateBlock("Acid header tape", art, new Vector3(-0.58f, 0.685f, -0.045f), new Vector3(1.58f, 0.13f, 0.022f), new Vector3(0f, 0f, -1.8f), acid);
-        CreateBlock("Orange index", art, new Vector3(1.20f, 0.66f, -0.047f), new Vector3(0.30f, 0.11f, 0.022f), new Vector3(0f, 0f, 4f), orange);
-        BuildReferenceMotifs(art, ink, paper, cyan, magenta, acid, orange, violet, coral, mint);
-
-        CreateText("Title", art, "FLOW STATE", new Vector3(-1.31f, 0.69f, -0.085f), new Vector2(1.45f, 0.24f), 1.25f, Ink, TextAlignmentOptions.Left, FontStyles.Bold);
-        CreateText("Spray Lab", art, "SPRAY LAB", new Vector3(0.25f, 0.675f, -0.087f), new Vector2(0.70f, 0.20f), 0.72f, Magenta, TextAlignmentOptions.Center, FontStyles.Bold);
-        CreateText("Index", art, "FS.02", new Vector3(1.06f, 0.655f, -0.087f), new Vector2(0.28f, 0.18f), 0.5f, Ink, TextAlignmentOptions.Center, FontStyles.Bold);
+        CreateBlock("Header underline", art, new Vector3(-0.77f, 0.565f, -0.05f), new Vector3(1.12f, 0.018f, 0.018f), new Vector3(0f, 0f, -1f), accent);
+        CreateText("Title", art, "FLOW STATE", new Vector3(-1.31f, 0.69f, -0.085f), new Vector2(1.45f, 0.24f), 1.25f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
+        CreateText("Index", art, "TU MURO. TU HUELLA.", new Vector3(0.25f, 0.67f, -0.087f), new Vector2(1.05f, 0.20f), 0.5f, Ochre, TextAlignmentOptions.Right, FontStyles.Normal);
     }
 
     static void BuildReferenceMotifs(Transform art, Material ink, Material paper, Material cyan, Material magenta, Material acid, Material orange, Material violet, Material coral, Material mint)
@@ -289,7 +287,7 @@ public static class GraffitiMenuArtDirector
             CreateMeshShape("Micro spark " + i, art, spark, marks[i], Vector3.one * (0.036f + i * 0.005f), i * 17f, markMaterials[i]);
     }
 
-    static void BuildColorLab(Transform root, Transform art, Material ink, Material paper, Material cyan, Material magenta, Material acid)
+    static void BuildColorLab(Transform root, Transform art, Material ink, Material paper, Material neutral)
     {
         Transform wheel = root.Find("RGB_ColorWheel");
         if (wheel != null)
@@ -297,9 +295,8 @@ public static class GraffitiMenuArtDirector
             wheel.localPosition = new Vector3(-0.94f, 0.14f, -0.085f);
             wheel.localScale = Vector3.one * 0.50f;
             CreateBlock("Wheel card", art, new Vector3(-0.94f, 0.15f, -0.035f), new Vector3(0.76f, 0.61f, 0.028f), new Vector3(0f, 0f, -2f), paper);
-            CreateBlock("Wheel shadow", art, new Vector3(-0.90f, 0.11f, -0.02f), new Vector3(0.79f, 0.62f, 0.02f), new Vector3(0f, 0f, 1.5f), magenta);
-            CreateBlock("Wheel label tape", art, new Vector3(-0.94f, 0.49f, -0.065f), new Vector3(0.72f, 0.115f, 0.018f), new Vector3(0f, 0f, 1.5f), acid);
-            CreateText("Wheel label", art, "COLOR / PIGMENT", new Vector3(-1.28f, 0.488f, -0.095f), new Vector2(0.68f, 0.11f), 0.42f, Ink, TextAlignmentOptions.Center, FontStyles.Bold);
+            CreateBlock("Wheel shadow", art, new Vector3(-0.92f, 0.13f, -0.02f), new Vector3(0.79f, 0.62f, 0.02f), new Vector3(0f, 0f, -1f), neutral);
+            CreateText("Wheel label", art, "COLOR", new Vector3(-1.28f, 0.488f, -0.095f), new Vector2(0.68f, 0.11f), 0.55f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
         }
 
         Transform slider = root.Find("RGB_ValueSlider");
@@ -315,23 +312,20 @@ public static class GraffitiMenuArtDirector
         {
             preview.localPosition = new Vector3(0.02f, 0.23f, -0.105f);
             preview.localScale = new Vector3(0.30f, 0.30f, 0.07f);
-            CreateBlock("Preview frame", art, new Vector3(0.02f, 0.23f, -0.047f), new Vector3(0.44f, 0.44f, 0.026f), new Vector3(0f, 0f, 3f), acid);
-            CreateText("Preview label", art, "LIVE INK", new Vector3(-0.18f, -0.055f, -0.09f), new Vector2(0.42f, 0.1f), 0.38f, Paper, TextAlignmentOptions.Center, FontStyles.Bold);
+            CreateBlock("Preview frame", art, new Vector3(0.02f, 0.23f, -0.047f), new Vector3(0.37f, 0.37f, 0.026f), new Vector3(0f, 0f, 2f), paper);
+            CreateText("Preview label", art, "TU TINTA", new Vector3(-0.18f, -0.025f, -0.09f), new Vector2(0.42f, 0.1f), 0.42f, Paper, TextAlignmentOptions.Center, FontStyles.Bold);
         }
 
-        CreateBlock("Lab divider", art, new Vector3(0.35f, 0.17f, -0.035f), new Vector3(0.025f, 0.67f, 0.02f), new Vector3(0f, 0f, 8f), cyan);
-        CreateBlock("Rack banner", art, new Vector3(0.84f, 0.435f, -0.055f), new Vector3(0.96f, 0.15f, 0.022f), new Vector3(0f, 0f, -2f), magenta);
-        CreateText("Rack label", art, "BOQUILLAS / 3D CAP RACK", new Vector3(0.44f, 0.43f, -0.09f), new Vector2(0.88f, 0.14f), 0.45f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
+        CreateBlock("Lab divider", art, new Vector3(0.35f, 0.20f, -0.035f), new Vector3(0.012f, 0.57f, 0.02f), Vector3.zero, neutral);
+        CreateText("Rack label", art, "ELIGE TU\nBOQUILLA", new Vector3(0.48f, 0.32f, -0.09f), new Vector2(0.85f, 0.32f), 0.95f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
+        CreateText("Controls", art, "CLIC / E  ELEGIR\nQ  VOLVER A PINTAR", new Vector3(0.48f, 0.035f, -0.09f), new Vector2(0.86f, 0.18f), 0.40f, Ochre, TextAlignmentOptions.Left, FontStyles.Normal);
     }
 
-    static void BuildNozzleRack(Transform root, Transform art, Material ink, Material paper, Material steel, Material blackMetal, Material cyan, Material magenta, Material acid, Material orange, Material violet)
+    static void BuildNozzleRack(Transform root, Transform art, Material ink, Material paper, Material steel, Material blackMetal, Material neutral, Material accent, Material projection)
     {
-        string[] names = { "Boquilla_Needle", "Boquilla_Soft", "Boquilla_FatCap", "Boquilla_Chisel", "Boquilla_Splatter" };
-        string[] titles = { "PEQUEÑA", "DIFUMINAR", "GRANDE", "TRAZO", "MEDIANA" };
-        string[] descriptors = { "PRECISION", "NUBE SUAVE", "COBERTURA", "LINEA PLANA", "PULSO MEDIO" };
-        string[] sourceParts = { "tripo_part_0", "tripo_part_1", "tripo_part_4", "tripo_part_2", "tripo_part_3" };
-        Color[] colors = { Cyan, Violet, Magenta, Orange, Acid };
-        Material[] accents = { cyan, violet, magenta, orange, acid };
+        string[] names = { "Boquilla_Needle", "Boquilla_Splatter", "Boquilla_FatCap", "Boquilla_Chisel", "Boquilla_Soft" };
+        string[] titles = { "PEQUEÑA", "MEDIANA", "GRANDE", "TRAZO", "DIFUMINAR" };
+        string[] sourceParts = { "tripo_part_0", "tripo_part_3", "tripo_part_4", "tripo_part_2", "tripo_part_1" };
         float[] xs = { -1.08f, -0.54f, 0f, 0.54f, 1.08f };
 
         for (int i = 0; i < names.Length; i++)
@@ -341,11 +335,11 @@ public static class GraffitiMenuArtDirector
                 continue;
 
             button.localPosition = new Vector3(xs[i], -0.42f, -0.07f);
-            button.localRotation = Quaternion.Euler(0f, 0f, i % 2 == 0 ? -1.5f : 1.5f);
+            button.localRotation = Quaternion.Euler(0f, 0f, i % 2 == 0 ? -0.7f : 0.7f);
             button.localScale = Vector3.one;
+            button.GetComponent<GraffitiDrawnMenuButton>().nozzleName = titles[i];
 
             MeshRenderer legacyRenderer = button.GetComponent<MeshRenderer>();
-            Material strokeMaterial = legacyRenderer != null ? legacyRenderer.sharedMaterial : null;
             if (legacyRenderer != null)
                 legacyRenderer.enabled = false;
 
@@ -361,26 +355,19 @@ public static class GraffitiMenuArtDirector
                 UnityEngine.Object.DestroyImmediate(oldVisual.gameObject);
 
             Transform cardRoot = NewRoot("ART_CAP", button);
-            CreateBlock("Card shadow", cardRoot, new Vector3(0.025f, -0.018f, 0.045f), new Vector3(0.43f, 0.54f, 0.025f), new Vector3(0f, 0f, -3f), accents[i]);
-            CreateBlock("Card", cardRoot, new Vector3(0f, 0f, 0.025f), new Vector3(0.41f, 0.53f, 0.028f), new Vector3(0f, 0f, i % 2 == 0 ? 1.5f : -1.5f), i == 2 ? paper : ink);
-            Renderer halo = CreateBlock("Hover halo", cardRoot, new Vector3(0f, 0.075f, -0.005f), new Vector3(0.34f, 0.29f, 0.015f), Vector3.zero, accents[i]).GetComponent<Renderer>();
-
-            if (strokeMaterial != null)
-            {
-                Transform sample = CreatePrimitive("Stroke sample", PrimitiveType.Quad, cardRoot, new Vector3(0.085f, 0.105f, -0.036f), new Vector3(0.27f, 0.18f, 1f), new Vector3(0f, 180f, i * 8f), strokeMaterial);
-                Renderer sampleRenderer = sample.GetComponent<Renderer>();
-                if (sampleRenderer != null)
-                    sampleRenderer.sortingOrder = 1;
-            }
+            CreateBlock("Card edge", cardRoot, new Vector3(0.009f, -0.012f, 0.045f), new Vector3(0.47f, 0.54f, 0.025f), Vector3.zero, neutral);
+            CreateBlock("Card", cardRoot, new Vector3(0f, 0f, 0.025f), new Vector3(0.455f, 0.53f, 0.028f), Vector3.zero, ink);
+            Renderer halo = CreateBlock("Hover halo", cardRoot, new Vector3(0f, 0.065f, -0.005f), new Vector3(0.405f, 0.33f, 0.015f), Vector3.zero, projection).GetComponent<Renderer>();
+            Transform marker = CreateBlock("Selected underline", cardRoot, new Vector3(0f, -0.237f, -0.025f), new Vector3(0.36f, 0.018f, 0.015f), Vector3.zero, accent);
+            marker.gameObject.SetActive(false);
 
             Transform modelPivot = NewRoot("Physical cap", cardRoot);
-            modelPivot.localPosition = new Vector3(-0.055f, 0.095f, -0.105f);
+            modelPivot.localPosition = new Vector3(0f, 0.075f, -0.105f);
             modelPivot.localRotation = Quaternion.Euler(-8f, -24f + i * 12f, -4f + i * 2f);
             modelPivot.localScale = Vector3.one;
-            BuildImportedNozzleModel(sourceParts[i], modelPivot, steel, blackMetal, accents[i]);
+            BuildImportedNozzleModel(sourceParts[i], modelPivot, steel, blackMetal, paper);
 
-            TMP_Text title = CreateText("Name", cardRoot, titles[i], new Vector3(-0.18f, -0.145f, -0.075f), new Vector2(0.36f, 0.11f), 0.43f, i == 2 ? Ink : colors[i], TextAlignmentOptions.Center, FontStyles.Bold);
-            TMP_Text descriptor = CreateText("Use", cardRoot, descriptors[i], new Vector3(-0.18f, -0.245f, -0.075f), new Vector2(0.36f, 0.09f), 0.28f, i == 2 ? Ink : Paper, TextAlignmentOptions.Center, FontStyles.Bold);
+            TMP_Text title = CreateText("Name", cardRoot, titles[i], new Vector3(-0.22f, -0.165f, -0.075f), new Vector2(0.44f, 0.14f), 0.66f, Paper, TextAlignmentOptions.Center, FontStyles.Bold);
 
             GraffitiNozzleVisual visual = button.GetComponent<GraffitiNozzleVisual>();
             if (visual == null)
@@ -390,13 +377,20 @@ public static class GraffitiMenuArtDirector
             serialized.FindProperty("modelPivot").objectReferenceValue = modelPivot;
             serialized.FindProperty("haloRenderer").objectReferenceValue = halo;
             serialized.FindProperty("title").objectReferenceValue = title;
-            serialized.FindProperty("descriptor").objectReferenceValue = descriptor;
-            serialized.FindProperty("idleColor").colorValue = Color.Lerp(Steel, colors[i], 0.28f);
-            serialized.FindProperty("activeColor").colorValue = colors[i];
+            serialized.FindProperty("selectionMarker").objectReferenceValue = marker.gameObject;
+            serialized.FindProperty("idleColor").colorValue = Hex("484945");
+            serialized.FindProperty("activeColor").colorValue = Ochre;
+            serialized.FindProperty("hoverLift").floatValue = 0.025f;
+            serialized.FindProperty("hoverDepth").floatValue = 0.025f;
+            serialized.FindProperty("hoverTilt").floatValue = 6f;
+            serialized.FindProperty("response").floatValue = 10f;
+            Transform capModel = modelPivot.Find(sourceParts[i]);
+            serialized.FindProperty("capRenderer").objectReferenceValue = capModel != null ? capModel.GetComponent<Renderer>() : null;
+            serialized.FindProperty("idleMotion").floatValue = 1f;
+            serialized.FindProperty("animationPhase").floatValue = i * 1.17f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        CreateText("Rack instruction", art, "APUNTA + E  /  ELIGE TU HUELLA", new Vector3(0.43f, 0.31f, -0.085f), new Vector2(0.96f, 0.1f), 0.32f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
     }
 
     static void BuildImportedNozzleModel(string sourcePartName, Transform parent, Material steel, Material blackMetal, Material accent)
@@ -576,6 +570,148 @@ public static class GraffitiMenuArtDirector
         go.layer = 6;
         go.transform.SetParent(parent, false);
         return go.transform;
+    }
+
+    [MenuItem("Flow State/Graffiti Menu/Apply Character Comic Frame")]
+    public static void ApplyComicFrame()
+    {
+        // This targeted path preserves all other menu art and paint settings.
+        GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+        try
+        {
+            BuildComicFrame(root.transform);
+            PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(root);
+        }
+        AssetDatabase.SaveAssets();
+    }
+
+    static void BuildComicFrame(Transform root)
+    {
+        const string frameName = "ART_COMIC_FRAME";
+        Shader shader = Shader.Find("FLOWSTATE/FSSRS/Player Comic Plate");
+        if (shader == null)
+            throw new InvalidOperationException("No se encontro el shader de contorno del personaje.");
+
+        Mesh mesh = ComicFrameMesh();
+        Transform previous = root.Find(frameName);
+        if (previous != null)
+            UnityEngine.Object.DestroyImmediate(previous.gameObject);
+        Transform frame = NewRoot(frameName, root);
+        frame.localPosition = new Vector3(0f, 0f, -0.022f);
+        frame.localRotation = Quaternion.Euler(0f, 0f, -1.2f);
+
+        string[] names = { "Echo", "Paper", "Color", "Ink" };
+        float[] roles = { 3f, 0f, 1f, 2f };
+        float[] widths = { 0.084f, 0.059f, 0.037f, 0.014f };
+        float[] alpha = { 0.45f, 1f, 0.92f, 1f };
+        Vector2[] offsets = { new Vector2(0.7f, -0.4f), new Vector2(-0.25f, 0.15f), new Vector2(0.4f, -0.2f), Vector2.zero };
+        for (int i = 0; i < names.Length; i++)
+        {
+            string path = AssetFolder + "/M_Menu_Comic" + names[i] + ".mat";
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material == null)
+            {
+                material = new Material(shader) { name = "M_Menu_Comic" + names[i] };
+                AssetDatabase.CreateAsset(material, path);
+            }
+            material.shader = shader;
+            material.renderQueue = 3004 + i;
+            material.SetFloat("_PlateRole", roles[i]);
+            material.SetFloat("_ShellWidth", widths[i]);
+            material.SetVector("_RegistrationOffset", new Vector4(offsets[i].x, offsets[i].y, 0f, 0f));
+            material.SetFloat("_JitterAmount", i == 1 ? 0.025f : 0.075f);
+            material.SetFloat("_Breakup", i == 1 ? 0f : 0.045f);
+            material.SetFloat("_Alpha", alpha[i]);
+            material.SetFloat("_AnimationPhase", i * 0.65f);
+            material.SetFloat("_PulseAmount", i == 0 ? 0.045f : 0.018f);
+            material.SetFloat("_FlowSpeed", 0.35f);
+            material.SetFloat("_PanelMotion", i == 0 ? 0.15f : 0.06f);
+            EditorUtility.SetDirty(material);
+            CreateMeshShape(names[i] + " perimeter", frame, mesh, Vector3.zero, Vector3.one, 0f, material);
+        }
+    }
+
+    static Mesh ComicFrameMesh()
+    {
+        const float halfWidth = 1.54f;
+        const float halfHeight = 0.86f;
+        const float chamfer = 0.045f;
+        const float band = 0.052f;
+        const int segmentsPerSide = 16;
+        Vector2[] corners =
+        {
+            new Vector2(-halfWidth + chamfer, -halfHeight), new Vector2(halfWidth - chamfer, -halfHeight),
+            new Vector2(halfWidth, -halfHeight + chamfer), new Vector2(halfWidth, halfHeight - chamfer),
+            new Vector2(halfWidth - chamfer, halfHeight), new Vector2(-halfWidth + chamfer, halfHeight),
+            new Vector2(-halfWidth, halfHeight - chamfer), new Vector2(-halfWidth, -halfHeight + chamfer)
+        };
+        int count = corners.Length * segmentsPerSide;
+        Vector3[] vertices = new Vector3[count * 2];
+        Vector3[] normals = new Vector3[vertices.Length];
+        int[] triangles = new int[count * 6];
+        for (int i = 0; i < count; i++)
+        {
+            int side = i / segmentsPerSide;
+            Vector2 p = Vector2.Lerp(corners[side], corners[(side + 1) % corners.Length], (i % segmentsPerSide) / (float)segmentsPerSide);
+            vertices[i * 2] = new Vector3(p.x, p.y, 0f);
+            vertices[i * 2 + 1] = new Vector3(p.x * (halfWidth - band) / halfWidth, p.y * (halfHeight - band) / halfHeight, 0f);
+            // Radial XY normals adapt the player's inverted hull to a flat menu.
+            // Back-facing winding is deliberate: the original shader uses Cull Front.
+            normals[i * 2] = normals[i * 2 + 1] = new Vector3(p.x / halfWidth, p.y / halfHeight, 0f).normalized;
+            int next = (i + 1) % count;
+            triangles[i * 6] = i * 2;
+            triangles[i * 6 + 1] = next * 2;
+            triangles[i * 6 + 2] = i * 2 + 1;
+            triangles[i * 6 + 3] = i * 2 + 1;
+            triangles[i * 6 + 4] = next * 2;
+            triangles[i * 6 + 5] = next * 2 + 1;
+        }
+        string path = AssetFolder + "/MESH_Menu_ComicFrame.asset";
+        Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+        if (mesh == null)
+        {
+            mesh = new Mesh { name = "Menu Comic Frame" };
+            AssetDatabase.CreateAsset(mesh, path);
+        }
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.normals = normals;
+        mesh.triangles = triangles;
+        mesh.RecalculateBounds();
+        Bounds bounds = mesh.bounds;
+        bounds.Expand(0.26f); // Include the shader's outward displacement in culling.
+        mesh.bounds = bounds;
+        EditorUtility.SetDirty(mesh);
+        return mesh;
+    }
+
+    static Material FoilMaterial(string name, bool nozzle)
+    {
+        Shader shader = Shader.Find("FLOWSTATE/Graffiti/HolographicFoil");
+        if (shader == null)
+            throw new InvalidOperationException("Importa GraffitiHolographicFoil.shader antes de reconstruir el menu.");
+        string path = AssetFolder + "/" + name + ".mat";
+        Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (material == null)
+        {
+            material = new Material(shader) { name = name };
+            AssetDatabase.CreateAsset(material, path);
+        }
+        material.shader = shader;
+        material.SetColor("_BaseColor", nozzle ? Hex("62686A") : Hex("182127"));
+        material.SetColor("_CoolTint", Hex("779B9E"));
+        material.SetColor("_WarmTint", Hex("BCA47C"));
+        material.SetFloat("_Intensity", nozzle ? 0.38f : 0.3f);
+        material.SetFloat("_Speed", nozzle ? 0.35f : 0.27f);
+        material.SetFloat("_SurfaceMode", nozzle ? 1f : 0f);
+        material.SetFloat("_HalftoneStrength", nozzle ? 0f : 0.28f);
+        material.SetFloat("_HalftoneScale", 12f);
+        EditorUtility.SetDirty(material);
+        return material;
     }
 
     static Material MaterialAsset(string name, Color color, bool emission, float metallic, float smoothness)

@@ -5,6 +5,10 @@ using UnityEngine.Rendering;
 [DisallowMultipleComponent]
 public sealed class GraffitiSurfaceCanvas : MonoBehaviour
 {
+    const int BaseSortingOrder = 24;
+    static readonly Dictionary<int, GraffitiSurfaceCanvas> activeCanvases = new Dictionary<int, GraffitiSurfaceCanvas>();
+
+    [Min(1)]
     public int maxStampCount = 12000;
 
     readonly List<Vector3> vertices = new List<Vector3>();
@@ -19,19 +23,64 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
     bool meshDirty;
     int stampCount;
 
+    public bool IsFull => stampCount >= Mathf.Max(1, maxStampCount);
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetRuntimeCache()
+    {
+        activeCanvases.Clear();
+    }
+
     public static GraffitiSurfaceCanvas GetOrCreate(Transform surface, Material material)
     {
         if (surface == null)
             return null;
 
-        GraffitiSurfaceCanvas existing = surface.GetComponentInChildren<GraffitiSurfaceCanvas>(true);
-        if (existing != null)
+        int surfaceId = surface.GetInstanceID();
+        if (activeCanvases.TryGetValue(surfaceId, out GraffitiSurfaceCanvas cached) &&
+            cached != null && cached.transform.parent == surface && !cached.IsFull)
         {
-            existing.SetMaterial(material);
-            return existing;
+            cached.SetMaterial(material);
+            return cached;
         }
 
-        GameObject canvasObject = new GameObject("__Graffiti Surface Canvas");
+        GraffitiSurfaceCanvas[] canvases = surface.GetComponentsInChildren<GraffitiSurfaceCanvas>(true);
+        GraffitiSurfaceCanvas available = null;
+        int canvasCount = 0;
+        int highestSiblingIndex = -1;
+
+        foreach (GraffitiSurfaceCanvas canvas in canvases)
+        {
+            if (canvas == null || canvas.transform.parent != surface)
+                continue;
+
+            canvasCount++;
+            canvas.SetMaterial(material);
+            int siblingIndex = canvas.transform.GetSiblingIndex();
+            if (!canvas.IsFull && siblingIndex > highestSiblingIndex)
+            {
+                available = canvas;
+                highestSiblingIndex = siblingIndex;
+            }
+        }
+
+        if (available != null)
+        {
+            activeCanvases[surfaceId] = available;
+            return available;
+        }
+
+        GraffitiSurfaceCanvas created = CreateCanvas(surface, material, canvasCount);
+        activeCanvases[surfaceId] = created;
+        return created;
+    }
+
+    static GraffitiSurfaceCanvas CreateCanvas(Transform surface, Material material, int canvasIndex)
+    {
+        string canvasName = canvasIndex == 0
+            ? "__Graffiti Surface Canvas"
+            : $"__Graffiti Surface Canvas {canvasIndex + 1}";
+        GameObject canvasObject = new GameObject(canvasName);
         canvasObject.layer = surface.gameObject.layer;
         canvasObject.transform.SetParent(surface, false);
         canvasObject.transform.localPosition = Vector3.zero;
@@ -39,7 +88,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
         canvasObject.transform.localScale = Vector3.one;
 
         GraffitiSurfaceCanvas canvas = canvasObject.AddComponent<GraffitiSurfaceCanvas>();
-        canvas.Initialize(material);
+        canvas.Initialize(material, BaseSortingOrder + canvasIndex);
         return canvas;
     }
 
@@ -48,7 +97,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
         Initialize(null);
     }
 
-    void Initialize(Material material)
+    void Initialize(Material material, int sortingOrder = BaseSortingOrder)
     {
         if (mesh == null)
         {
@@ -74,9 +123,9 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
             meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
             meshRenderer.receiveShadows = false;
             meshRenderer.allowOcclusionWhenDynamic = false;
-            meshRenderer.sortingOrder = 24;
         }
 
+        meshRenderer.sortingOrder = sortingOrder;
         SetMaterial(material);
     }
 
@@ -96,7 +145,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
         Vector4 profile,
         Vector4 spray)
     {
-        if (stampCount >= maxStampCount || width <= 0f || height <= 0f)
+        if (IsFull || width <= 0f || height <= 0f)
             return false;
 
         Vector3 normal = worldNormal.normalized;
@@ -164,6 +213,14 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
 
     void OnDestroy()
     {
+        Transform surface = transform.parent;
+        if (surface != null &&
+            activeCanvases.TryGetValue(surface.GetInstanceID(), out GraffitiSurfaceCanvas cached) &&
+            cached == this)
+        {
+            activeCanvases.Remove(surface.GetInstanceID());
+        }
+
         if (mesh != null)
             Destroy(mesh);
     }

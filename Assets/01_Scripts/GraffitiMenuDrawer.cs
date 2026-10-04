@@ -43,6 +43,15 @@ public class GraffitiMenuDrawer : MonoBehaviour
         {
             if (currentMenu != null)
                 CloseMenu();
+            else if (fps != null && fps.EnteredGraffitiModeThisFrame())
+                return;
+            else if (fps != null && !fps.IsGraffitiMode())
+            {
+                RaycastHit entryHit;
+                if (TryGetPaintableHit(out entryHit))
+                    fps.EnterGraffitiMode();
+                return;
+            }
             else
                 TryDrawMenu();
         }
@@ -55,16 +64,8 @@ public class GraffitiMenuDrawer : MonoBehaviour
     {
         if (cam == null || menuPrefab == null) return;
 
-        if (fps != null && !fps.IsGraffitiMode())
-            fps.EnterGraffitiMode();
-
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         RaycastHit hit;
-
-        if (!Physics.Raycast(ray, out hit, drawDistance, paintableLayer))
-            return;
-
-        if (requireWallTag && !hit.collider.CompareTag(wallTag))
+        if (!TryGetPaintableHit(out hit))
             return;
 
         Vector3 spawnPos = hit.point + hit.normal * surfaceOffset;
@@ -84,12 +85,26 @@ public class GraffitiMenuDrawer : MonoBehaviour
         }
 
         RefreshColorControls();
+        RefreshNozzleSelection();
 
         if (fps != null)
         {
             fps.canMove = false;
             fps.focusMode = false;
         }
+    }
+
+    bool TryGetPaintableHit(out RaycastHit hit)
+    {
+        hit = default(RaycastHit);
+        if (cam == null)
+            return false;
+
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        if (!Physics.Raycast(ray, out hit, drawDistance, paintableLayer))
+            return false;
+
+        return !requireWallTag || hit.collider.CompareTag(wallTag);
     }
 
     void HandleMenuSelection()
@@ -176,6 +191,7 @@ public class GraffitiMenuDrawer : MonoBehaviour
         if (selected)
         {
             currentHover.Apply(painter, this);
+            RefreshNozzleSelection();
         }
     }
 
@@ -210,6 +226,18 @@ public class GraffitiMenuDrawer : MonoBehaviour
 
         if (fps != null)
             fps.canMove = true;
+    }
+
+    void RefreshNozzleSelection()
+    {
+        if (currentMenu == null || painter == null) return;
+        foreach (GraffitiDrawnMenuButton button in currentMenu.GetComponentsInChildren<GraffitiDrawnMenuButton>(true))
+        {
+            GraffitiNozzleVisual visual = button.GetComponent<GraffitiNozzleVisual>();
+            if (visual != null)
+                visual.SetSelected(button.buttonType == GraffitiDrawnMenuButton.ButtonType.Nozzle &&
+                    button.nozzleShape == painter.currentNozzleShape);
+        }
     }
 
     void RefreshColorControls()

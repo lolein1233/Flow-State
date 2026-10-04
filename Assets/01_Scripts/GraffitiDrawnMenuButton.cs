@@ -85,7 +85,9 @@ public class GraffitiDrawnMenuButton : MonoBehaviour
 
     public void SetHover(bool value)
     {
-        transform.localScale = value ? originalScale * hoverScale : originalScale;
+        // Keep the raycast target stationary; animate only the physical cap.
+        if (nozzleVisual == null)
+            transform.localScale = value ? originalScale * hoverScale : originalScale;
 
         if (nozzleVisual != null)
             nozzleVisual.SetHover(value);

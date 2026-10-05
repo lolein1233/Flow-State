@@ -6,7 +6,7 @@ Implemented 2026-09-08 in `Assets/02_Escenas/MainMenu_FlowState.unity`.
 
 Open the scene and enter Play Mode. Keyboard arrows/A-D or gamepad stick/D-pad navigate circularly. Enter/gamepad south button or mouse click confirms; Escape/gamepad east button returns. Mouse wheel also navigates. The menu owns a clone of the existing `InputSystem_Actions` UI map; the original bindings and gameplay input are unchanged.
 
-The menu is now first in Build Settings; the existing enabled `Game.unity` follows it. JUGAR paints across the lens and loads that scene asynchronously. GALERÍA displays three existing project artworks. CONFIG provides master volume, reduced motion and return. SALIR requires a second confirmation within five seconds; Escape cancels. In the Editor, confirmation logs the intended quit without closing Unity.
+The menu is now first in Build Settings; the existing enabled `Gameplay.unity` follows it. JUGAR paints across the lens and loads that scene asynchronously. GALERÍA displays three existing project artworks. CONFIG provides master volume, reduced motion and return. SALIR requires a second confirmation within five seconds; Escape cancels. In the Editor, confirmation logs the intended quit without closing Unity.
 
 Edit the four ScriptableObjects under `Assets/09_MainMenu/Options` to change option/action, palette, emotion, pigment, grain/drips/halftone, turn and spray duration, audio clips/pitch, pressure, camera impulse and scene transition duration. UnityEvents provide an extension point for new actions. Submenus are intentionally a small foundation, not complete unlock, video-settings or rebinding systems.
 
@@ -72,5 +72,13 @@ The archive gradually erodes per new mark, keeping a long session from becoming 
 - Persistence paths are implemented; cross-process persistence has not been separately tested. Settings changes use dedicated PlayerPrefs keys.
 - Existing user changes in Game_LookDev_FSSRS, Leander SDF and OWNED assets were present before this work and preserved.
 - TextMesh Pro populated its existing LiberationSans fallback atlas with the two navigation arrows (U+2190/U+2192). This generated font-cache change supports the menu legends. The test runner's temporary Enter Play Mode Options change was restored to its original value.
+
+## UI and transition polish - 2026-10-05
+
+- Gallery and settings now use layered paper, ink slabs, registration marks and mode-colored accents derived from the in-game graffiti menu.
+- Each submenu owns a dedicated text layout, so instructions stay inside the card at the supported aspect ratios. The reduced-motion label now reflects the actual saved threshold.
+- Submenus open with a short unscaled-time paper/stencil settle animation.
+- The menu-to-gameplay transition uses a smooth organic aerosol front with deep violet pigment and a wet accent edge. The former pixel/halftone cells and square droplets were removed.
+- `00_JUGAR` uses a 1.05 second transition and continues to load `Assets/02_Escenas/Gameplay.unity`.
 
 ![Enlarged official can in the main menu](MainMenuPreview.png)

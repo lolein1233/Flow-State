@@ -194,6 +194,9 @@ public class FPSController : MonoBehaviour
     Vector3 cameraLookAheadVelocity;
     bool cameraStateInitialized;
     bool teleportTransitionActive;
+    bool pauseInputSuspended;
+    bool resumeJumpInputGuard;
+    int resumeInputBlockFrames;
     bool graffitiMode;
     int lastGraffitiModeEnterFrame = -1;
     bool isParkouring;
@@ -270,7 +273,25 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
-        if (teleportTransitionActive) return;
+        if (teleportTransitionActive || pauseInputSuspended) return;
+
+        if (resumeInputBlockFrames > 0)
+        {
+            resumeInputBlockFrames--;
+            jumpPressedTime = -999f;
+            return;
+        }
+
+        if (resumeJumpInputGuard)
+        {
+            jumpPressedTime = -999f;
+
+            if (Input.GetKey(jumpKey))
+                return;
+
+            resumeJumpInputGuard = false;
+        }
+
         ResolveReferences();
         HandleModeInput();
         UpdateCursorState();
@@ -287,7 +308,7 @@ public class FPSController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (teleportTransitionActive) return;
+        if (teleportTransitionActive || pauseInputSuspended) return;
         UpdateCamera();
         UpdateInitialGroundAlignment();
     }
@@ -1694,6 +1715,27 @@ public class FPSController : MonoBehaviour
         ExitClimb(false);
         isParkouring = false;
         ResetMovementAnimator();
+    }
+
+    public void SetPauseInputSuspended(bool suspended)
+    {
+        pauseInputSuspended = suspended;
+        jumpPressedTime = -999f;
+
+        if (suspended)
+        {
+            resumeInputBlockFrames = 0;
+            resumeJumpInputGuard = false;
+            return;
+        }
+
+        // UI interaction and cursor movement can leave legacy input edges/deltas alive for
+        // the frame in which gameplay resumes. Flush them and skip that frame completely.
+        Input.ResetInputAxes();
+        resumeInputBlockFrames = 1;
+        resumeJumpInputGuard = true;
+        previousCameraPlayerPosition = transform.position;
+        ResetCameraVelocities();
     }
 
     public void TeleportTo(Vector3 position, Quaternion rotation)

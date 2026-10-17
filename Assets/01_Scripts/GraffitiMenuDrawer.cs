@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(-50)]
 public class GraffitiMenuDrawer : MonoBehaviour
 {
     [Header("Referencias")]
@@ -21,6 +22,7 @@ public class GraffitiMenuDrawer : MonoBehaviour
     public float drawDistance = 3f;
     public float selectDistance = 3f;
     public float surfaceOffset = 0.02f;
+    [Range(1f, 8f)] public float menuScaleMultiplier = 1f;
 
     [Header("Tag opcional")]
     public bool requireWallTag = false;
@@ -30,9 +32,19 @@ public class GraffitiMenuDrawer : MonoBehaviour
     GraffitiDrawnMenuButton currentHover;
     GraffitiColorWheel currentColorWheel;
     GraffitiColorValueSlider currentValueSlider;
+    bool previousCanMove;
+    int closedFrame = -1;
+
+    public bool IsMenuOpen => currentMenu != null;
+    public bool ClosedThisFrame => closedFrame == Time.frameCount;
 
     void Update()
     {
+        if (currentMenu != null && fps != null && !fps.IsGraffitiMode())
+        {
+            CloseMenu();
+            return;
+        }
         if (currentMenu != null && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseMenu();
@@ -78,6 +90,9 @@ public class GraffitiMenuDrawer : MonoBehaviour
         if (currentMenu == null)
             currentMenu = menuObj.AddComponent<GraffitiDrawMenu>();
 
+        currentMenu.SetPresentationScale(menuScaleMultiplier);
+        currentMenu.BindPainter(painter);
+
         if (painter != null)
         {
             painter.menuOpen = true;
@@ -89,6 +104,7 @@ public class GraffitiMenuDrawer : MonoBehaviour
 
         if (fps != null)
         {
+            previousCanMove = fps.canMove;
             fps.canMove = false;
             fps.focusMode = false;
         }
@@ -101,7 +117,8 @@ public class GraffitiMenuDrawer : MonoBehaviour
             return false;
 
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        if (!Physics.Raycast(ray, out hit, drawDistance, paintableLayer))
+        float effectiveDistance = painter != null ? Mathf.Max(drawDistance, painter.MaximumPaintDistance) : drawDistance;
+        if (!Physics.Raycast(ray, out hit, effectiveDistance, paintableLayer))
             return false;
 
         return !requireWallTag || hit.collider.CompareTag(wallTag);
@@ -111,14 +128,15 @@ public class GraffitiMenuDrawer : MonoBehaviour
     {
         if (cam == null || currentMenu == null) return;
 
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        Ray ray = GetSelectionRay(Input.mousePosition);
         RaycastHit hit;
 
         GraffitiDrawnMenuButton button = null;
         GraffitiColorWheel colorWheel = null;
         GraffitiColorValueSlider valueSlider = null;
 
-        if (Physics.Raycast(ray, out hit, selectDistance, menuLayer))
+        float effectiveDistance = painter != null ? Mathf.Max(selectDistance, painter.MaximumPaintDistance) : selectDistance;
+        if (Physics.Raycast(ray, out hit, effectiveDistance, menuLayer))
         {
             button = hit.collider.GetComponentInParent<GraffitiDrawnMenuButton>();
             if (button == null)
@@ -197,6 +215,10 @@ public class GraffitiMenuDrawer : MonoBehaviour
 
     public void CloseMenu()
     {
+        if (currentMenu == null)
+            return;
+
+        closedFrame = Time.frameCount;
         if (currentHover != null)
         {
             currentHover.SetHover(false);
@@ -225,7 +247,14 @@ public class GraffitiMenuDrawer : MonoBehaviour
             painter.menuOpen = false;
 
         if (fps != null)
-            fps.canMove = true;
+            fps.canMove = previousCanMove;
+    }
+
+    public Ray GetSelectionRay(Vector2 screenPosition) => cam.ScreenPointToRay(screenPosition);
+
+    void OnDisable()
+    {
+        CloseMenu();
     }
 
     void RefreshNozzleSelection()

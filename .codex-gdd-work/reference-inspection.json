@@ -1,0 +1,5842 @@
+{
+  "path": "C:\\Users\\alons\\Downloads\\FlowState_GDD.docx",
+  "sha256": "9723f1357d296090863cc1f0810addd4dcf843ce9a51b3f75b1ff7e8e95d93fa",
+  "paragraph_count": 193,
+  "table_count": 30,
+  "inline_shape_count": 6,
+  "sections": [
+    {
+      "page_width": {
+        "pt": 595.3,
+        "in": 8.268055555555556
+      },
+      "page_height": {
+        "pt": 841.9,
+        "in": 11.693055555555556
+      },
+      "left_margin": {
+        "pt": 45.35,
+        "in": 0.6298611111111111
+      },
+      "right_margin": {
+        "pt": 45.35,
+        "in": 0.6298611111111111
+      },
+      "top_margin": {
+        "pt": 41.1,
+        "in": 0.5708333333333333
+      },
+      "bottom_margin": {
+        "pt": 38.25,
+        "in": 0.53125
+      },
+      "header_distance": {
+        "pt": 36.0,
+        "in": 0.5
+      },
+      "footer_distance": {
+        "pt": 36.0,
+        "in": 0.5
+      },
+      "different_first_page": true,
+      "start_type": "NEW_PAGE (2)"
+    }
+  ],
+  "styles": {
+    "Normal": {
+      "name": "normal",
+      "type": "PARAGRAPH (1)",
+      "base_style": null,
+      "font_name": null,
+      "font_size": null,
+      "bold": null,
+      "italic": null,
+      "color": null,
+      "alignment": "None",
+      "space_before": null,
+      "space_after": null,
+      "line_spacing": "None",
+      "keep_with_next": null,
+      "keep_together": null,
+      "page_break_before": null,
+      "left_indent": null,
+      "first_line_indent": null
+    },
+    "Title": {
+      "name": "Title",
+      "type": "PARAGRAPH (1)",
+      "base_style": "normal",
+      "font_name": "Calibri",
+      "font_size": {
+        "pt": 26.0,
+        "in": 0.3611111111111111
+      },
+      "bold": null,
+      "italic": null,
+      "color": "17365D",
+      "alignment": "None",
+      "space_before": null,
+      "space_after": {
+        "pt": 15.0,
+        "in": 0.20833333333333334
+      },
+      "line_spacing": "1.0",
+      "keep_with_next": null,
+      "keep_together": null,
+      "page_break_before": null,
+      "left_indent": null,
+      "first_line_indent": null
+    },
+    "Heading 1": {
+      "name": "Heading 1",
+      "type": "PARAGRAPH (1)",
+      "base_style": "normal",
+      "font_name": "Arial",
+      "font_size": {
+        "pt": 14.0,
+        "in": 0.19444444444444445
+      },
+      "bold": true,
+      "italic": null,
+      "color": "111827",
+      "alignment": "None",
+      "space_before": {
+        "pt": 24.0,
+        "in": 0.3333333333333333
+      },
+      "space_after": {
+        "pt": 0.0,
+        "in": 0.0
+      },
+      "line_spacing": "None",
+      "keep_with_next": true,
+      "keep_together": true,
+      "page_break_before": null,
+      "left_indent": null,
+      "first_line_indent": null
+    },
+    "Heading 2": {
+      "name": "Heading 2",
+      "type": "PARAGRAPH (1)",
+      "base_style": "normal",
+      "font_name": "Arial",
+      "font_size": {
+        "pt": 13.0,
+        "in": 0.18055555555555555
+      },
+      "bold": true,
+      "italic": null,
+      "color": "111827",
+      "alignment": "None",
+      "space_before": {
+        "pt": 10.0,
+        "in": 0.1388888888888889
+      },
+      "space_after": {
+        "pt": 0.0,
+        "in": 0.0
+      },
+      "line_spacing": "None",
+      "keep_with_next": true,
+      "keep_together": true,
+      "page_break_before": null,
+      "left_indent": null,
+      "first_line_indent": null
+    },
+    "Heading 3": {
+      "name": "Heading 3",
+      "type": "PARAGRAPH (1)",
+      "base_style": "normal",
+      "font_name": "Arial",
+      "font_size": null,
+      "bold": true,
+      "italic": null,
+      "color": "111827",
+      "alignment": "None",
+      "space_before": {
+        "pt": 10.0,
+        "in": 0.1388888888888889
+      },
+      "space_after": {
+        "pt": 0.0,
+        "in": 0.0
+      },
+      "line_spacing": "None",
+      "keep_with_next": true,
+      "keep_together": true,
+      "page_break_before": null,
+      "left_indent": null,
+      "first_line_indent": null
+    }
+  },
+  "paragraphs": [
+    {
+      "index": 3,
+      "style": "normal",
+      "text": "ÍNDICE",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "ÍNDICE",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": {
+            "pt": 14.0,
+            "in": 0.19444444444444445
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "\n",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "style": "Heading 1",
+      "text": "1. Ficha técnica y resumen ejecutivo",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "1. ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Ficha técnica y resumen ejecutivo\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "style": "Heading 2",
+      "text": "Resumen ejecutivo",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Resumen ejecutivo\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "style": "normal",
+      "text": "Flow State es una aventura narrativa de sigilo, parkour y expresión urbana donde el graffiti funciona como lenguaje, herramienta de exploración y sistema de consecuencia. El jugador encarna a Maikol \"Maik\" Hernández, un joven chileno que viajó a Estados Unidos para escapar del ruido político y la opresión dejando atrás a su familia a muy temprana edad.. En Nueva York descubre el graffiti como una forma de existir: escribir un nombre, ocupar una superficie y transformar el miedo en estilo.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Flow State es una aventura narrativa de sigilo, parkour y expresión urbana donde el graffiti funciona como lenguaje, herramienta de exploración y sistema de consecuencia. El jugador encarna a Maikol \"Maik\" Hernández, un joven chileno que viajó a Estados Unidos para escapar del ruido político y la opresión dejando atrás a su familia a muy temprana edad.. En Nueva York descubre el graffiti como una forma de existir: escribir un nombre, ocupar una superficie y transformar el miedo en estilo.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "style": "normal",
+      "text": "Años después, Maikol vuelve a un Santiago ficcional de cambio de siglo, una ciudad que intenta verse moderna, limpia y pura mientras roba, manipula y criminaliza toda marca que no controle. La campaña municipal Ciudad Clara promete orden y seguridad, pero detrás de su imagen pública opera una red de vigilancia, manipulación mediática y abuso institucional. Maikol regresa creyendo que puede pintar para ser reconocido, pero descubre que en una ciudad que borra selectivamente, incluso una firma puede convertirse en declaración.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Años después, Maikol vuelve a un Santiago ficcional de cambio de siglo, una ciudad que intenta verse moderna, limpia y pura mientras roba, manipula y criminaliza toda marca que no controle. La campaña municipal Ciudad Clara promete orden y seguridad, pero detrás de su imagen pública opera una red de vigilancia, manipulación mediática y abuso institucional. Maikol regresa creyendo que puede pintar para ser reconocido, pero descubre que en una ciudad que borra selectivamente, incluso una firma puede convertirse en declaración.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "style": "normal",
+      "text": "El mensaje central del proyecto es defender el arte libre como una fuerza creativa que no se reduce a propaganda, vandalismo o decoración. Flow State no obliga al jugador a elegir un único discurso correcto: le permite experimentar con fama, estilo, comunidad, denuncia, silencio, reparación y contradicción. La libertad artística se expresa en la posibilidad de decidir qué pintar, dónde pintarlo, cómo ejecutarlo y qué costó aceptar cuando la ciudad responde.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El mensaje central del proyecto es defender el arte libre como una fuerza creativa que no se reduce a propaganda, vandalismo o decoración. Flow State no obliga al jugador a elegir un único discurso correcto: le permite experimentar con fama, estilo, comunidad, denuncia, silencio, reparación y contradicción. La libertad artística se expresa en la posibilidad de decidir qué pintar, dónde pintarlo, cómo ejecutarlo y qué costó aceptar cuando la ciudad responde.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "style": "normal",
+      "text": "La innovación principal está en convertir el graffiti en un sistema jugable profundo. Cada pieza se construye por capas, boceto, relleno, outline, sombra, brillo, stencil, sticker, tag final, etc. El muro es un lienzo de interacción, social y narrativa. Puede gotear, fallar, cubrirse, ser limpiado, ser tapado por rivales, convertirse en evidencia, inspirar a vecinos o aumentar la persecución.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La innovación principal está en convertir el graffiti en un sistema jugable profundo. Cada pieza se construye por capas, boceto, relleno, outline, sombra, brillo, stencil, sticker, tag final, etc. El muro es un lienzo de interacción, social y narrativa. Puede gotear, fallar, cubrirse, ser limpiado, ser tapado por rivales, convertirse en evidencia, inspirar a vecinos o aumentar la persecución.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "style": "normal",
+      "text": "El loop central une creatividad y riesgo: leer el barrio, elegir una intención, planear una ruta, infiltrarse, pintar manualmente, escapar y observar la consecuencia. El estado de Flow aparece cuando el jugador encadena movimiento, sigilo y trazar con precisión: el sonido se comprime, la ciudad se vuelve legible, la mano se estabiliza y la obra alcanza mayor calidad. Así, Flow State propone una fantasía de autoría: dejar una huella propia en una ciudad que se resiste a recordarla.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El loop central une creatividad y riesgo: leer el barrio, elegir una intención, planear una ruta, infiltrarse, pintar manualmente, escapar y observar la consecuencia. El estado de Flow aparece cuando el jugador encadena movimiento, sigilo y trazar con precisión: el sonido se comprime, la ciudad se vuelve legible, la mano se estabiliza y la obra alcanza mayor calidad. Así, Flow State propone una fantasía de autoría: dejar una huella propia en una ciudad que se resiste a recordarla.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "style": "normal",
+      "text": "2. Producción multimedia y responsabilidades",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "2",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 14.0,
+            "in": 0.19444444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "111827",
+          "fonts": null
+        },
+        {
+          "text": "Producción multimedia y responsabilidades",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": {
+            "pt": 14.0,
+            "in": 0.19444444444444445
+          },
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "style": "Heading 1",
+      "text": "3. Diseño de experiencia",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "3",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Diseño de experiencia\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "style": "normal",
+      "text": "La experiencia debe sentirse como una negociación constante entre impulso creativo y responsabilidad. El jugador no solo quiere pintar el lugar más visible; también debe preguntarse qué historia tiene ese muro, quién vive alrededor, qué riesgo trae intervenir y qué relato construirá la prensa después. El objetivo es que cada misión tenga una tensión simple de leer y difícil de resolver: expresarse sin perder el vínculo con la ciudad.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La experiencia debe sentirse como una negociación constante entre impulso creativo y responsabilidad. El jugador no solo quiere pintar el lugar más visible; también debe preguntarse qué historia tiene ese muro, quién vive alrededor, qué riesgo trae intervenir y qué relato construirá la prensa después. El objetivo es que cada misión tenga una tensión simple de leer y difícil de resolver: expresarse sin perder el vínculo con la ciudad.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "style": "Heading 2",
+      "text": "Acto emocional de una misión",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\nActo emocional de una misión\n ",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "style": "Heading 2",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "style": "Heading 2",
+      "text": "CoreLoop",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "CoreLoop\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "\n\n\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "style": "Heading 2",
+      "text": "ScreenFlow",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "ScreenFlow\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "\n \t\n\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "style": "Heading 2",
+      "text": "Gameflow",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Gameflow \n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "style": "Heading 2",
+      "text": "Look And feeling",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Look And feeling",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": {
+            "pt": 13.0,
+            "in": 0.18055555555555555
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "style": "normal",
+      "text": "Flow State debe sentirse como una mezcla entre energía urbana, exploración nocturna y tensión. La ciudad tiene una base gris, fría y desgastada: concreto húmedo, rejas oxidadas, persianas metálicas, cables, blocks, señaléticas viejas, pasos bajo nivel, paraderos rayados y muros cubiertos por capas de pintura. Sobre ese mundo apagado aparece el graffiti como una explosión de color, identidad y conflicto.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Flow State debe sentirse como una mezcla entre energía urbana, exploración nocturna y tensión. La ciudad tiene una base gris, fría y desgastada: concreto húmedo, rejas oxidadas, persianas metálicas, cables, blocks, señaléticas viejas, pasos bajo nivel, paraderos rayados y muros cubiertos por capas de pintura. Sobre ese mundo apagado aparece el graffiti como una explosión de color, identidad y conflicto.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "style": "normal",
+      "text": "La dirección visual propone un estilo High-Fi Low Poly: escenarios de geometría simple y clara, pero enriquecidos con texturas, decals, suciedad, afiches, stickers, humedad, papel rasgado y pintura descascarada. Santiago no debe verse como una copia realista, sino como una reinterpretación emocional de sus barrios, techos, rutas y tensiones.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La dirección visual propone un estilo High-Fi Low Poly: escenarios de geometría simple y clara, pero enriquecidos con texturas, decals, suciedad, afiches, stickers, humedad, papel rasgado y pintura descascarada. Santiago no debe verse como una copia realista, sino como una reinterpretación emocional de sus barrios, techos, rutas y tensiones.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "style": "normal",
+      "text": "La paleta base se compone de grises azulados, negro asfalto, blanco sucio, verde oxidado, metal opaco y luz naranjo sodio. El graffiti rompe esa base con fucsia, cian, verde lima, violeta, amarillo ácido, rojo spray, chrome plateado y blanco marcador. Esta diferencia hace que cada intervención del jugador destaque visualmente y se sienta como una marca viva sobre una ciudad que intenta apagarse.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La paleta base se compone de grises azulados, negro asfalto, blanco sucio, verde oxidado, metal opaco y luz naranjo sodio. El graffiti rompe esa base con fucsia, cian, verde lima, violeta, amarillo ácido, rojo spray, chrome plateado y blanco marcador. Esta diferencia hace que cada intervención del jugador destaque visualmente y se sienta como una marca viva sobre una ciudad que intenta apagarse.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "style": "normal",
+      "text": "La iluminación debe reforzar el riesgo: faroles débiles, vitrinas cerradas, luces de patrulla, neones baratos, ventanas encendidas y reflejos sobre pavimento húmedo. La noche no es sólo estética, también es una herramienta jugable para esconderse, moverse y encontrar rutas.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La iluminación debe reforzar el riesgo: faroles débiles, vitrinas cerradas, luces de patrulla, neones baratos, ventanas encendidas y reflejos sobre pavimento húmedo. La noche no es sólo estética, también es una herramienta jugable para esconderse, moverse y encontrar rutas.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "style": "normal",
+      "text": "La experiencia de pintar debe sentirse manual, tensa y personal. Al acercarse a un muro, el ritmo baja: se escucha la respiración, el aerosol, el goteo, la lata moviéndose y los sonidos lejanos de la ciudad. Cada segundo pintando es un segundo de exposición. Cuando el jugador encadena movimiento, sigilo y pintura con precisión, entra en Flow State: el sonido se comprime, las rutas se vuelven más claras, el trazo mejora y la cámara se siente más fluida.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La experiencia de pintar debe sentirse manual, tensa y personal. Al acercarse a un muro, el ritmo baja: se escucha la respiración, el aerosol, el goteo, la lata moviéndose y los sonidos lejanos de la ciudad. Cada segundo pintando es un segundo de exposición. Cuando el jugador encadena movimiento, sigilo y pintura con precisión, entra en Flow State: el sonido se comprime, las rutas se vuelven más claras, el trazo mejora y la cámara se siente más fluida.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "style": "normal",
+      "text": "La interfaz debe parecer parte del mundo. En lugar de menús limpios, la UI puede verse como fanzines, stickers, mapas doblados, recortes de prensa, señaléticas intervenidas o menús pintados directamente sobre muros. Todo debe reforzar la idea de que Maicol entiende la ciudad a través de marcas, rumores y superficies.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La interfaz debe parecer parte del mundo. En lugar de menús limpios, la UI puede verse como fanzines, stickers, mapas doblados, recortes de prensa, señaléticas intervenidas o menús pintados directamente sobre muros. Todo debe reforzar la idea de que Maicol entiende la ciudad a través de marcas, rumores y superficies.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "style": "normal",
+      "text": "El tono general combina adrenalina, nostalgia y rabia contenida. Flow State debe verse como un juego de graffiti, pero sentirse como una historia sobre una ciudad que intenta borrar su memoria y un protagonista que debe decidir qué vale la pena escribir sobre ella.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El tono general combina adrenalina, nostalgia y rabia contenida. Flow State debe verse como un juego de graffiti, pero sentirse como una historia sobre una ciudad que intenta borrar su memoria y un protagonista que debe decidir qué vale la pena escribir sobre ella.\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Diseño de experiencia",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Diseño de experiencia",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n\n",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": "000000",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "style": "Heading 1",
+      "text": "4. Diseño narrativo",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "4",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Diseño narrativo ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "style": "normal",
+      "text": "Maikol “Maik” Hernández nace en un Chile donde la vida doméstica está atravesada por el miedo, la presión política y el silencio. En su casa, las conversaciones se interrumpen, los recuerdos se esconden y ciertos símbolos deben desaparecer antes de llamar demasiado la atención. Cuando la tensión económica y familiar se vuelve insostenible, Maikol es enviado a Estados Unidos siendo todavía muy joven, dejando atrás un país que apenas alcanza a comprender.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Maikol “Maik” Hernández nace en un Chile donde la vida doméstica está atravesada por el miedo, la presión política y el silencio. En su casa, las conversaciones se interrumpen, los recuerdos se esconden y ciertos símbolos deben desaparecer antes de llamar demasiado la atención. Cuando la tensión económica y familiar se vuelve insostenible, Maikol es enviado a Estados Unidos siendo todavía muy joven, dejando atrás un país que apenas alcanza a comprender.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "style": "normal",
+      "text": "En Nueva York, la ciudad que nunca duerma, Maik descubre el graffiti como una forma de existencia. Los trenes, rooftops, tags y crews le enseñan que escribir un nombre en la ciudad puede ser una manera de resistir al olvido. Aprende técnica, velocidad y orgullo, pero también desarrolla una visión individualista: cree que si su firma se vuelve lo suficientemente grande, no necesitará pertenecer a ningún lugar. Su nombre se transforma en una armadura contra el desarraigo.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "En Nueva York, la ciudad que nunca duerma, Maik descubre el graffiti como una forma de existencia. Los trenes, rooftops, tags y crews le enseñan que escribir un nombre en la ciudad puede ser una manera de resistir al olvido. Aprende técnica, velocidad y orgullo, pero también desarrolla una visión individualista: cree que si su firma se vuelve lo suficientemente grande, no necesitará pertenecer a ningún lugar. Su nombre se transforma en una armadura contra el desarraigo.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "style": "normal",
+      "text": "Años después, Maik regresa a Santiago, tras recorrer la ciudad conoce a Nadir, quien se volvería su primer amigo en un entorno nuevo, quien le muestra cómo la campaña municipal Ciudad Clara está borrando murales, persiguiendo crews y transformando la ciudad en una imagen limpia, controlada y vendible. Maik vuelve creyendo que trae un lenguaje superior, influenciado por la escena neoyorquina, pero pronto descubre que Santiago posee códigos propios que no entiende del todo. En la escena local, un muro no es solo una superficie: puede ser memoria, duelo, respeto, advertencia o defensa barrial.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Años después, Maik regresa a Santiago, tras recorrer la ciudad conoce a Nadir, quien se volvería su primer amigo en un entorno nuevo, quien le muestra cómo la campaña municipal Ciudad Clara está borrando murales, persiguiendo crews y transformando la ciudad en una imagen limpia, controlada y vendible. Maik vuelve creyendo que trae un lenguaje superior, influenciado por la escena neoyorquina, pero pronto descubre que Santiago posee códigos propios que no entiende del todo. En la escena local, un muro no es solo una superficie: puede ser memoria, duelo, respeto, advertencia o defensa barrial.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "style": "normal",
+      "text": "Nadir introduce a Maik en esta realidad y le muestra que el graffiti chileno no se limita a la fama ni a la competencia. También puede funcionar como archivo popular, humor, protesta y cuidado comunitario. Vela, una muralista vinculada a organizaciones vecinales, tensiona aún más su mirada al exigirle que escuche los muros antes de intervenirlos. Para ella, pintar sin comprender el territorio puede convertirse en otra forma de borramiento.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Nadir introduce a Maik en esta realidad y le muestra que el graffiti chileno no se limita a la fama ni a la competencia. También puede funcionar como archivo popular, humor, protesta y cuidado comunitario. Vela, una muralista vinculada a organizaciones vecinales, tensiona aún más su mirada al exigirle que escuche los muros antes de intervenirlos. Para ella, pintar sin comprender el territorio puede convertirse en otra forma de borramiento.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "style": "normal",
+      "text": "Con esto comienza en buscar su primer objetivo, creando su propia crew la cual lo ayudarían a desafiar a los grupos rivales, obteniendo sus territorios para probar sus habilidades mientras busca su camino y propósito, mientras alardea de sus habilidades en centros de seguridad, sitios resguardados y lugares públicos, generando un ojo que siga sus movimientos.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Con esto comienza en buscar su primer objetivo, creando su propia crew la cual lo ayudarían a desafiar a los grupos rivales, obteniendo sus territorios para probar sus habilidades mientras busca su camino y propósito, mientras alardea de sus habilidades en centros de seguridad, sitios resguardados y lugares públicos, generando un ojo que siga sus movimientos.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "style": "normal",
+      "text": "El conflicto se intensifica cuando Nadir muere o desaparece durante un operativo que busca mostrar que las fuerzas corruptas tienen el dominio. Desde ese momento, Maik ya no puede refugiarse en la idea de que “solo quiere pintar”. Comprende que su arte siempre tiene consecuencias: si pinta únicamente por fama, el sistema puede convertirlo en espectáculo; si pinta solo consignas, corre el riesgo de usar el dolor colectivo como propaganda. Su desafío será encontrar una tercera vía.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El conflicto se intensifica cuando Nadir muere o desaparece durante un operativo que busca mostrar que las fuerzas corruptas tienen el dominio. Desde ese momento, Maik ya no puede refugiarse en la idea de que “solo quiere pintar”. Comprende que su arte siempre tiene consecuencias: si pinta únicamente por fama, el sistema puede convertirlo en espectáculo; si pinta solo consignas, corre el riesgo de usar el dolor colectivo como propaganda. Su desafío será encontrar una tercera vía.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "style": "normal",
+      "text": "El arco de Maik consiste en transformar su ego artístico en una voz propia, libre y responsable. Debe aprender que pertenecer no significa perder identidad, y que expresarse no significa ignorar la memoria de otros. En una ciudad donde el poder intenta borrar todo aquello que incomoda, el graffiti se convierte en lenguaje, archivo y resistencia.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El arco de Maik consiste en transformar su ego artístico en una voz propia, libre y responsable. Debe aprender que pertenecer no significa perder identidad, y que expresarse no significa ignorar la memoria de otros. En una ciudad donde el poder intenta borrar todo aquello que incomoda, el graffiti se convierte en lenguaje, archivo y resistencia.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "style": "normal",
+      "text": "Flow State cuenta la historia de un artista que vuelve buscando imponer su nombre, pero termina descubriendo que pintar también puede ser una forma de devolver presencia a quienes fueron silenciados.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Flow State",
+          "bold": null,
+          "italic": true,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " cuenta la historia de un artista que vuelve buscando imponer su nombre, pero termina descubriendo que pintar también puede ser una forma de devolver presencia a quienes fueron silenciados.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "style": "Heading 2",
+      "text": "Premisa dramática",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Premisa dramática",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "style": "normal",
+      "text": "En un Santiago ficcional de fines de los noventa y comienzos de los 2000, una campaña municipal llamada Ciudad Clara busca limpiar la ciudad, borrar murales, perseguir crews y convertir los barrios en espacios ordenados, vendibles y controlados. Aunque se presenta como una iniciativa de seguridad y embellecimiento urbano, en realidad funciona como una maquinaria de borramiento visual y social.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "En un Santiago ficcional de fines de los noventa y comienzos de los 2000",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        },
+        {
+          "text": ", una campaña municipal llamada Ciudad Clara busca limpiar la ciudad, borrar murales, perseguir crews y convertir los barrios en espacios ordenados, vendibles y controlados. Aunque se presenta como una iniciativa de seguridad y embellecimiento urbano, en realidad funciona como una maquinaria de borramiento visual y social.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "style": "normal",
+      "text": "Ciudad Clara elimina obras comunitarias, instala vigilancia, oculta información, manipula incidentes y usa a los medios para presentar el grafiti como una amenaza. Detrás de la campaña aparecen intereses institucionales, inmobiliarios y políticos que buscan controlar la ciudad.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Ciudad Clara elimina obras comunitarias, instala vigilancia, oculta información, manipula incidentes y usa a los medios para presentar el grafiti como una amenaza. Detrás de la campaña aparecen intereses institucionales, inmobiliarios y políticos que buscan controlar la ciudad.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "style": "normal",
+      "text": "Maicol entra a esta escena buscando ganar nombre, pero pronto descubre que sus obras pueden ser usadas en su contra, deformadas por la prensa o convertidas en símbolos de algo mayor. Una firma puede darle fama, pero también puede afectar a un barrio.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Maicol entra a esta escena buscando ganar nombre, pero pronto descubre que sus obras pueden ser usadas en su contra, deformadas por la prensa o convertidas en símbolos de algo mayor. Una firma puede darle fama, pero también puede afectar a un barrio.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "style": "Heading 2",
+      "text": "Estructura narrativa por actos",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Estructura narrativa por actos",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "style": "Heading 2",
+      "text": "Ambientes narrativos claves",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Ambientes narrativos claves\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "style": "Heading 2",
+      "text": "Personajes principales",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Personajes principales",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "style": "normal",
+      "text": "(diseño y concept art principal de maikol 3D)",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": " ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 7.0,
+            "in": 0.09722222222222222
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "(diseño y concept art principal de maikol 3D)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "style": "normal",
+      "text": "(diseño y concept art principal de maikol)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\t\t\t\t\t ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 7.0,
+            "in": 0.09722222222222222
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "(diseño y concept art principal de maikol)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "style": "normal",
+      "text": "(diseño y concept art principal de personajes secundarios/facciones)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "           ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 7.0,
+            "in": 0.09722222222222222
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "(diseño y concept art principal de personajes secundarios/facciones)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "style": "Heading 2",
+      "text": "Facciones y relaciones",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Facciones y relaciones ",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "style": "normal",
+      "text": "El crew del protagonista es un grupo flexible que mezcla bombing, fanzine, parkour, muralismo y música. Sus integrantes no siempre comparten la misma visión, lo que genera dilemas internos y decisiones narrativas.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El crew del protagonista es un grupo flexible que mezcla bombing, fanzine, parkour, muralismo y música. Sus integrantes no siempre comparten la misma visión, lo que genera dilemas internos y decisiones narrativas.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "style": "normal",
+      "text": "Las crews rivales defienden su territorio y reputación, pero no son enemigos planos. Pueden enfrentarse al jugador o colaborar con él si logra ganar respeto y suficiente reputación.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Las crews rivales defienden su territorio y reputación, pero no son enemigos planos. Pueden enfrentarse al jugador o colaborar con él si logra ganar respeto y suficiente reputación.\t",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 65,
+      "style": "normal",
+      "text": "Los muralistas y organizaciones barriales reaccionan según el tipo de intervención realizada. Al crear murales significativos y ganar reputación, el jugador desbloquea nuevos puntos de graffiti, atajos y vínculos comunitarios.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Los muralistas y organizaciones barriales reaccionan según el tipo de intervención realizada. Al crear murales significativos y ganar reputación, el jugador desbloquea nuevos puntos de graffiti, atajos y vínculos comunitarios.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 66,
+      "style": "normal",
+      "text": "Ciudad Clara funciona como la amenaza principal: una fuerza anti-graffiti corrupta y violenta que persigue writers, borran murales y mantiene presión constante durante el juego",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Ciudad Clara funciona como la amenaza principal: una fuerza anti-graffiti corrupta y violenta que persigue writers, ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "borran murales y mantiene presión constante durante el juego",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 68,
+      "style": "normal",
+      "text": "(Diagrama de sistema de facciones)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "    \t ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 7.0,
+            "in": 0.09722222222222222
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "(Diagrama de sistema de facciones)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 69,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Narrativa",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\nReferentes de apoyo - Narrativa",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 70,
+      "style": "Heading 1",
+      "text": "5. Mecánicas",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " 5",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Mecánicas\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 71,
+      "style": "normal",
+      "text": "Las mecánicas deben demostrar que el graffiti no es un minijuego aislado, sino el sistema central que conecta expresión, riesgo, mundo y progresión. El movimiento permite llegar al muro; el sigilo protege la pieza; el flow mejora precisión; la reputación registra el efecto de lo pintado. El sistema de graffiti debe tener profundidad suficiente para sostener la identidad del juego. No se trata de dibujar libremente sin reglas ni de presionar un botón para completar una pieza. La propuesta combina habilidad manual, lectura del entorno, composición visual y consecuencias sociales.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Las mecánicas deben demostrar que el graffiti no es un minijuego aislado, sino el sistema central que conecta expresión, riesgo, mundo y progresión. El movimiento permite llegar al muro; el sigilo protege la pieza; el flow mejora precisión; la reputación registra el efecto de lo pintado. ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "El sistema de graffiti debe tener profundidad suficiente para sostener la identidad del juego. No se trata de dibujar libremente sin reglas ni de presionar un botón para completar una pieza. La propuesta combina habilidad manual, lectura del entorno, composición visual y consecuencias sociales.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": "101725",
+          "fonts": null
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 72,
+      "style": "Heading 2",
+      "text": "Sistema de graffiti",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Sistema de graffiti",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 73,
+      "style": "normal",
+      "text": "(diseño mecánico principal de vista en Primera Persona)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": " (diseño mecánico principal de vista en Primera Persona)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 76,
+      "style": "normal",
+      "text": "(diseño mecánico principal de boquilla Lienzo Prefab)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": " (diseño mecánico principal de boquilla Lienzo Prefab)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 78,
+      "style": "normal",
+      "text": "(diseño mecánico principal de menú interactivo en espacios específicos para seleccionar boquilla, color y grosor)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": " (diseño mecánico principal de menú interactivo en espacios específicos para seleccionar boquilla, color y grosor)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 84,
+      "style": "normal",
+      "text": "(diseño mecánico principal de vista y pintura con diferentes colores y grosores)",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": " (diseño mecánico principal de",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": " vista y pintura con diferentes colores y grosores",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": ")",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 86,
+      "style": "Heading 2",
+      "text": "Sistemas complementarios",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Sistemas complementarios\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 90,
+      "style": "normal",
+      "text": "(Diagrama de mecánicas principales)",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "\t\t\t\t\t\n",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": null
+        },
+        {
+          "text": "(Diagrama de mecánicas principales)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 91,
+      "style": "normal",
+      "text": "(Diagrama de inputs principales)",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": "\n",
+          "bold": false,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": null
+        },
+        {
+          "text": "(Diagrama de inputs principales)",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 8.0,
+            "in": 0.1111111111111111
+          },
+          "color": "999999",
+          "fonts": null
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 94,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Mecánicas",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Mecánicas",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 95,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 96,
+      "style": "Heading 1",
+      "text": "6. Estructura de juego",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "6",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Estructura de juego\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 97,
+      "style": "normal",
+      "text": "La estructura combina campaña narrativa, barrios semiabiertos y misiones de intervención Cada barrio funciona como un ecosistema con spots, rutas, vigilancia, crews, vecinos y memoria visual. El jugador no avanza solo por superar pruebas, sino por entender el territorio y modificarlo de forma legible.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La estructura combina campaña narrativa, barrios ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "semiabiertos",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " y misiones de ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "intervención ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Cada barrio funciona como un ecosistema con spots, rutas, vigilancia, crews, vecinos y memoria visual. El jugador no avanza solo por superar pruebas, sino por entender el territorio y modificarlo de forma legible.\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 98,
+      "style": "Heading 2",
+      "text": "Progresión y finales",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Progresión y finales\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 100,
+      "style": "Heading 3",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n\n\n\n\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 101,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Estructura de juego",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Estructura de juego\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 102,
+      "style": "Heading 1",
+      "text": "7. Dirección de arte",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "7",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Dirección de arte\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 103,
+      "style": "normal",
+      "text": "Flow State debe sentirse como una mezcla de memoria urbana chilena, cultura Y2K, stickers sobre señaléticas, ropa oversize y graffiti saturado, etc. El objetivo no es copiar una ciudad real, sino construir un Santiago reconocible por sensación: rejas, cerros, blocks, micros, persianas metálicas, pasajes y techos, ademàs de que como se menciona anteriormente, el pilar principal en la decisión de diseño se basa en el estilo High-Fi LowPoly, puesto que es un estilo que logra sobresalir de un mercado actual lleno de fotorealismo, sin mencionar que logra encajar perfectamente en nuestra visión y con el mismo contexto narrativo.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Flow State debe sentirse como una mezcla de memoria urbana chilena, cultura Y2K, stickers sobre señaléticas, ropa oversize y graffiti saturado, etc. El objetivo no es copiar una ciudad real, sino construir un Santiago reconocible por ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "sensación",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ": rejas, cerros, blocks, micros, persianas ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "metálicas",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ", pasajes y techos, adem",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "às de que como se menciona anteriormente, el pilar principal en la decisión de diseño se basa en el estilo High-Fi LowPoly, puesto que es un estilo que logra sobresalir de un mercado actual lleno de fotorealismo, sin mencionar que logra encajar perfectamente en nuestra visión y con el mismo contexto narrativo",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". \n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 104,
+      "style": "Heading 2",
+      "text": "Guía visual de producción",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\nGuía visual de producción\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 106,
+      "style": "normal",
+      "text": "(concept-art escenario y diseño )",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "999999",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "(concept-art escenario y diseño )",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "999999",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        }
+      ]
+    },
+    {
+      "index": 108,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Dirección de arte",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Dirección de arte\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 109,
+      "style": "Heading 1",
+      "text": "Diseño de niveles y escenarios",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Diseño de niveles y escenarios",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": {
+            "pt": 13.0,
+            "in": 0.18055555555555555
+          },
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 110,
+      "style": "normal",
+      "text": "Para la conformación de los niveles, escenarios y escenas que tendrá el juego a lo largo que transcurre la narrativa se consta de varias zonas a las cuales, el jugador podrá acceder únicamente tras cumplir con los requisitos necesarios como los sería tener la reputación suficiente, derrotar al jefe de la crew enemiga y completar el graffiti de crew.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Para la conformación de los niveles, escenarios y escenas que tendrá el juego a lo largo que transcurre la narrativa se consta de varias zonas a las cuales, el jugador podrá acceder únicamente tras cumplir con los requisitos necesarios como los sería tener la reputación suficiente, derrotar al jefe de la crew enemiga y completar el graffiti de crew.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 113,
+      "style": "normal",
+      "text": "En cuanto a sus diseños, las zonas tendrán un estilo urbano, variando con la estética de la narrativa y la crew dominante, el jugador tendrá acceso a distintos puntos en los que podría pintar como edificios, techos, zonas de interés o infiltración, de esta forma establecemos un límite para la producción de los entornos y de tener un entorno pulido e interactivo con el jugador.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "En cuanto a sus diseños, las zonas tendrán un estilo urbano, variando con la estética de la narrativa y la crew dominante, el jugador tendrá acceso a distintos puntos en los que podría pintar como edificios, techos, zonas de interés o infiltración, de esta forma establecemos un límite para la producción de los entornos y de tener un entorno pulido e interactivo con el jugador.",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 117,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "\n\n\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 118,
+      "style": "Heading 1",
+      "text": "8. Diseño sonoro",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "8",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Diseño sonoro\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 119,
+      "style": "normal",
+      "text": "El sonido debe comunicar tres capas al mismo tiempo: barrio, riesgo y mente. La música mezcla boom bap, hip-hop chileno, scratches, batería seca, radio pirata y texturas de casete. El aerosol no es solo efecto: es instrumento, metrónomo y feedback de precisión agregando una estética retro que va de la mano con la base de diseño High-Fi Low Poly",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El sonido debe comunicar tres capas al mismo tiempo: barrio, riesgo y mente. La música mezcla boom bap, hip-hop chileno",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": ", scratches",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ", batería seca, radio pirata y texturas de cas",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "ete",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". El aerosol no es solo efecto: es instrumento, metrónomo y feedback de precisión",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": " agregando una estética retro que va de la mano con la base de diseño High-Fi Low Poly",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 121,
+      "style": "normal",
+      "text": "LINK PRINCIPAL DE CARPETA CON BGM´s E INTRO DEL JUEGO:\nhttps://uandresbelloedu-my.sharepoint.com/:f:/g/personal/a_poncecristi_uandresbello_edu/IgDoJaK7SpnhTbsX3gWnzc0oAeR9-cFADyxch12Ny5TGshA?e=uvzw7T",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "LINK PRINCIPAL DE CARPETA CON BGM´s E INTRO DEL JUEGO:\nhttps://uandresbelloedu-my.sharepoint.com/:f:/g/personal/a_poncecristi_uandresbello_edu/IgDoJaK7SpnhTbsX3gWnzc0oAeR9-cFADyxch12Ny5TGshA?e=uvzw7T",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 123,
+      "style": "Heading 3",
+      "text": "Referentes de apoyo - Diseño sonoro",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Diseño sonoro\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 124,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 125,
+      "style": "Heading 1",
+      "text": "9. Diseño de interfaces",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "9",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Diseño de interfaces\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 126,
+      "style": "normal",
+      "text": "La interfaz de Flow State debe evitar la limpieza corporativa. Debe parecer pintada, fotocopiada, pegada, escaneada, rayada o proyectada desde un dispositivo antiguo. Al mismo tiempo, debe ser clara y funcional. La regla es: la UI debe pertenecer al mundo del juego, no flotar encima de él sin justificación.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La interfaz de Flow State debe evitar la limpieza corporativa. Debe parecer pintada, fotocopiada, pegada, escaneada, rayada o proyectada desde un dispositivo antiguo. Al mismo tiempo, debe ser clara y funcional. La regla es: la UI debe pertenecer al mundo del juego, no flotar encima de ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "él",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " sin ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "justificación",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ".\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 127,
+      "style": "Heading 2",
+      "text": "Menu diegetico de pintura",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Menu diegetico de pintura\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": {
+            "pt": 14.0,
+            "in": 0.19444444444444445
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 128,
+      "style": "normal",
+      "text": "Al apuntar a una superficie válida, el jugador puede desplegar un menú dibujado sobre muro o suelo.",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "Al apuntar a una superficie ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "válida",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ", el jugador puede desplegar un ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "menú",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " dibujado sobre muro o suelo.",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 129,
+      "style": "normal",
+      "text": "El menú muestra colores, boquillas y plantillas como iconos pintados, stickers o marcas rápidas.",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "El ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "menú",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " muestra colores, boquillas y plantillas como iconos pintados, stickers o marcas ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "rápidas",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ".",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 130,
+      "style": "normal",
+      "text": "La selección se realiza con cursor de spray/raycast para mantener la lógica de intervenir superficies.",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "La ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "selección",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " se realiza con cursor de spray/raycast para mantener la ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "lógica",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " de intervenir superficies.",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 131,
+      "style": "normal",
+      "text": "En persecución, el menú puede aparecer incompleto, gotear o vibrar, reforzando la presión.",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "En persecución, el ",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "menú",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " puede aparecer incompleto, gotear o vibrar, reforzando la presión.",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 132,
+      "style": "normal",
+      "text": ".",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "\n",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "\n",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "\n",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": "6B7280",
+          "fonts": null
+        },
+        {
+          "text": ".",
+          "bold": false,
+          "italic": false,
+          "font": "Arial",
+          "size": {
+            "pt": 9.5,
+            "in": 0.13194444444444445
+          },
+          "color": "000000",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 153,
+      "style": "normal",
+      "text": "(concept-art UI/HUD)",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": "(concept-art UI/HUD)",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "999999",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 155,
+      "style": "normal",
+      "text": "Referentes de apoyo - Diseño de interfaces",
+      "alignment": "LEFT (0)",
+      "runs": [
+        {
+          "text": "Referentes de apoyo - Diseño de interfaces\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 157,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 158,
+      "style": "Heading 1",
+      "text": "10. Diseño técnico, vertical slice y roadmap",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "1",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "0",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Diseño técnico, vertical slice y roadmap",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 159,
+      "style": "Heading 2",
+      "text": "Pilares técnicos",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Pilares técnicos\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 160,
+      "style": "Heading 2",
+      "text": "Vertical slice propuesto",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Vertical slice propuesto\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 161,
+      "style": "Heading 2",
+      "text": "Roadmap de desarrollo",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Roadmap de desarrollo\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 162,
+      "style": "normal",
+      "text": ".",
+      "alignment": "CENTER (1)",
+      "runs": [
+        {
+          "text": ".",
+          "bold": null,
+          "italic": true,
+          "font": "Arial",
+          "size": {
+            "pt": 8.5,
+            "in": 0.11805555555555555
+          },
+          "color": "6B7280",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 163,
+      "style": "Heading 1",
+      "text": "11. Riesgos y cierre conceptual",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "1",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "1",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ".",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": " Riesgos y cierre conceptual",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 164,
+      "style": "Heading 2",
+      "text": "Riesgos de diseño y soluciones",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Riesgos de diseño y soluciones\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 165,
+      "style": "Heading 2",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 166,
+      "style": "Heading 2",
+      "text": "Cierre conceptual",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Cierre conceptual\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 167,
+      "style": "normal",
+      "text": "Flow State es un juego sobre dejar una marca y hacerse cargo de ella. Su fuerza no está solamente en pintar bonito, sino en convertir cada muro en una pregunta: ¿quieres ser visto, quieres decir algo, quieres pertenecer o quieres cambiar lo que la ciudad intenta borrar?",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Flow State es un juego sobre dejar una marca y hacerse cargo de ella. Su fuerza no ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "está",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " solamente en pintar bonito, sino en convertir cada muro en una pregunta: ¿quieres ser visto, quieres decir algo, quieres pertenecer o quieres cambiar lo que la ciudad intenta borrar?",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 168,
+      "style": "normal",
+      "text": "La combinación central entre graffiti persistente, identidad híbrida, Santiago ficcional, estética Y2K/High-Fi Low Poly, sigilo urbano y consecuencias morales posiciona el proyecto como una experiencia con personalidad propia dentro del videojuego independiente latinoamericano.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "La ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "combinación",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "central entre ",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "graffiti persistente, identidad ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "híbrida",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ", Santiago ficcional, ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "estética",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 169,
+      "style": "Heading 1",
+      "text": "",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 170,
+      "style": "Heading 1",
+      "text": "12. Anexo y bibliografía",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "1",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "2",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "Anexo",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": "111827",
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        },
+        {
+          "text": " y bibliografía",
+          "bold": null,
+          "italic": null,
+          "font": "Arial Black",
+          "size": null,
+          "color": null,
+          "fonts": {
+            "ascii": "Arial Black",
+            "hAnsi": "Arial Black"
+          }
+        }
+      ]
+    },
+    {
+      "index": 171,
+      "style": "Heading 2",
+      "text": "Resumen de investigación",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Resumen de investigación\n",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 172,
+      "style": "normal",
+      "text": "El marco teórico de Flow State se organiza en cinco líneas que justifican las decisiones de diseño: graffiti e identidad, ciudad como sistema legible, flow como concentración, videojuegos como sistemas de reglas significativas e interfaz como comunicación situada.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "El marco teórico de Flow State se organiza en cinco ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "líneas",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": " que justifican las decisiones de diseño: graffiti e identidad, ciudad como sistema legible, flow como ",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "concentración",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ", videojuegos como sistemas de reglas significativas e interfaz como comunicación situada.\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 10.0,
+            "in": 0.1388888888888889
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 174,
+      "style": "Heading 2",
+      "text": "Bibliografía",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Bibliografía",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 175,
+      "style": "normal",
+      "text": "-Austin, J. (2001). Taking the train: How graffiti art became an urban crisis in New York City. Columbia University Press.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Austin, J. (2001). Taking the train: How graffiti art became an urban crisis in New York City. Columbia University Press.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 176,
+      "style": "normal",
+      "text": "-Csikszentmihalyi, M. (1990). Flow: The psychology of optimal experience. Harper & Row.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Csikszentmihalyi, M. (1990). Flow: The psychology of optimal experience. Harper & Row.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 177,
+      "style": "normal",
+      "text": "-Hunicke, R., LeBlanc, M., & Zubek, R. (2004). MDA: A formal approach to game design and game research. Proceedings of the AAAI Workshop on Challenges in Game AI.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Hunicke, R., LeBlanc, M., & Zubek, R. (2004). MDA: A formal approach to game design and game research. Proceedings of the AAAI Workshop on Challenges in Game AI.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 178,
+      "style": "normal",
+      "text": "-Lynch, K. (1960). The image of the city. MIT Press.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Lynch, K. (1960). The image of the city. MIT Press.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 179,
+      "style": "normal",
+      "text": "-Macdonald, N. (2001). The graffiti subculture: Youth, masculinity and identity in London and New York. Palgrave Macmillan.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Macdonald, N. (2001). The graffiti subculture: Youth, masculinity and identity in London and New York. Palgrave Macmillan.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 180,
+      "style": "normal",
+      "text": "-Norman, D. A. (2013). The design of everyday things: Revised and expanded edition. Basic Books.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Norman, D. A. (2013). The design of everyday things: Revised and expanded edition. Basic Books.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 181,
+      "style": "normal",
+      "text": "-Salen Tekinbas, K., & Zimmerman, E. (2004). Rules of play: Game design fundamentals. MIT Press.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Salen Tekinbas, K., & Zimmerman, E. (2004). Rules of play: Game design fundamentals. MIT Press.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 182,
+      "style": "normal",
+      "text": "-Schell, J. (2008). The art of game design: A book of lenses. Morgan Kaufmann.",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Schell, J. (2008). The art of game design: A book of lenses. Morgan Kaufmann.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 183,
+      "style": "normal",
+      "text": "-Museo a Cielo Abierto en San Miguel. (s. f.). Historia del proyecto muralista. https://www.museoacieloabiertoensanmiguel.cl/",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Museo a Cielo Abierto en San Miguel. (s. f.). Historia del proyecto muralista. https://www.museoacieloabiertoensanmiguel.cl/",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 184,
+      "style": "normal",
+      "text": "-Centro Cultural Mixart / Google Arts & Culture. (s. f.). Museo a Cielo Abierto en San Miguel, Santiago, Chile. https://artsandculture.google.com/partner/museo-a-cielo-abierto-san-miguel",
+      "alignment": "JUSTIFY (3)",
+      "runs": [
+        {
+          "text": "-",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "Centro Cultural Mixart / Google Arts & Culture. (s. f.). Museo a Cielo Abierto en San Miguel, Santiago, Chile. https://artsandculture.google.com/partner/museo-a-cielo-abierto-san-miguel",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 185,
+      "style": "Heading 2",
+      "text": "Ludografía y referentes culturales",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Ludografía y referentes culturales",
+          "bold": null,
+          "italic": null,
+          "font": "Courier New",
+          "size": null,
+          "color": "1F2937",
+          "fonts": {
+            "ascii": "Courier New",
+            "hAnsi": "Courier New"
+          }
+        }
+      ]
+    },
+    {
+      "index": 186,
+      "style": "normal",
+      "text": "Atlus. (2016). Persona 5 [Videojuego]. Atlus.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Atlus. (2016). Persona 5 [Videojuego]. Atlus.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 187,
+      "style": "normal",
+      "text": "Infinite Fall. (2017). Night in the Woods [Videojuego]. Finji.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Infinite Fall. (2017). Night in the Woods [Videojuego]. Finji.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 188,
+      "style": "normal",
+      "text": "Looking Glass Studios. (1998). Thief: The Dark Project [Videojuego]. Eidos Interactive.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Looking Glass Studios. (1998). Thief: The Dark Project [Videojuego]. Eidos Interactive.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 189,
+      "style": "normal",
+      "text": "Origami digital. (2020). Umurangi Generation [Videojuego]. Playism.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Origami digital",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": ". (2020). Umurangi Generation [Videojuego]. Playism.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 190,
+      "style": "normal",
+      "text": "Smilebit. (2000). Jet Set Radio [videojuego]. Sega.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Smilebit. (2000). Jet Set Radio [",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "videojuego",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "]. Sega.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 191,
+      "style": "normal",
+      "text": "Team Reptile. (2023). Bomb Rush Cyberfunk [videojuego]. Team Reptile.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "Team Reptile. (2023). Bomb Rush Cyberfunk [",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "videojuego",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": null
+        },
+        {
+          "text": "]. Team Reptile.",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    },
+    {
+      "index": 192,
+      "style": "normal",
+      "text": "The Collective. (2006). Marc Ecko's Getting Up: Contents Under Pressure [Videojuego]. Atari.",
+      "alignment": "None",
+      "runs": [
+        {
+          "text": "The Collective. (2006). Marc Ecko's Getting Up: Contents Under Pressure [Videojuego]. Atari.\n\n\n",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": "Arial",
+          "size": {
+            "pt": 9.0,
+            "in": 0.125
+          },
+          "color": null,
+          "fonts": {
+            "ascii": "Arial",
+            "hAnsi": "Arial"
+          }
+        },
+        {
+          "text": "",
+          "bold": null,
+          "italic": null,
+          "font": null,
+          "size": null,
+          "color": null,
+          "fonts": null
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "index": 0,
+      "style": null,
+      "rows": 6,
+      "cols": 2,
+      "grid_cols": [
+        "3620.0000000000005",
+        "6910"
+      ],
+      "first_row": [
+        "Dato",
+        ""
+      ]
+    },
+    {
+      "index": 1,
+      "style": null,
+      "rows": 5,
+      "cols": 2,
+      "grid_cols": [
+        "3620.0000000000005",
+        "6910"
+      ],
+      "first_row": [
+        "Integrante",
+        "Rol"
+      ]
+    },
+    {
+      "index": 2,
+      "style": null,
+      "rows": 9,
+      "cols": 2,
+      "grid_cols": [
+        "3600",
+        "6480"
+      ],
+      "first_row": [
+        "Categoría",
+        "Definición actualizada"
+      ]
+    },
+    {
+      "index": 3,
+      "style": null,
+      "rows": 11,
+      "cols": 3,
+      "grid_cols": [
+        "3000",
+        "4110",
+        "2445"
+      ],
+      "first_row": [
+        "Pieza",
+        "Uso dentro del GDD",
+        "Responsable"
+      ]
+    },
+    {
+      "index": 4,
+      "style": null,
+      "rows": 6,
+      "cols": 3,
+      "grid_cols": [
+        "2430",
+        "3195",
+        "3975"
+      ],
+      "first_row": [
+        "Pilar",
+        "Cómo se siente",
+        "Traducción jugable"
+      ]
+    },
+    {
+      "index": 5,
+      "style": null,
+      "rows": 6,
+      "cols": 3,
+      "grid_cols": [
+        "1950",
+        "3300",
+        "4365"
+      ],
+      "first_row": [
+        "Momento",
+        "Pregunta emocional",
+        "Respuesta de diseño"
+      ]
+    },
+    {
+      "index": 6,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2085",
+        "2160",
+        "2730",
+        "2670"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 7,
+      "style": null,
+      "rows": 6,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Acto",
+        "Objetivo emocional",
+        "Objetivo jugable",
+        "Giro narrativo"
+      ]
+    },
+    {
+      "index": 8,
+      "style": null,
+      "rows": 8,
+      "cols": 3,
+      "grid_cols": [
+        "3150",
+        "3300",
+        "3660"
+      ],
+      "first_row": [
+        "Ambiente",
+        "Función narrativa",
+        "Función jugable / visual"
+      ]
+    },
+    {
+      "index": 9,
+      "style": null,
+      "rows": 7,
+      "cols": 4,
+      "grid_cols": [
+        "2520",
+        "2520",
+        "2520",
+        "2520"
+      ],
+      "first_row": [
+        "Personaje",
+        "Rol",
+        "Conflicto interno",
+        "Uso jugable/narrativo"
+      ]
+    },
+    {
+      "index": 10,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 11,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "3364",
+        "3364",
+        "3364"
+      ],
+      "first_row": [
+        "Subsistema",
+        "Funcionamiento",
+        "Impacto jugable"
+      ]
+    },
+    {
+      "index": 12,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "2670",
+        "4605",
+        "2865"
+      ],
+      "first_row": [
+        "Sistema",
+        "Reglas concretas",
+        "Por qué importa"
+      ]
+    },
+    {
+      "index": 13,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 14,
+      "style": null,
+      "rows": 8,
+      "cols": 3,
+      "grid_cols": [
+        "2235",
+        "4485",
+        "3360"
+      ],
+      "first_row": [
+        "Tipo de misión",
+        "Descripción",
+        "Ejemplo actualizado"
+      ]
+    },
+    {
+      "index": 15,
+      "style": null,
+      "rows": 6,
+      "cols": 3,
+      "grid_cols": [
+        "2110",
+        "4610.000000000001",
+        "3360"
+      ],
+      "first_row": [
+        "Rama",
+        "Desbloqueos",
+        "Resultado"
+      ]
+    },
+    {
+      "index": 16,
+      "style": null,
+      "rows": 6,
+      "cols": 3,
+      "grid_cols": [
+        "2805",
+        "3615",
+        "3660"
+      ],
+      "first_row": [
+        "Final",
+        "Condición dominante",
+        "Lectura temática"
+      ]
+    },
+    {
+      "index": 17,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2085",
+        "2955",
+        "2520",
+        "2520"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 18,
+      "style": null,
+      "rows": 6,
+      "cols": 3,
+      "grid_cols": [
+        "2190",
+        "4530",
+        "3360"
+      ],
+      "first_row": [
+        "Capa estética",
+        "Elementos visuales",
+        "Uso en juego"
+      ]
+    },
+    {
+      "index": 19,
+      "style": null,
+      "rows": 7,
+      "cols": 4,
+      "grid_cols": [
+        "1335",
+        "3660",
+        "2565",
+        "2520"
+      ],
+      "first_row": [
+        "Elemento",
+        "Diseño",
+        "Materiales / shaders",
+        "Notas"
+      ]
+    },
+    {
+      "index": 20,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 21,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "3364",
+        "3364",
+        "3364"
+      ],
+      "first_row": [
+        "Capa",
+        "Tratamiento sonoro",
+        "Función"
+      ]
+    },
+    {
+      "index": 22,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2250",
+        "2370",
+        "2415",
+        "3045"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 23,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "2040",
+        "4440",
+        "3600"
+      ],
+      "first_row": [
+        "Sistema UI",
+        "Forma visual",
+        "Función jugable"
+      ]
+    },
+    {
+      "index": 24,
+      "style": null,
+      "rows": 4,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Tipo",
+        "Referente",
+        "Aporte al área",
+        "Transformación en Flow State"
+      ]
+    },
+    {
+      "index": 25,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "2505",
+        "4215",
+        "3360"
+      ],
+      "first_row": [
+        "Sistema",
+        "Implementación propuesta",
+        "Riesgo / nota"
+      ]
+    },
+    {
+      "index": 26,
+      "style": null,
+      "rows": 9,
+      "cols": 2,
+      "grid_cols": [
+        "3570",
+        "6510"
+      ],
+      "first_row": [
+        "Elemento",
+        "Contenido mínimo"
+      ]
+    },
+    {
+      "index": 27,
+      "style": null,
+      "rows": 7,
+      "cols": 4,
+      "grid_cols": [
+        "2523",
+        "2523",
+        "2523",
+        "2523"
+      ],
+      "first_row": [
+        "Fase",
+        "Duración",
+        "Objetivo",
+        "Entregables"
+      ]
+    },
+    {
+      "index": 28,
+      "style": null,
+      "rows": 7,
+      "cols": 3,
+      "grid_cols": [
+        "2460",
+        "4260",
+        "3360"
+      ],
+      "first_row": [
+        "Riesgo",
+        "Problema posible",
+        "Solución propuesta"
+      ]
+    },
+    {
+      "index": 29,
+      "style": null,
+      "rows": 8,
+      "cols": 3,
+      "grid_cols": [
+        "2400",
+        "3105",
+        "4575"
+      ],
+      "first_row": [
+        "Tema de investigación",
+        "Fuente guía",
+        "Aplicación al proyecto"
+      ]
+    }
+  ],
+  "package_parts": [
+    {
+      "path": "word/header1.xml",
+      "size": 7643,
+      "sha256": "1f227b5e88519d43173ef8a3caf63f6530f88644a37ed3f68eeb90011ef43417"
+    },
+    {
+      "path": "word/_rels/header1.xml.rels",
+      "size": 421,
+      "sha256": "1cad9422a02405ba399c57da16e81cd375d46f63ae41dc7a6b1df3dc6dbd4ebe"
+    },
+    {
+      "path": "word/header2.xml",
+      "size": 1958,
+      "sha256": "fc86b69040f4442da5de462974f365a9a220adec9b4ea3d0410ceae63d2f8d4b"
+    },
+    {
+      "path": "word/footer1.xml",
+      "size": 4679,
+      "sha256": "5d4e88feaa258ba1869e3a43a6828d12ef5bce287bfe524a42d71620b48985c4"
+    },
+    {
+      "path": "word/footer2.xml",
+      "size": 1958,
+      "sha256": "b365b97569c9934c19c47bbdd9cf37fe5f2038be564b1245e91439d8b46f89fb"
+    },
+    {
+      "path": "word/numbering.xml",
+      "size": 5469,
+      "sha256": "0f30c2f97f10de61ded4aa4b646f587bb3e71f402e82eba8b1f2274e2dc360dc"
+    },
+    {
+      "path": "word/settings.xml",
+      "size": 2152,
+      "sha256": "26f2853fde05b88d4b0a9da0bb016d56a896901f60c9272dddf33c3f3fa61e4a"
+    },
+    {
+      "path": "word/fontTable.xml",
+      "size": 2166,
+      "sha256": "057a4f50ee13d7cf22d5b798b438e508295bdd6bbe7f819676e811e290e07852"
+    },
+    {
+      "path": "word/_rels/fontTable.xml.rels",
+      "size": 592,
+      "sha256": "c6e8e6fb1f9c300c56c533add08cf6d49a27a132fbe43c773fe8b900e41499ff"
+    },
+    {
+      "path": "word/styles.xml",
+      "size": 17834,
+      "sha256": "bf2c36108e11360891fdfd538cd8565c0b3f0c20593331089910c78b0324f286"
+    },
+    {
+      "path": "word/document.xml",
+      "size": 700679,
+      "sha256": "e823384202358483eb4e940710412309d95a0e4d03564591e3e59dbfc572d484"
+    },
+    {
+      "path": "word/_rels/document.xml.rels",
+      "size": 4666,
+      "sha256": "23f1ba4eeb1901dda6573c61e99a362395e4418d6dea6b140c4f1a7a86b43648"
+    },
+    {
+      "path": "_rels/.rels",
+      "size": 298,
+      "sha256": "1cc87395d4a229f21c23af406724de12dd9454071925f983e4b648a7b2be8cc5"
+    },
+    {
+      "path": "word/media/image24.png",
+      "size": 1073846,
+      "sha256": "9f07f14f3bd06cc05a492f70ff7a3df9cc96ff8b05b1bb0eb78fadc73fe669b7"
+    },
+    {
+      "path": "word/media/image3.png",
+      "size": 71133,
+      "sha256": "61fc85941f206629109c11fb8c83d36f6f870bb6f070a449416abd777786714b"
+    },
+    {
+      "path": "word/media/image8.jpg",
+      "size": 18863,
+      "sha256": "1d813d44b7884866722f7e056c3348de0a6cc6b9b4474970cdc082e15ad98939"
+    },
+    {
+      "path": "word/media/image15.png",
+      "size": 790911,
+      "sha256": "8abc0ac7ae25702c679904c7d7993f2f66aa8bf3e7ff8aade5321325dab7a178"
+    },
+    {
+      "path": "word/media/image4.png",
+      "size": 814355,
+      "sha256": "cbe0580121a6dac0b1e9ebd0df22f6dc5f299d5dea913966a179d45731771bbb"
+    },
+    {
+      "path": "word/media/image11.png",
+      "size": 1140924,
+      "sha256": "3b1df84e0b13d613c7d0648eb442e7dc46bff96c5136443aba2a2fe6a465396a"
+    },
+    {
+      "path": "word/fonts/NotoSansSymbols-regular.ttf",
+      "size": 183620,
+      "sha256": "3c9c40311ae6012f7d3c4a4ff98952b2c7bbc0d4c89a93ba22986ff1f1884af5"
+    },
+    {
+      "path": "word/media/image17.png",
+      "size": 2030562,
+      "sha256": "670d47a93100ee971adfc834a9468ed801f5ed862aab2fca0c8392155fcd350c"
+    },
+    {
+      "path": "word/media/image20.png",
+      "size": 110091,
+      "sha256": "1ba9d5ecbe0145d2fd2089caab3b110b32180290b44e1fe8c769f952934c3d87"
+    },
+    {
+      "path": "word/media/image5.png",
+      "size": 261736,
+      "sha256": "75b9a6818497ccad2f98eb96086102c328f0251c6baaa4bf9e96b90b4f933bd3"
+    },
+    {
+      "path": "word/media/image16.png",
+      "size": 1968260,
+      "sha256": "72ba8aa5ed9b6ef64242a483a299cdd960107b405644269767f5331df9da0664"
+    },
+    {
+      "path": "word/media/image21.png",
+      "size": 683427,
+      "sha256": "f31a240492615566537f10ef5cc97c6b5a58498b0637f2cc9a890e50fa3b527d"
+    },
+    {
+      "path": "word/media/image9.png",
+      "size": 101152,
+      "sha256": "a612b27ecc0b2493e74b00c7dc1248a5feab24b88cc4486bd3f58cd875b4eefd"
+    },
+    {
+      "path": "word/media/image25.png",
+      "size": 124142,
+      "sha256": "80e3da975bd5ccce3c3e4c0185ba935044ea434bed6045d9edbe37e9fbf66c2c"
+    },
+    {
+      "path": "word/media/image12.png",
+      "size": 254278,
+      "sha256": "4a1bf79c7824fe8ca6e5d213dc7ea1697937679c4ea56b26f0f333785df9dc27"
+    },
+    {
+      "path": "word/media/image18.png",
+      "size": 842124,
+      "sha256": "f863df3eb0cda1d68c992f93a63d198ac127227f534040275ed57dcb6f3e39a8"
+    },
+    {
+      "path": "word/theme/theme1.xml",
+      "size": 7643,
+      "sha256": "b2295d3198893d2c03f5e584c749a15751b798aefdcd9bee2889f13903d68cb2"
+    },
+    {
+      "path": "word/media/image1.png",
+      "size": 852446,
+      "sha256": "9f7740231b3c6e686ad1ed85a28896487a616054ac31819ba2c70e95823eb53e"
+    },
+    {
+      "path": "word/media/image22.png",
+      "size": 717392,
+      "sha256": "09640c551266b8d4396b67fecb030ba7ae8153702f2a0429f55ca58bf3d83112"
+    },
+    {
+      "path": "word/media/image6.png",
+      "size": 378255,
+      "sha256": "9cbaa7e41e6fa1e4f5341c89b7be702354537af75bd6fac0549784193debeb33"
+    },
+    {
+      "path": "word/media/image13.png",
+      "size": 1698848,
+      "sha256": "23072d2acaaced387b5733a434fcf8542bd0eaf02f915878958bbd016c06c624"
+    },
+    {
+      "path": "word/media/image26.png",
+      "size": 1192854,
+      "sha256": "18387c44323d758196ac6d7433a30372dc218117904e82b2843aa4e6276b4289"
+    },
+    {
+      "path": "word/fonts/NotoSansSymbols-bold.ttf",
+      "size": 183344,
+      "sha256": "afc2a6b7050df884f5deb2618ebbdecb9fa2f163d3ca66ca75f8b069febc6741"
+    },
+    {
+      "path": "word/media/image2.png",
+      "size": 228579,
+      "sha256": "51b3881e044781eaceef17e53204b04cc6c0a607f199258acccb53edd138a5d0"
+    },
+    {
+      "path": "word/media/image19.png",
+      "size": 655675,
+      "sha256": "f739f28e34ea79e9fae2e0ee47d088e1d218274c31e4895247869a41db78210a"
+    },
+    {
+      "path": "word/media/image23.png",
+      "size": 1151088,
+      "sha256": "7ae3806f5aeddabc71dbf086bc71b0d8d2c84f34ab1422c8d567d12d25fb959a"
+    },
+    {
+      "path": "word/media/image14.png",
+      "size": 325906,
+      "sha256": "756d598bc24d1610f56daf8a5dfd784e95382db260438d8920c3e1f513a2883c"
+    },
+    {
+      "path": "word/media/image10.png",
+      "size": 1612392,
+      "sha256": "5227d7f8e2a67e21b936f0516a341905bc52db685162d752608402fdcfff66fa"
+    },
+    {
+      "path": "word/fonts/ArialBlack-regular.ttf",
+      "size": 49404,
+      "sha256": "2d4afd334c0224a26d1dac348376fe375f0a9fcf087689c14eb4787117a42a42"
+    },
+    {
+      "path": "word/media/image7.png",
+      "size": 84981,
+      "sha256": "faa716b7549d88f89dd09ddee2b0cdd800c21951a6f3966c5972c619661201a3"
+    },
+    {
+      "path": "[Content_Types].xml",
+      "size": 1848,
+      "sha256": "a4fdb813cd63b405a2b8030619c77be1c70f2971c855535c23e8156f2b35e20b"
+    }
+  ]
+}

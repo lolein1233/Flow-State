@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
+[DefaultExecutionOrder(200)]
 public class GraffitiRaycastUI : MonoBehaviour
 {
     [Header("Distancias")]
@@ -13,6 +14,7 @@ public class GraffitiRaycastUI : MonoBehaviour
     public GameObject promptUI;
     public Camera cam;
     public FPSController fps;
+    public GraffitiPainter painter;
     public bool enterGraffitiOnInteract = true;
     public KeyCode interactKey = KeyCode.Q;
 
@@ -25,47 +27,56 @@ public class GraffitiRaycastUI : MonoBehaviour
     RaycastHit currentHit;
     TMP_Text promptText;
     int lastPromptState = -1;
+    int surfaceFrame = -1;
 
     void Awake()
     {
         if (fps == null)
             fps = GetComponent<FPSController>();
+        if (painter == null)
+            painter = GetComponent<GraffitiPainter>();
+
+        if (!graffitiPrompt.Contains("RUEDA"))
+            graffitiPrompt += "\n[RUEDA] DISTANCIA DE LA LATA";
 
         if (promptUI != null)
             promptText = promptUI.GetComponentInChildren<TMP_Text>(true);
     }
 
-    void Update()
+    public void RefreshSurface()
     {
-        if (cam == null)
+        if (cam == null || surfaceFrame == Time.frameCount)
             return;
+        surfaceFrame = Time.frameCount;
 
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        bool graffitiModeActive = fps != null && fps.IsGraffitiMode();
+        Ray ray = graffitiModeActive && painter != null ? painter.GetSprayRay() : new Ray(cam.transform.position, cam.transform.forward);
         RaycastHit hit;
         float detectionDistance = Mathf.Max(distance, graffitiDetectionDistance);
 
-        if (Physics.Raycast(ray, out hit, detectionDistance, wallLayer))
+        if (Physics.Raycast(ray, out hit, detectionDistance, wallLayer, QueryTriggerInteraction.Ignore))
         {
             canDetectGraffitiSurface = true;
-            canPaint = hit.distance <= distance;
-            currentHit = canPaint ? hit : default(RaycastHit);
-
-            if (enterGraffitiOnInteract && fps != null && !fps.IsGraffitiMode() && !fps.IsClimbing() && Input.GetKeyDown(interactKey))
-                fps.EnterGraffitiMode();
-
-            UpdatePromptText();
-
-            bool graffitiModeActive = fps != null && fps.IsGraffitiMode();
-            SetPromptVisible(!isPainting && (!graffitiModeActive || canPaint));
+            canPaint = hit.distance <= (painter != null ? painter.MaximumPaintDistance : distance);
+            currentHit = hit;
         }
         else
         {
             canPaint = false;
             canDetectGraffitiSurface = false;
             currentHit = default(RaycastHit);
-
-            SetPromptVisible(false);
         }
+    }
+
+    void LateUpdate()
+    {
+        RefreshSurface();
+        if (canDetectGraffitiSurface && enterGraffitiOnInteract && fps != null && !fps.IsGraffitiMode() &&
+            !fps.IsClimbing() && Input.GetKeyDown(interactKey))
+            fps.EnterGraffitiMode();
+        UpdatePromptText();
+        bool graffitiActive = fps != null && fps.IsGraffitiMode();
+        SetPromptVisible(canDetectGraffitiSurface && !isPainting && !graffitiActive);
     }
 
     public bool CanPaint() => canPaint;

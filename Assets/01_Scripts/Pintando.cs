@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[DefaultExecutionOrder(150)]
 public class Pintando : MonoBehaviour
 {
     public Camera cam;
@@ -9,15 +10,18 @@ public class Pintando : MonoBehaviour
     public float distance = 3f;
     public float surfaceOffset = 0.012f;
     public int maxStampsPerFrame = 18;
-    [SerializeField, Min(64)] int minimumInterpolationBudget = 384;
+    [SerializeField, Min(32)] int minimumInterpolationBudget = 96;
     [SerializeField, Range(0.35f, 1f)] float continuitySpacingScale = 0.58f;
     public GraffitiPainter mainPainter;
 
     [Header("Distancia y proyeccion")]
     [SerializeField] float closeDistance = 0.55f;
-    [SerializeField] float farRadiusMultiplier = 1.42f;
-    [SerializeField] float farOpacityMultiplier = 0.5f;
+    [SerializeField, Range(0.35f, 0.9f)] float controlledCloseRadiusMultiplier = 0.55f;
+    [SerializeField, Range(1.4f, 3f)] float controlledFarRadiusMultiplier = 2.05f;
     [SerializeField] float maximumAngleStretch = 2.25f;
+
+    [Header("Ataque inicial")]
+    [SerializeField, Range(1f, 4f)] float initialBurstExposureFrames = 3f;
 
     [Header("Chorreos")]
     [SerializeField] bool enableDrips = true;
@@ -39,15 +43,23 @@ public class Pintando : MonoBehaviour
     float dwellTimer;
     float dripCooldown;
     float smoothedBrushSize;
+    Vector3 lastObservedPoint;
+    float lastPaintCone01;
+    int firstStampFrame = -1;
+    public bool CapacityReached { get; private set; }
+    Collider fullSurface;
 
     void Awake()
     {
-        minimumInterpolationBudget = Mathf.Max(384, minimumInterpolationBudget);
+        minimumInterpolationBudget = Mathf.Clamp(minimumInterpolationBudget, 64, 160);
         EnsureMaterial();
     }
 
-    void Update()
+    void LateUpdate()
     {
+        if (CapacityReached && mainPainter != null && mainPainter.raycastUI != null &&
+            mainPainter.raycastUI.GetHit().collider != fullSurface)
+            CapacityReached = false;
         dripCooldown = Mathf.Max(0f, dripCooldown - Time.deltaTime);
 
         if (mainPainter == null || cam == null)
@@ -68,8 +80,8 @@ public class Pintando : MonoBehaviour
             return;
         }
 
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        if (!Physics.Raycast(ray, out RaycastHit hit, distance, paintLayer, QueryTriggerInteraction.Ignore))
+        RaycastHit hit = mainPainter.raycastUI != null ? mainPainter.raycastUI.GetHit() : default;
+        if (hit.collider == null || hit.distance > distance || (paintLayer.value & (1 << hit.collider.gameObject.layer)) == 0)
         {
             ResetStroke();
             return;
@@ -83,8 +95,9 @@ public class Pintando : MonoBehaviour
             return;
         }
 
-        sampleTimer += Time.deltaTime;
-        PaintStroke(hit);
+        if (firstStampFrame == Time.frameCount)
+            return;
+        SampleStroke(hit, Time.deltaTime);
     }
 
     void EnsureMaterial()
@@ -103,67 +116,89 @@ public class Pintando : MonoBehaviour
         }
     }
 
-    void PaintStroke(RaycastHit hit)
+    void SampleStroke(RaycastHit hit, float deltaTime)
     {
-        float averageSize = Mathf.Max(0.001f, (mainPainter.brushMinSize + mainPainter.brushMaxSize) * 0.5f);
+        sampleTimer += deltaTime;
+        PaintStroke(hit, deltaTime);
+    }
+
+    void PaintStroke(RaycastHit hit, float deltaTime)
+    {
+        float currentCone01 = GetEffectiveDistance01(hit.distance);
+        float averageSize = Mathf.Max(0.001f, hasLastPaintPoint
+            ? Mathf.Min(EstimateBrushWidthFromDistance01(lastPaintCone01), EstimateBrushWidthFromDistance01(currentCone01))
+            : EstimateBrushWidthFromDistance01(currentCone01));
         float spacing = mainPainter.GetBrushSpacing(averageSize) * continuitySpacingScale;
 
         if (!hasLastPaintPoint || hit.collider != lastPaintCollider || Vector3.Angle(lastPaintNormal, hit.normal) > 40f)
         {
-            float exposure = Mathf.Max(sampleTimer, Time.deltaTime);
-            PaintStamp(hit, hit.point, hit.normal, Vector3.zero, exposure);
+            float exposure = 1f / 60f;
+            PaintStamp(hit, hit.point, hit.normal, Vector3.zero, currentCone01, exposure);
             sampleTimer = 0f;
             RememberHit(hit);
             return;
         }
 
         float distanceBetween = Vector3.Distance(lastPaintPoint, hit.point);
-        bool timeSampleDue = sampleTimer >= mainPainter.freePaintRate;
-        int distanceSamples = Mathf.CeilToInt(distanceBetween / spacing);
-
-        if (distanceSamples <= 0 && !timeSampleDue)
+        float strokeSpeed = Vector3.Distance(lastObservedPoint, hit.point) / Mathf.Max(deltaTime, 0.0001f);
+        lastObservedPoint = hit.point;
+        int distanceSamples = Mathf.FloorToInt(distanceBetween / spacing);
+        bool moving = strokeSpeed > 0.02f;
+        // Spatial samples carry the unsampled remainder instead of stamping every
+        // rendered frame. At rest use a fixed emission interval, independent of FPS.
+        float interval = Mathf.Max(1f / 30f, mainPainter.freePaintRate);
+        if (distanceSamples == 0 && (moving || sampleTimer < interval))
             return;
 
         int stampLimit = Mathf.Max(minimumInterpolationBudget, maxStampsPerFrame);
-        int stampCount = Mathf.Clamp(Mathf.Max(1, distanceSamples), 1, stampLimit);
-        float exposurePerStamp = Mathf.Max(0.0001f, sampleTimer / stampCount);
-        if (distanceSamples > 0)
-            exposurePerStamp = Mathf.Max(exposurePerStamp, mainPainter.freePaintRate * 0.75f);
+        int stampCount = Mathf.Clamp(distanceSamples > 0 ? distanceSamples : Mathf.FloorToInt(sampleTimer / interval), 1, stampLimit);
+        float exposurePerStamp = distanceSamples > 0 ? mainPainter.MinimumStampExposure / 60f : interval;
         Vector3 startPoint = lastPaintPoint;
         Vector3 startNormal = lastPaintNormal;
-
+        float startCone01 = lastPaintCone01;
+        float sampledFraction = distanceSamples > 0 && distanceSamples <= stampLimit
+            ? Mathf.Min(1f, distanceSamples * spacing / Mathf.Max(distanceBetween, 0.0001f)) : 1f;
         for (int i = 1; i <= stampCount; i++)
         {
-            float t = i / (float)stampCount;
+            float t = i / (float)stampCount * sampledFraction;
             Vector3 point = Vector3.Lerp(startPoint, hit.point, t);
             Vector3 normal = Vector3.Slerp(startNormal, hit.normal, t).normalized;
             Vector3 strokeDirection = point - startPoint;
-            PaintStamp(hit, point, normal, strokeDirection, exposurePerStamp);
+            float cone01 = Mathf.Lerp(startCone01, currentCone01, t);
+            PaintStamp(hit, point, normal, strokeDirection, cone01, exposurePerStamp);
+            if (CapacityReached)
+                break;
         }
 
-        sampleTimer = 0f;
-        RememberHit(hit);
+        sampleTimer = distanceSamples > 0 ? 0f : Mathf.Max(0f, sampleTimer - stampCount * interval);
+        lastPaintPoint = Vector3.Lerp(startPoint, hit.point, sampledFraction);
+        lastPaintNormal = Vector3.Slerp(startNormal, hit.normal, sampledFraction).normalized;
+        lastPaintCone01 = Mathf.Lerp(startCone01, currentCone01, sampledFraction);
     }
 
-    void PaintStamp(RaycastHit hit, Vector3 point, Vector3 normal, Vector3 strokeDirection, float exposureSeconds)
+    void PaintStamp(RaycastHit hit, Vector3 point, Vector3 normal, Vector3 strokeDirection, float distance01, float exposureSeconds)
     {
         Transform surface = hit.collider != null ? hit.collider.transform : null;
         GraffitiSurfaceCanvas canvas = GraffitiSurfaceCanvas.GetOrCreate(surface, sprayMaterial);
         if (canvas == null)
+        {
+            CapacityReached = surface != null;
+            fullSurface = hit.collider;
+            mainPainter.CancelPaintingForMenu();
             return;
+        }
 
-        float distance01 = Mathf.InverseLerp(closeDistance, Mathf.Max(closeDistance + 0.01f, distance), hit.distance);
         float resourceRadius = mainPainter.sprayResources != null ? mainPainter.sprayResources.OutputRadius : 1f;
         float requestedSize = mainPainter.GetBrushSize();
         if (smoothedBrushSize <= 0f)
             smoothedBrushSize = (mainPainter.brushMinSize + mainPainter.brushMaxSize) * 0.5f;
         smoothedBrushSize = Mathf.Lerp(smoothedBrushSize, requestedSize, 0.14f);
-        float size = smoothedBrushSize * resourceRadius * Mathf.Lerp(0.86f, farRadiusMultiplier, distance01);
-        float opacity = Mathf.Lerp(1.08f, farOpacityMultiplier, distance01);
+        float size = smoothedBrushSize * resourceRadius * GetRadiusMultiplier(distance01);
 
         Vector3 tangent = GetSurfaceTangent(normal, strokeDirection);
-        Vector3 viewProjection = Vector3.ProjectOnPlane(cam.transform.forward, normal);
-        float incidence = Mathf.Abs(Vector3.Dot(-cam.transform.forward, normal));
+        Vector3 sprayDirection = mainPainter.GetSprayRay().direction;
+        Vector3 viewProjection = Vector3.ProjectOnPlane(sprayDirection, normal);
+        float incidence = Mathf.Abs(Vector3.Dot(-sprayDirection, normal));
         float angleStretch = Mathf.Min(maximumAngleStretch, 1f / Mathf.Max(0.3f, incidence));
         if (angleStretch > 1.05f && viewProjection.sqrMagnitude > 0.0001f)
             tangent = viewProjection.normalized;
@@ -173,9 +208,9 @@ public class Pintando : MonoBehaviour
         ApplyNozzleAspect(ref width, ref height);
 
         Vector3 bitangent = Vector3.Cross(normal, tangent).normalized;
-        Vector2 jitter = Random.insideUnitCircle * size * mainPainter.brushJitter;
+        Vector2 jitter = Random.insideUnitCircle * size * mainPainter.brushJitter * 0.35f;
         Vector3 position = point + normal * surfaceOffset + tangent * jitter.x + bitangent * jitter.y;
-        Color color = mainPainter.GetPaintColorWithVariation(exposureSeconds, opacity);
+        Color color = mainPainter.GetPaintColorWithVariation(exposureSeconds, 1f);
         float seed = Random.Range(0.001f, 999f);
         Vector4 profile = mainPainter.GetStampProfile(distance01, seed);
         Vector4 spray = mainPainter.GetSpraySettings();
@@ -184,25 +219,59 @@ public class Pintando : MonoBehaviour
 
     void ApplyNozzleAspect(ref float width, ref float height)
     {
-        switch (mainPainter.currentNozzleShape)
+        Vector2 aspect = mainPainter.GetNozzleAspect();
+        width *= aspect.x;
+        height *= aspect.y;
+        if (mainPainter.currentNozzleShape == GraffitiNozzleShape.Splatter)
         {
-            case GraffitiNozzleShape.Needle:
-                width *= 0.72f;
-                height *= 1.05f;
-                break;
-            case GraffitiNozzleShape.FatCap:
-                width *= 1.18f;
-                height *= 1.18f;
-                break;
-            case GraffitiNozzleShape.Chisel:
-                width *= 1.58f;
-                height *= 0.56f;
-                break;
-            case GraffitiNozzleShape.Splatter:
-                width *= Random.Range(0.82f, 1.28f);
-                height *= Random.Range(0.82f, 1.28f);
-                break;
+            width *= Random.Range(0.82f, 1.28f);
+            height *= Random.Range(0.82f, 1.28f);
         }
+    }
+
+    public void BeginStrokeImmediately(RaycastHit hit)
+    {
+        EnsureMaterial();
+        if (mainPainter == null || sprayMaterial == null || hit.collider == null || !mainPainter.CanEmitPaint)
+            return;
+
+        ResetStroke();
+        sampleTimer = initialBurstExposureFrames / 60f;
+        PaintStamp(hit, hit.point, hit.normal, Vector3.zero, GetEffectiveDistance01(hit.distance), sampleTimer);
+        sampleTimer = 0f;
+        RememberHit(hit);
+        firstStampFrame = Time.frameCount;
+    }
+
+    public float GetDistance01(float distanceToSurface)
+    {
+        return Mathf.Clamp01(Mathf.InverseLerp(closeDistance, Mathf.Max(closeDistance + 0.01f, distance), distanceToSurface));
+    }
+
+    public float EstimateBrushWidth(float distanceToSurface)
+    {
+        return EstimateBrushWidthFromDistance01(GetEffectiveDistance01(distanceToSurface));
+    }
+
+    public float GetRadiusMultiplier(float distance01)
+    {
+        return Mathf.Lerp(controlledCloseRadiusMultiplier, controlledFarRadiusMultiplier, Mathf.Clamp01(distance01));
+    }
+
+    float GetEffectiveDistance01(float distanceToSurface)
+    {
+        return mainPainter != null ? mainPainter.GetSprayDistance01(distanceToSurface) : GetDistance01(distanceToSurface);
+    }
+
+    float EstimateBrushWidthFromDistance01(float distance01)
+    {
+        if (mainPainter == null)
+            return 0f;
+
+        float resourceRadius = mainPainter.sprayResources != null ? mainPainter.sprayResources.OutputRadius : 1f;
+        float baseSize = (mainPainter.brushMinSize + mainPainter.brushMaxSize) * 0.5f;
+        Vector2 aspect = mainPainter.GetNozzleAspect();
+        return baseSize * Mathf.Min(aspect.x, aspect.y) * resourceRadius * GetRadiusMultiplier(distance01);
     }
 
     Vector3 GetSurfaceTangent(Vector3 normal, Vector3 strokeDirection)
@@ -275,6 +344,8 @@ public class Pintando : MonoBehaviour
         lastPaintPoint = hit.point;
         lastPaintNormal = hit.normal;
         lastPaintCollider = hit.collider;
+        lastObservedPoint = hit.point;
+        lastPaintCone01 = GetEffectiveDistance01(hit.distance);
     }
 
     void SkipStroke(RaycastHit hit)
@@ -296,6 +367,9 @@ public class Pintando : MonoBehaviour
     void OnDestroy()
     {
         if (sprayMaterial != null)
-            Destroy(sprayMaterial);
+        {
+            if (Application.isPlaying) Destroy(sprayMaterial);
+            else DestroyImmediate(sprayMaterial);
+        }
     }
 }

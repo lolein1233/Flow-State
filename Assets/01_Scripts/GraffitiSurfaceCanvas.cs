@@ -3,13 +3,17 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [DisallowMultipleComponent]
+[DefaultExecutionOrder(250)]
 public sealed class GraffitiSurfaceCanvas : MonoBehaviour
 {
     const int BaseSortingOrder = 24;
+    public const int MaxCanvasesPerSurface = 8;
+    public const int MaxCanvasesTotal = 64;
     static readonly Dictionary<int, GraffitiSurfaceCanvas> activeCanvases = new Dictionary<int, GraffitiSurfaceCanvas>();
+    static readonly HashSet<GraffitiSurfaceCanvas> liveCanvases = new HashSet<GraffitiSurfaceCanvas>();
 
     [Min(1)]
-    public int maxStampCount = 12000;
+    public int maxStampCount = 4096;
 
     readonly List<Vector3> vertices = new List<Vector3>();
     readonly List<Vector2> uvs = new List<Vector2>();
@@ -29,6 +33,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
     static void ResetRuntimeCache()
     {
         activeCanvases.Clear();
+        liveCanvases.Clear();
     }
 
     public static GraffitiSurfaceCanvas GetOrCreate(Transform surface, Material material)
@@ -70,6 +75,9 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
             return available;
         }
 
+        if (canvasCount >= MaxCanvasesPerSurface || liveCanvases.Count >= MaxCanvasesTotal)
+            return null; // Never erase old work or allocate unbounded mesh chunks.
+
         GraffitiSurfaceCanvas created = CreateCanvas(surface, material, canvasCount);
         activeCanvases[surfaceId] = created;
         return created;
@@ -94,6 +102,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
 
     void Awake()
     {
+        liveCanvases.Add(this);
         Initialize(null);
     }
 
@@ -213,6 +222,7 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
 
     void OnDestroy()
     {
+        liveCanvases.Remove(this);
         Transform surface = transform.parent;
         if (surface != null &&
             activeCanvases.TryGetValue(surface.GetInstanceID(), out GraffitiSurfaceCanvas cached) &&
@@ -222,6 +232,9 @@ public sealed class GraffitiSurfaceCanvas : MonoBehaviour
         }
 
         if (mesh != null)
-            Destroy(mesh);
+        {
+            if (Application.isPlaying) Destroy(mesh);
+            else DestroyImmediate(mesh);
+        }
     }
 }

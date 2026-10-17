@@ -5,18 +5,17 @@ public sealed class SprayResourceSystem : MonoBehaviour
 {
     [Header("Pintura")]
     [SerializeField, Range(0f, 100f)] float startingPaint = 100f;
-    [SerializeField] float paintConsumptionPerSecond = 4f;
+    [SerializeField] float paintConsumptionPerSecond = 2.2f;
     [SerializeField, Range(0f, 100f)] float criticalPaintLevel = 20f;
 
     [Header("Mezcla")]
     [SerializeField, Range(0f, 100f)] float startingMixture = 100f;
-    [SerializeField] float mixtureDecayWhilePainting = 7.5f;
-    [SerializeField] float mixtureDecayWhileIdle = 0.12f;
+    [SerializeField] float mixtureDecayWhilePainting = 4.2f;
+    [SerializeField] float mixtureDecayWhileIdle = 0.06f;
     [SerializeField, Range(0f, 100f)] float unstableMixtureLevel = 35f;
 
     [Header("Salida con pocos recursos")]
     [SerializeField, Range(0f, 1f)] float emptyCanOpacity = 0.54f;
-    [SerializeField, Range(0f, 1f)] float emptyCanRadius = 0.82f;
     [SerializeField, Range(0f, 1f)] float emptyCanDensity = 0.58f;
     [SerializeField, Range(0f, 1f)] float maximumDropout = 0.48f;
 
@@ -88,9 +87,11 @@ public sealed class SprayResourceSystem : MonoBehaviour
         }
     }
 
-    public float OutputOpacity => Mathf.Lerp(emptyCanOpacity, 1f, Mathf.SmoothStep(0f, 1f, Paint01)) * Mathf.Lerp(0.58f, 1f, 1f - Instability);
-    public float OutputRadius => Mathf.Lerp(emptyCanRadius, 1f, Mathf.SmoothStep(0f, 1f, Paint01));
-    public float OutputDensity => Mathf.Lerp(emptyCanDensity, 1f, Mathf.SmoothStep(0f, 1f, Paint01));
+    // While there is paint, valve pressure stays constant. Mixture instability is
+    // the only gradual degradation; an empty can simply stops emitting.
+    public float OutputOpacity => Mathf.Lerp(emptyCanOpacity, 1f, 1f - Instability);
+    public float OutputRadius => 1f;
+    public float OutputDensity => Mathf.Lerp(emptyCanDensity, 1f, 1f - Instability);
     public float DropoutChance => maximumDropout * Instability;
 
     void Awake()

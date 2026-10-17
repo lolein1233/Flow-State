@@ -26,6 +26,7 @@ public class FPSController : MonoBehaviour
     public bool requirePaintableToEnterGraffiti = true;
     public bool allowMovementInGraffitiMode = true;
     public float graffitiMoveSpeed = 2.25f;
+    public bool lockCameraAimInGraffitiMode = true;
 
     [Header("Vista vertical de graffiti")]
     [Range(-89f, 0f)] public float graffitiMinPitch = -85f;
@@ -163,6 +164,7 @@ public class FPSController : MonoBehaviour
     public float maxFootGroundSnap = 0.35f;
 
     CharacterController controller;
+    GraffitiMenuDrawer graffitiMenu;
     CapsuleCollider legacyCapsuleCollider;
     Camera playerCamera;
     Transform cameraTransform;
@@ -239,6 +241,7 @@ public class FPSController : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        graffitiMenu = GetComponentInChildren<GraffitiMenuDrawer>(true);
         legacyCapsuleCollider = GetComponent<CapsuleCollider>();
         ResolveReferences();
         CacheAnimatorParameters();
@@ -315,6 +318,9 @@ public class FPSController : MonoBehaviour
 
     void ResolveReferences()
     {
+        if (graffitiMenu == null)
+            graffitiMenu = GetComponentInChildren<GraffitiMenuDrawer>(true);
+
         if (cameraHolder == null && Camera.main != null)
             cameraHolder = Camera.main.transform;
 
@@ -486,7 +492,8 @@ public class FPSController : MonoBehaviour
 
     void HandleModeInput()
     {
-        if (Input.GetKeyDown(exitGraffitiKey) && graffitiMode)
+        if (Input.GetKeyDown(exitGraffitiKey) && graffitiMode &&
+            (graffitiMenu == null || (!graffitiMenu.IsMenuOpen && !graffitiMenu.ClosedThisFrame)))
         {
             ExitGraffitiMode();
             return;
@@ -517,6 +524,9 @@ public class FPSController : MonoBehaviour
 
         if (graffitiMode)
         {
+            if (lockCameraAimInGraffitiMode)
+                return;
+
             pitch -= mouseY;
             float minimumPitch = Mathf.Min(graffitiMinPitch, graffitiMaxPitch);
             float maximumPitch = Mathf.Max(graffitiMinPitch, graffitiMaxPitch);
@@ -1683,10 +1693,13 @@ public class FPSController : MonoBehaviour
 
     void UpdateCursorState()
     {
-        if (graffitiCursorCanvas != null && graffitiCursorCanvas.activeSelf != graffitiMode)
-            graffitiCursorCanvas.SetActive(graffitiMode);
-        Cursor.lockState = graffitiMode ? CursorLockMode.Locked : CursorLockMode.Confined;
-        Cursor.visible = graffitiMode;
+        // The spray origin is no longer the centre of the screen. A world-space
+        // marker owned by GraffitiPainter shows the actual nozzle hit instead.
+        if (graffitiCursorCanvas != null && graffitiCursorCanvas.activeSelf)
+            graffitiCursorCanvas.SetActive(false);
+        bool menuOpen = graffitiMenu != null && graffitiMenu.IsMenuOpen;
+        Cursor.lockState = graffitiMode && !menuOpen ? CursorLockMode.Locked : CursorLockMode.Confined;
+        Cursor.visible = graffitiMode && menuOpen;
     }
 
     void SetAnimatorFloat(int hash, float value)

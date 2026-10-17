@@ -243,7 +243,6 @@ public static class GraffitiMenuArtDirector
         CreateBlock("Ink slab", art, new Vector3(0.02f, -0.005f, 0.02f), new Vector3(2.96f, 1.62f, 0.035f), new Vector3(0f, 0f, 0.8f), ink);
         CreateBlock("Header underline", art, new Vector3(-0.77f, 0.565f, -0.05f), new Vector3(1.12f, 0.018f, 0.018f), new Vector3(0f, 0f, -1f), accent);
         CreateText("Title", art, "FLOW STATE", new Vector3(-1.31f, 0.69f, -0.085f), new Vector2(1.45f, 0.24f), 1.25f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
-        CreateText("Index", art, "TU MURO. TU HUELLA.", new Vector3(0.25f, 0.67f, -0.087f), new Vector2(1.05f, 0.20f), 0.5f, Ochre, TextAlignmentOptions.Right, FontStyles.Normal);
     }
 
     static void BuildReferenceMotifs(Transform art, Material ink, Material paper, Material cyan, Material magenta, Material acid, Material orange, Material violet, Material coral, Material mint)
@@ -317,7 +316,7 @@ public static class GraffitiMenuArtDirector
         }
 
         CreateBlock("Lab divider", art, new Vector3(0.35f, 0.20f, -0.035f), new Vector3(0.012f, 0.57f, 0.02f), Vector3.zero, neutral);
-        CreateText("Rack label", art, "ELIGE TU\nBOQUILLA", new Vector3(0.48f, 0.32f, -0.09f), new Vector2(0.85f, 0.32f), 0.95f, Paper, TextAlignmentOptions.Left, FontStyles.Bold);
+        CreateText("Rack label", art, "DIFUMINAR", new Vector3(0.455f, 0.205f, -0.09f), new Vector2(0.90f, 0.12f), 0.48f, Paper, TextAlignmentOptions.Center, FontStyles.Bold);
         CreateText("Controls", art, "CLIC / E  ELEGIR\nQ  VOLVER A PINTAR", new Vector3(0.48f, 0.035f, -0.09f), new Vector2(0.86f, 0.18f), 0.40f, Ochre, TextAlignmentOptions.Left, FontStyles.Normal);
     }
 

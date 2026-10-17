@@ -123,6 +123,12 @@ public sealed class GraffitiNozzleVisual : MonoBehaviour
 
     void ApplyColors(float amount)
     {
+        // Unity clears non-serialized runtime fields during a hot reload even
+        // when Play Mode keeps these menu objects alive. Recreate the blocks
+        // lazily so recompiling cannot produce one exception per frame.
+        propertyBlock ??= new MaterialPropertyBlock();
+        capProperties ??= new MaterialPropertyBlock();
+
         Color color = Color.Lerp(idleColor, activeColor, Mathf.Max(selectionAmount * 0.7f, amount * 0.35f));
 
         if (haloRenderer != null)

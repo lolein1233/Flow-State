@@ -1601,11 +1601,11 @@ MonoBehaviour:
   buttonType: 1
   colorValue: {r: 0, g: 0, b: 0, a: 1}
   nozzleName: "PEQUE\xD1A"
-  nozzleMinSize: 0.024
-  nozzleMaxSize: 0.044
+  nozzleMinSize: 0.045
+  nozzleMaxSize: 0.075
   nozzlePaintRate: 0.004
   nozzleSpacingMultiplier: 0.17
-  nozzleOpacity: 0.7
+  nozzleOpacity: 0.72
   nozzleJitter: 0.055
   nozzleShape: 1
   nozzleTexture: {fileID: 2800000, guid: 8adcacaeaccb9d846a0b1dea4a14f588, type: 3}
@@ -4802,7 +4802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4969137167783804483
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8045,8 +8045,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.905, y: 0.32}
-  m_SizeDelta: {x: 0.85, y: 0.32}
+  m_AnchoredPosition: {x: 0.905, y: 0.205}
+  m_SizeDelta: {x: 0.9, y: 0.12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &181279557416376668
 MeshRenderer:
@@ -8113,9 +8113,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'ELIGE TU
-
-    BOQUILLA'
+  m_text: DIFUMINAR
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5f0c8f1432797224f99dcb5ecd4d5a88, type: 2}
   m_sharedMaterial: {fileID: -8618694021610527115, guid: 5f0c8f1432797224f99dcb5ecd4d5a88, type: 2}
@@ -8142,8 +8140,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.95
-  m_fontSizeBase: 0.95
+  m_fontSize: 0.48
+  m_fontSizeBase: 0.48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -13,7 +13,7 @@ namespace FlowState.Menu
         public string optionId;
         public string displayName;
         public MenuAction action;
-        public string scenePath = "Assets/02_Escenas/Game.unity";
+        public string scenePath = "Assets/02_Escenas/Gameplay.unity";
         public FlowEmotion visualState;
         public FlowPaletteProfile palette;
         public Texture2D wordMask;

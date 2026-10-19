@@ -147,7 +147,7 @@ namespace FlowState.Menu.Editor
             for(int i=0;i<4;i++)
             {
                 var o=ScriptableObject.CreateInstance<MenuOptionData>();o.optionId=words[i];o.displayName=words[i];o.action=(MenuAction)i;o.visualState=emotions[i];o.palette=profiles[i];o.accentColor=accents[i];o.wordMask=Asset<Texture2D>(Root+"/Textures/"+i.ToString("00")+"_"+words[i]+".png");o.paintColor=new Color(.035f,.03f,.045f);
-                o.rattle=Asset<AudioClip>(Root+"/Audio/Can_Rattle.wav");o.clack=Asset<AudioClip>(Root+"/Audio/Can_Clack.wav");o.spray=Asset<AudioClip>(Root+"/Audio/Can_Spray.wav");o.grain=i==1?.38f:.16f;o.drips=i==1?.95f:.4f;o.halftone=i==3?.65f:.3f;o.pressure=i==1?1:.7f;o.pitch=i==1?1.15f:1;o.turnDuration=i==1?.53f:.65f;
+                o.rattle=Asset<AudioClip>(Root+"/Audio/Can_Rattle.wav");o.clack=Asset<AudioClip>(Root+"/Audio/Can_Clack.wav");o.spray=Asset<AudioClip>(Root+"/Audio/Can_Spray.wav");o.grain=i==1?.38f:.16f;o.drips=i==1?.95f:.4f;o.halftone=i==3?.65f:.3f;o.pressure=i==1?1:.7f;o.pitch=i==1?1.15f:1;o.turnDuration=i==1?.53f:.65f;o.transitionDuration=i==0?1.05f:.85f;
                 AssetDatabase.CreateAsset(o,Root+"/Options/"+i.ToString("00")+"_"+words[i]+".asset");opts[i]=o;
             }
             painter.options=opts;
@@ -160,13 +160,29 @@ namespace FlowState.Menu.Editor
             overlayCamera.enabled=false;
             var transition=transitionRoot.AddComponent<MenuTransition>();transition.inkPlane=ink.GetComponent<Renderer>();
             var submenu=root.AddComponent<MenuSubmenu>();submenu.motion=motion;submenu.cameraFeedback=feedback;submenu.sound=audio;
-            var sub=Node("Pasted sheets · submenus",root.transform);submenu.presentation=sub;
+            var sub=Node("Pasted sheets · submenus",root.transform);sub.transform.localPosition=new Vector3(.51f,0,0);submenu.presentation=sub;
             var sheetMat=Material("ArchivePaper","Universal Render Pipeline/Unlit");sheetMat.color=new Color(.9f,.87f,.79f);
             var sheet=Shape("Archive sheet",PrimitiveType.Quad,new Vector3(-3,.1f,-.15f),new Vector3(6.3f,5.1f,1),sheetMat,sub.transform);sheet.transform.localEulerAngles=new Vector3(0,0,1.5f);
-            submenu.heading=Text("Archive heading","GALERÍA",new Vector3(-5.7f,2.1f,-.2f),new Vector2(6,1),6.8f,owned,sub.transform);
-            submenu.body=Text("Archive instructions","",new Vector3(-5.6f,1.05f,-.25f),new Vector2(6,3),2.9f,secondary,sub.transform);
+            Shape("Paper drop shadow",PrimitiveType.Quad,new Vector3(-2.84f,-.06f,-.08f),new Vector3(6.48f,5.25f,1),dark,sub.transform);
+            var submenuAccent=Material("SubmenuAccent","Universal Render Pipeline/Unlit");submenuAccent.color=Color.white;
+            var polish=Node("Submenu polish",sub.transform);
+            var headerAccent=Shape("Header paint underline",PrimitiveType.Quad,new Vector3(-3.05f,1.69f,-.255f),new Vector3(5.18f,.095f,1),submenuAccent,polish.transform);headerAccent.transform.localEulerAngles=new Vector3(0,0,-1.2f);
+            var registration=Shape("Registration slash",PrimitiveType.Quad,new Vector3(-5.78f,2.02f,-.255f),new Vector3(.1f,.62f,1),submenuAccent,polish.transform);registration.transform.localEulerAngles=new Vector3(0,0,-13);
+            var galleryDecor=Node("Gallery comic frame",polish.transform);
+            var galleryAccent=Shape("Gallery offset pigment",PrimitiveType.Quad,new Vector3(-2.92f,-.18f,-.205f),new Vector3(5.62f,3.3f,1),submenuAccent,galleryDecor.transform);galleryAccent.transform.localEulerAngles=new Vector3(0,0,-.8f);
+            Shape("Gallery ink frame",PrimitiveType.Quad,new Vector3(-3,-.18f,-.235f),new Vector3(5.48f,3.18f,1),dark,galleryDecor.transform);
+            Shape("Gallery footer ink",PrimitiveType.Quad,new Vector3(-3,-1.68f,-.27f),new Vector3(5.48f,.92f,1),dark,galleryDecor.transform);
+            var settingsDecor=Node("Settings ink cards",polish.transform);
+            Shape("Settings ink slab",PrimitiveType.Quad,new Vector3(-3,-.18f,-.235f),new Vector3(5.48f,3.28f,1),dark,settingsDecor.transform);
+            var settingsRail=Shape("Settings pigment rail",PrimitiveType.Quad,new Vector3(-5.62f,-.18f,-.275f),new Vector3(.12f,3.12f,1),submenuAccent,settingsDecor.transform);
+            var dividerTop=Shape("Settings divider top",PrimitiveType.Quad,new Vector3(-3,.28f,-.275f),new Vector3(4.85f,.025f,1),submenuAccent,settingsDecor.transform);
+            var dividerBottom=Shape("Settings divider bottom",PrimitiveType.Quad,new Vector3(-3,-.72f,-.275f),new Vector3(4.85f,.025f,1),submenuAccent,settingsDecor.transform);
+            submenu.galleryDecoration=galleryDecor;submenu.settingsDecoration=settingsDecor;
+            submenu.accentRenderers=new[]{headerAccent.GetComponent<Renderer>(),registration.GetComponent<Renderer>(),galleryAccent.GetComponent<Renderer>(),settingsRail.GetComponent<Renderer>(),dividerTop.GetComponent<Renderer>(),dividerBottom.GetComponent<Renderer>()};
+            submenu.heading=Text("Archive heading","GALERÍA",new Vector3(-5.72f,2.18f,-.31f),new Vector2(5.35f,.78f),5.35f,owned,sub.transform);
+            submenu.body=Text("Archive instructions","",new Vector3(-5.48f,-1.42f,-.34f),new Vector2(4.95f,1.25f),1.9f,secondary,sub.transform);
             var artMat=Material("ArchiveArtwork","Universal Render Pipeline/Unlit");
-            submenu.artwork=Shape("Original project artwork",PrimitiveType.Quad,new Vector3(-3,-.7f,-.3f),new Vector3(4,2.3f,1),artMat,sub.transform).GetComponent<Renderer>();
+            submenu.artwork=Shape("Original project artwork",PrimitiveType.Quad,new Vector3(-3,-.03f,-.305f),new Vector3(5.08f,2.34f,1),artMat,sub.transform).GetComponent<Renderer>();
             submenu.gallery=new Texture[]{logo,Asset<Texture2D>("Assets/04_Materiales e Imagenes/imagenes/ChatGPT Image 3 may 2026, 09_07_59 p.m..png"),Asset<Texture2D>("Assets/04_Materiales e Imagenes/imagenes/yslogo-removebg-preview.png")};sub.SetActive(false);
             var controller=root.AddComponent<MainMenuController>();controller.options=opts;controller.input=input;controller.motion=motion;controller.visual=visual;controller.painter=painter;controller.audioFeedback=audio;controller.cameraFeedback=feedback;controller.spray=spray;controller.transition=transition;controller.submenu=submenu;controller.legend=legend;controller.exitTag=exit;controller.previewWord=preview.gameObject;
             exit.gameObject.SetActive(false);

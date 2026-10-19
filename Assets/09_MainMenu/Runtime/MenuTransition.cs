@@ -36,18 +36,30 @@ namespace FlowState.Menu
         }
         IEnumerator Load(MenuOptionData option)
         {
-            ink.SetColor("_Color",option.accentColor*.22f);
+            Color deepInk=new Color(.035f,.01f,.075f,1);
+            ink.SetColor("_Color",deepInk);
+            ink.SetColor("_AccentColor",Color.Lerp(option.accentColor,Color.white,.08f));
+            ink.SetFloat("_Seed",Random.Range(3f,91f));
             yield return Wipe(0,1,option.transitionDuration);
+            yield return new WaitForSecondsRealtime(.08f);
             var load=SceneManager.LoadSceneAsync(option.scenePath);
             if(load!=null)while(!load.isDone)yield return null;
-            // The same pigment is lifted from the gameplay camera after the scene loads.
-            yield return null;yield return Wipe(1,0,option.transitionDuration*.75f);
+            // Keep one rendered gameplay frame safely behind the opaque pigment.
+            yield return new WaitForEndOfFrame();
+            yield return Wipe(1,0,option.transitionDuration*.9f);
             Destroy(gameObject);
         }
         IEnumerator Wipe(float from,float to,float duration)
         {
             float t=0;
-            while(t<1){t+=Time.unscaledDeltaTime/Mathf.Max(.1f,duration);ink.SetFloat("_Progress",Mathf.Lerp(from,to,Mathf.SmoothStep(0,1,t)));yield return null;}
+            while(t<1)
+            {
+                t+=Time.unscaledDeltaTime/Mathf.Max(.1f,duration);
+                float normalized=Mathf.Clamp01(t);
+                float eased=to>from?1-Mathf.Pow(1-normalized,3):Mathf.SmoothStep(0,1,normalized);
+                ink.SetFloat("_Progress",Mathf.Lerp(from,to,eased));
+                yield return null;
+            }
             ink.SetFloat("_Progress",to);
         }
         void OnDestroy(){SceneManager.sceneLoaded-=Attach;if(ink)Destroy(ink);}

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
+[DefaultExecutionOrder(50)]
 public class GraffitiAnimation : MonoBehaviour
 {
     [Header("Base")]
@@ -68,6 +69,9 @@ public class GraffitiAnimation : MonoBehaviour
     float shakeTravel;
     float canChangeProgress;
     float noiseSeed;
+    Vector3 graffitiControlPosition;
+    Vector3 graffitiControlRotation;
+    bool graffitiControlActive;
 
     void Awake()
     {
@@ -112,7 +116,17 @@ public class GraffitiAnimation : MonoBehaviour
         currentRotationOffset = Vector3.SmoothDamp(currentRotationOffset, targetRotation, ref rotationVelocity, rotationTime, Mathf.Infinity, deltaTime);
 
         transform.localPosition = idlePosition + currentPositionOffset;
-        transform.localRotation = baseRotation * Quaternion.Euler(currentRotationOffset);
+        transform.localRotation = graffitiControlActive
+            ? Quaternion.Euler(currentRotationOffset) * baseRotation
+            : baseRotation * Quaternion.Euler(currentRotationOffset);
+    }
+
+    // The imported can is rotated -90 degrees. Calibrate the nozzle against its
+    // resting pose, then let the actual animated wrist drive both origin and aim.
+    public Ray GetNozzleRay(Vector3 restingOffset)
+    {
+        Quaternion nozzleRotation = transform.rotation * Quaternion.Inverse(baseRotation);
+        return new Ray(transform.position + nozzleRotation * restingOffset, nozzleRotation * Vector3.forward);
     }
 
     Vector3 BuildPositionOffset(float time)
@@ -129,7 +143,8 @@ public class GraffitiAnimation : MonoBehaviour
             SignedPerlin(time * slowIdleNoiseFrequency * 1.17f, noiseSeed + 463f));
         idle += Vector3.Scale(slowIdle, slowIdlePositionAmplitude);
 
-        Vector3 sway = new Vector3(-currentSway.x * swayPositionAmount.x, -currentSway.y * swayPositionAmount.y, 0f);
+        float swayWeight = graffitiControlActive ? 0.16f : 1f;
+        Vector3 sway = new Vector3(-currentSway.x * swayPositionAmount.x, -currentSway.y * swayPositionAmount.y, 0f) * swayWeight;
         Vector3 bob = new Vector3(
             Mathf.Sin(walkCycle) * walkBobAmplitude.x,
             Mathf.Sin(walkCycle * 2f) * walkBobAmplitude.y,
@@ -154,7 +169,7 @@ public class GraffitiAnimation : MonoBehaviour
         float recoil = recoilTimer > 0f ? Mathf.Sin((recoilTimer / valveRecoilDuration) * Mathf.PI) * valveRecoilDistance : 0f;
         Vector3 shake = shaking ? Vector3.Scale(shakePositionAmplitude, new Vector3(shakeTravel, Mathf.Abs(shakeTravel), -Mathf.Abs(shakeTravel))) : Vector3.zero;
         Vector3 canChange = changingCan ? BuildCanChangePosition(canChangeProgress) : Vector3.zero;
-        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake + canChange;
+        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake + canChange + graffitiControlPosition;
     }
 
     Vector3 BuildRotationOffset(float time)
@@ -171,7 +186,8 @@ public class GraffitiAnimation : MonoBehaviour
             SignedPerlin(time * slowIdleNoiseFrequency * 0.61f, noiseSeed + 557f));
         idle += Vector3.Scale(slowIdle, slowIdleRotationAmplitude);
 
-        Vector3 sway = new Vector3(-currentSway.y * swayRotationAmount.x, currentSway.x * swayRotationAmount.y, -currentSway.x * 0.18f);
+        float swayWeight = graffitiControlActive ? 0.16f : 1f;
+        Vector3 sway = new Vector3(-currentSway.y * swayRotationAmount.x, currentSway.x * swayRotationAmount.y, -currentSway.x * 0.18f) * swayWeight;
         Vector3 bob = new Vector3(Mathf.Sin(walkCycle * 2f), Mathf.Sin(walkCycle), Mathf.Cos(walkCycle)) * walkBlend;
         bob = Vector3.Scale(bob, walkBobRotation);
 
@@ -187,7 +203,7 @@ public class GraffitiAnimation : MonoBehaviour
 
         Vector3 shake = shaking ? Vector3.Scale(shakeRotationAmplitude, new Vector3(-shakeTravel, shakeTravel, -shakeTravel)) : Vector3.zero;
         Vector3 canChange = changingCan ? BuildCanChangeRotation(canChangeProgress) : Vector3.zero;
-        return idle + sway + bob + vibration + shake + canChange;
+        return idle + sway + bob + vibration + shake + canChange + graffitiControlRotation;
     }
 
     Vector3 BuildCanChangePosition(float progress)
@@ -268,5 +284,12 @@ public class GraffitiAnimation : MonoBehaviour
         spraying = false;
         shaking = false;
         shakeTravel = 0f;
+    }
+
+    public void SetGraffitiControl(Vector3 positionOffset, Vector3 rotationOffset, bool active)
+    {
+        graffitiControlActive = active;
+        graffitiControlPosition = active ? positionOffset : Vector3.zero;
+        graffitiControlRotation = active ? rotationOffset : Vector3.zero;
     }
 }

@@ -33,7 +33,7 @@ MonoBehaviour:
   spray: {fileID: 8300000, guid: bc147d8ff11bb5d4884fea5fb03b13c9, type: 3}
   volume: 0.65
   pitch: 1
-  transitionDuration: 0.85
+  transitionDuration: 1.05
   onConfirmed:
     m_PersistentCalls:
       m_Calls: []

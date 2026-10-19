@@ -1,0 +1,174 @@
+{
+  "input": "C:\\Users\\alons\\Downloads\\FlowState_GDD.docx",
+  "fonts_by_char_count": {
+    "Arial": 3829,
+    "Courier New": 760,
+    "Arial Black": 415,
+    "Calibri": 168,
+    "Aptos": 50
+  },
+  "direct_run_formatting_runs": 863,
+  "direct_paragraph_formatting_paragraphs": 216,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 194,
+      "text": "Dato",
+      "style": "normal"
+    },
+    {
+      "para_index": 206,
+      "text": "Integrante",
+      "style": "normal"
+    },
+    {
+      "para_index": 207,
+      "text": "Rol",
+      "style": "normal"
+    },
+    {
+      "para_index": 216,
+      "text": "Categor\u00eda",
+      "style": "normal"
+    },
+    {
+      "para_index": 217,
+      "text": "Definici\u00f3n actualizada",
+      "style": "normal"
+    },
+    {
+      "para_index": 234,
+      "text": "Pieza",
+      "style": "normal"
+    },
+    {
+      "para_index": 235,
+      "text": "Uso dentro del GDD",
+      "style": "normal"
+    },
+    {
+      "para_index": 236,
+      "text": "Responsable",
+      "style": "normal"
+    },
+    {
+      "para_index": 267,
+      "text": "Pilar",
+      "style": "normal"
+    },
+    {
+      "para_index": 268,
+      "text": "C\u00f3mo se siente",
+      "style": "normal"
+    },
+    {
+      "para_index": 269,
+      "text": "Traducci\u00f3n jugable",
+      "style": "normal"
+    },
+    {
+      "para_index": 285,
+      "text": "Momento",
+      "style": "normal"
+    },
+    {
+      "para_index": 286,
+      "text": "Pregunta emocional",
+      "style": "normal"
+    },
+    {
+      "para_index": 287,
+      "text": "Respuesta de dise\u00f1o",
+      "style": "normal"
+    },
+    {
+      "para_index": 303,
+      "text": "Tipo",
+      "style": "normal"
+    },
+    {
+      "para_index": 304,
+      "text": "Referente",
+      "style": "normal"
+    },
+    {
+      "para_index": 305,
+      "text": "Aporte al \u00e1rea",
+      "style": "normal"
+    },
+    {
+      "para_index": 306,
+      "text": "Transformaci\u00f3n en Flow State",
+      "style": "normal"
+    },
+    {
+      "para_index": 319,
+      "text": "Acto",
+      "style": "normal"
+    },
+    {
+      "para_index": 320,
+      "text": "Objetivo emocional",
+      "style": "normal"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "",
+        "style": "normal"
+      },
+      {
+        "para_index": 2,
+        "text": "\n",
+        "style": "normal"
+      },
+      {
+        "para_index": 3,
+        "text": "",
+        "style": "normal"
+      },
+      {
+        "para_index": 4,
+        "text": "\u00cdNDICE\n",
+        "style": "normal"
+      },
+      {
+        "para_index": 9,
+        "text": "Flow State es una aventura narrativa de sigilo, parkour y expresi\u00f3n urbana donde el graffiti funciona como lenguaje, her",
+        "style": "normal"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 4,
+        "run_text": "\u00cdNDICE",
+        "style": "normal"
+      },
+      {
+        "para_index": 4,
+        "run_text": "\n",
+        "style": "normal"
+      },
+      {
+        "para_index": 6,
+        "run_text": "1. ",
+        "style": "Heading 1"
+      },
+      {
+        "para_index": 6,
+        "run_text": "Ficha t\u00e9cnica y resumen ejecutivo\n",
+        "style": "Heading 1"
+      },
+      {
+        "para_index": 8,
+        "run_text": "Resumen ejecutivo\n",
+        "style": "Heading 2"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

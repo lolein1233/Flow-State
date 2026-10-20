@@ -11,12 +11,12 @@ public class Pintando : MonoBehaviour
     public float surfaceOffset = 0.012f;
     public int maxStampsPerFrame = 18;
     [SerializeField, Min(32)] int minimumInterpolationBudget = 96;
-    [SerializeField, Range(0.35f, 1f)] float continuitySpacingScale = 0.58f;
+    [SerializeField, Range(0.25f, 1f)] float continuitySpacingScale = 0.5f;
     public GraffitiPainter mainPainter;
 
     [Header("Distancia y proyeccion")]
     [SerializeField] float closeDistance = 0.55f;
-    [SerializeField, Range(0.35f, 0.9f)] float controlledCloseRadiusMultiplier = 0.55f;
+    [SerializeField, Range(0.2f, 0.9f)] float controlledCloseRadiusMultiplier = 0.3f;
     [SerializeField, Range(1.4f, 3f)] float controlledFarRadiusMultiplier = 2.05f;
     [SerializeField] float maximumAngleStretch = 2.25f;
 
@@ -43,6 +43,8 @@ public class Pintando : MonoBehaviour
     float dwellTimer;
     float dripCooldown;
     float smoothedBrushSize;
+    float strokeSeed;
+    int strokeSampleIndex;
     Vector3 lastObservedPoint;
     float lastPaintCone01;
     int firstStampFrame = -1;
@@ -52,6 +54,9 @@ public class Pintando : MonoBehaviour
     void Awake()
     {
         minimumInterpolationBudget = Mathf.Clamp(minimumInterpolationBudget, 64, 160);
+        // Older scenes serialized a looser spacing value. Cap it here so every
+        // existing wall receives the denser, continuous stroke without a scene migration.
+        continuitySpacingScale = Mathf.Min(continuitySpacingScale, 0.5f);
         EnsureMaterial();
     }
 
@@ -133,7 +138,7 @@ public class Pintando : MonoBehaviour
         if (!hasLastPaintPoint || hit.collider != lastPaintCollider || Vector3.Angle(lastPaintNormal, hit.normal) > 40f)
         {
             float exposure = 1f / 60f;
-            PaintStamp(hit, hit.point, hit.normal, Vector3.zero, currentCone01, exposure);
+            PaintStamp(hit, hit.point, hit.normal, Vector3.zero, 0f, currentCone01, exposure);
             sampleTimer = 0f;
             RememberHit(hit);
             return;
@@ -158,14 +163,17 @@ public class Pintando : MonoBehaviour
         float startCone01 = lastPaintCone01;
         float sampledFraction = distanceSamples > 0 && distanceSamples <= stampLimit
             ? Mathf.Min(1f, distanceSamples * spacing / Mathf.Max(distanceBetween, 0.0001f)) : 1f;
+        Vector3 previousSamplePoint = startPoint;
         for (int i = 1; i <= stampCount; i++)
         {
             float t = i / (float)stampCount * sampledFraction;
             Vector3 point = Vector3.Lerp(startPoint, hit.point, t);
             Vector3 normal = Vector3.Slerp(startNormal, hit.normal, t).normalized;
-            Vector3 strokeDirection = point - startPoint;
+            Vector3 strokeDirection = point - previousSamplePoint;
+            float segmentLength = strokeDirection.magnitude;
             float cone01 = Mathf.Lerp(startCone01, currentCone01, t);
-            PaintStamp(hit, point, normal, strokeDirection, cone01, exposurePerStamp);
+            PaintStamp(hit, point, normal, strokeDirection, segmentLength, cone01, exposurePerStamp);
+            previousSamplePoint = point;
             if (CapacityReached)
                 break;
         }
@@ -176,7 +184,7 @@ public class Pintando : MonoBehaviour
         lastPaintCone01 = Mathf.Lerp(startCone01, currentCone01, sampledFraction);
     }
 
-    void PaintStamp(RaycastHit hit, Vector3 point, Vector3 normal, Vector3 strokeDirection, float distance01, float exposureSeconds)
+    void PaintStamp(RaycastHit hit, Vector3 point, Vector3 normal, Vector3 strokeDirection, float segmentLength, float distance01, float exposureSeconds)
     {
         Transform surface = hit.collider != null ? hit.collider.transform : null;
         GraffitiSurfaceCanvas canvas = GraffitiSurfaceCanvas.GetOrCreate(surface, sprayMaterial);
@@ -200,18 +208,28 @@ public class Pintando : MonoBehaviour
         Vector3 viewProjection = Vector3.ProjectOnPlane(sprayDirection, normal);
         float incidence = Mathf.Abs(Vector3.Dot(-sprayDirection, normal));
         float angleStretch = Mathf.Min(maximumAngleStretch, 1f / Mathf.Max(0.3f, incidence));
-        if (angleStretch > 1.05f && viewProjection.sqrMagnitude > 0.0001f)
+        // A stationary dab may align with the oblique projection. While moving,
+        // keep the quad on the actual path so its bridge cannot rotate away and
+        // reopen gaps on diagonal strokes.
+        if (segmentLength <= 0.0001f && angleStretch > 1.05f && viewProjection.sqrMagnitude > 0.0001f)
             tangent = viewProjection.normalized;
 
-        float width = size * angleStretch;
+        // Stretch a moving sample backwards across the distance it owns. The
+        // spray halo still comes from the stamp shader, but the opaque spine is
+        // now continuous instead of exposing a row of circular deposits.
+        float bridgeLength = Mathf.Min(segmentLength * 1.2f, size * 0.8f);
+        float width = size * angleStretch + bridgeLength;
         float height = size;
         ApplyNozzleAspect(ref width, ref height);
 
         Vector3 bitangent = Vector3.Cross(normal, tangent).normalized;
-        Vector2 jitter = Random.insideUnitCircle * size * mainPainter.brushJitter * 0.35f;
-        Vector3 position = point + normal * surfaceOffset + tangent * jitter.x + bitangent * jitter.y;
+        float precisionJitter = Mathf.Lerp(0.14f, 0.34f, Mathf.Clamp01(distance01));
+        Vector2 jitter = Random.insideUnitCircle * size * mainPainter.brushJitter * precisionJitter;
+        Vector3 position = point - tangent * (bridgeLength * 0.5f) + normal * surfaceOffset + tangent * jitter.x + bitangent * jitter.y;
         Color color = mainPainter.GetPaintColorWithVariation(exposureSeconds, 1f);
-        float seed = Random.Range(0.001f, 999f);
+        if (strokeSeed <= 0f)
+            strokeSeed = Random.Range(0.001f, 999f);
+        float seed = strokeSeed + strokeSampleIndex++ * 0.013f;
         Vector4 profile = mainPainter.GetStampProfile(distance01, seed);
         Vector4 spray = mainPainter.GetSpraySettings();
         canvas.AddStamp(position, normal, tangent, width, height, color, profile, spray);
@@ -237,7 +255,7 @@ public class Pintando : MonoBehaviour
 
         ResetStroke();
         sampleTimer = initialBurstExposureFrames / 60f;
-        PaintStamp(hit, hit.point, hit.normal, Vector3.zero, GetEffectiveDistance01(hit.distance), sampleTimer);
+        PaintStamp(hit, hit.point, hit.normal, Vector3.zero, 0f, GetEffectiveDistance01(hit.distance), sampleTimer);
         sampleTimer = 0f;
         RememberHit(hit);
         firstStampFrame = Time.frameCount;
@@ -362,6 +380,8 @@ public class Pintando : MonoBehaviour
         hasPreviousRayPoint = false;
         dwellTimer = 0f;
         smoothedBrushSize = 0f;
+        strokeSeed = 0f;
+        strokeSampleIndex = 0;
     }
 
     void OnDestroy()

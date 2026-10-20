@@ -900,7 +900,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.07, g: 0.065, b: 0.075, a: 1}
+  m_fontColor: {r: 0.9, g: 0.91, b: 0.94, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1108,7 +1108,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.84, g: 0.82, b: 0.75, a: 1}
+  m_BackGroundColor: {r: 0.012, g: 0.014, b: 0.019, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -8417,6 +8417,7 @@ Transform:
   - {fileID: 565913332}
   - {fileID: 1276670356}
   - {fileID: 2028984083}
+  - {fileID: 1915112700}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1619861828
@@ -9768,6 +9769,56 @@ Transform:
   - {fileID: 1578824295}
   m_Father: {fileID: 311615694}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1915112699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1915112700}
+  - component: {fileID: 1915112701}
+  m_Layer: 0
+  m_Name: "Living mural stage \xB7 mask + holo"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1915112700
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915112699}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1619861827}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1915112701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915112699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 125fd68e4e1df7842ad78fcc1d2d05b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wall: {fileID: 1782754100}
+  canMotion: {fileID: 1619861824}
+  cameraController: {fileID: 2028984082}
+  accessibility: {fileID: 320452557}
+  wallMotion: 0.82
+  hologramIntensity: 0.88
 --- !u!1 &1947633288
 GameObject:
   m_ObjectHideFlags: 0
@@ -9816,7 +9867,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4279439634
-  m_fontColor: {r: 0.07, g: 0.065, b: 0.075, a: 1}
+  m_fontColor: {r: 1, g: 0.08, b: 0.36, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

@@ -19,7 +19,7 @@ MonoBehaviour:
   visualState: 4
   palette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
   wordMask: {fileID: 2800000, guid: 218b397b8671cf54299f844538ab9d81, type: 3}
-  paintColor: {r: 0.035, g: 0.03, b: 0.045, a: 1}
+  paintColor: {r: 0.82, g: 0.87, b: 1, a: 1}
   accentColor: {r: 0.24, g: 0.32, b: 0.88, a: 1}
   grain: 0.16
   drips: 0.4

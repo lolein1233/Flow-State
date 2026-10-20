@@ -4,11 +4,24 @@ using UnityEngine;
 [DefaultExecutionOrder(50)]
 public class GraffitiAnimation : MonoBehaviour
 {
+    // Spray Test update.fbx is a single mesh without a nozzle child. These
+    // coordinates are the centre of the front face of the disconnected valve
+    // component, measured in that mesh's local space (not from its bounds).
+    public static readonly Vector3 AuthoredNozzleLocalPosition =
+        new Vector3(0f, -0.0034142f, 0.0016845f);
+
     [Header("Base")]
     public Vector3 idlePosition;
     public Vector3 sprayOffset = new Vector3(0f, -0.025f, 0.035f);
     [SerializeField] float positionDamping = 15f;
     [SerializeField] float rotationDamping = 17f;
+
+    [Header("Boquilla real")]
+    [Tooltip("Marcador opcional para otro modelo. Si no existe se usa el centro medido de la boquilla del FBX actual.")]
+    [SerializeField] Transform nozzleAnchorOverride;
+    [SerializeField] Vector3 nozzleLocalPosition = new Vector3(0f, -0.0034142f, 0.0016845f);
+    [SerializeField] Vector3 nozzleLocalForward = Vector3.down;
+    [SerializeField] Vector3 nozzleLocalUp = Vector3.forward;
 
     [Header("Idle organico")]
     [SerializeField] Vector3 idlePositionAmplitude = new Vector3(0.0035f, 0.006f, 0.0026f);
@@ -121,12 +134,34 @@ public class GraffitiAnimation : MonoBehaviour
             : baseRotation * Quaternion.Euler(currentRotationOffset);
     }
 
-    // The imported can is rotated -90 degrees. Calibrate the nozzle against its
-    // resting pose, then let the actual animated wrist drive both origin and aim.
-    public Ray GetNozzleRay(Vector3 restingOffset)
+    /// <summary>
+    /// Pose exacta del orificio. TransformPoint conserva la escala real del FBX
+    /// y de sus padres; por eso el origen sigue unido a la geometria durante
+    /// sway, recoil, vibracion, cambio de lata y cualquier reescalado.
+    /// </summary>
+    public Ray GetNozzleRay()
     {
-        Quaternion nozzleRotation = transform.rotation * Quaternion.Inverse(baseRotation);
-        return new Ray(transform.position + nozzleRotation * restingOffset, nozzleRotation * Vector3.forward);
+        if (nozzleAnchorOverride != null)
+            return new Ray(nozzleAnchorOverride.position, nozzleAnchorOverride.forward);
+
+        Vector3 direction = transform.TransformDirection(SafeDirection(nozzleLocalForward, Vector3.down)).normalized;
+        return new Ray(transform.TransformPoint(nozzleLocalPosition), direction);
+    }
+
+    public Vector3 GetNozzleUp()
+    {
+        if (nozzleAnchorOverride != null)
+            return nozzleAnchorOverride.up;
+
+        Vector3 up = transform.TransformDirection(SafeDirection(nozzleLocalUp, Vector3.forward)).normalized;
+        Vector3 forward = GetNozzleRay().direction;
+        Vector3 projected = Vector3.ProjectOnPlane(up, forward);
+        return projected.sqrMagnitude > 0.000001f ? projected.normalized : Vector3.up;
+    }
+
+    static Vector3 SafeDirection(Vector3 value, Vector3 fallback)
+    {
+        return value.sqrMagnitude > 0.000001f ? value.normalized : fallback;
     }
 
     Vector3 BuildPositionOffset(float time)

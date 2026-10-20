@@ -1422,6 +1422,18 @@ public class FPSController : MonoBehaviour
         previousCameraPlayerPosition = transform.position;
     }
 
+    public void ApplyGraffitiLookDelta(float yawDelta, float pitchDelta)
+    {
+        if (!graffitiMode)
+            return;
+
+        orbitYaw += yawDelta;
+        float minimumPitch = Mathf.Min(graffitiMinPitch, graffitiMaxPitch);
+        float maximumPitch = Mathf.Max(graffitiMinPitch, graffitiMaxPitch);
+        pitch = Mathf.Clamp(pitch + pitchDelta, minimumPitch, maximumPitch);
+        transform.rotation = Quaternion.Euler(0f, orbitYaw, 0f);
+    }
+
     void UpdateThirdPersonCamera(float deltaTime)
     {
         Vector3 target = GetDesiredThirdPersonTarget(deltaTime);

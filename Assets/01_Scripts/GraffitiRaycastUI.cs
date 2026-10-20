@@ -36,8 +36,7 @@ public class GraffitiRaycastUI : MonoBehaviour
         if (painter == null)
             painter = GetComponent<GraffitiPainter>();
 
-        if (!graffitiPrompt.Contains("RUEDA"))
-            graffitiPrompt += "\n[RUEDA] DISTANCIA DE LA LATA";
+        graffitiPrompt = graffitiPrompt.Replace("\n[RUEDA] DISTANCIA DE LA LATA", string.Empty);
 
         if (promptUI != null)
             promptText = promptUI.GetComponentInChildren<TMP_Text>(true);

@@ -23,6 +23,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BackdropLogo:
+        m_Texture: {fileID: 2800000, guid: f7f6830268b4c51479db285bfa656764, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BackdropMask:
+        m_Texture: {fileID: 2800000, guid: 912a39e3d93492849b096924320664fd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _FreshMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -36,8 +44,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _BackdropHoloIntensity: 0.88
+    - _BackdropMotion: 0.82
     m_Colors:
-    - _BaseColor: {r: 0.85, g: 0.83, b: 0.76, a: 1}
+    - _BackdropAccent: {r: 1, g: 0.015, b: 0.31, a: 1}
+    - _BaseColor: {r: 0.035, g: 0.038, b: 0.045, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

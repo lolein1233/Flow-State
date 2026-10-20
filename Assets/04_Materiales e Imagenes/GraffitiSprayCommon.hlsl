@@ -8,6 +8,18 @@ float FlowSprayHash21(float2 value)
     return frac(value.x * value.y);
 }
 
+float FlowSprayValueNoise(float2 value)
+{
+    float2 cell = floor(value);
+    float2 local = frac(value);
+    local = local * local * (3.0 - 2.0 * local);
+    float a = FlowSprayHash21(cell);
+    float b = FlowSprayHash21(cell + float2(1.0, 0.0));
+    float c = FlowSprayHash21(cell + float2(0.0, 1.0));
+    float d = FlowSprayHash21(cell + 1.0);
+    return lerp(lerp(a, b, local.x), lerp(c, d, local.x), local.y);
+}
+
 half4 FlowEvaluateSpray(float2 uv, float4 color, float4 profile, float4 spray, float globalOpacity)
 {
     float2 sprayPoint = (uv - 0.5) * 2.0;
@@ -21,10 +33,13 @@ half4 FlowEvaluateSpray(float2 uv, float4 color, float4 profile, float4 spray, f
     float coreHardness = saturate(spray.z);
     float instability = saturate(spray.w);
 
-    float2 organicCell = floor((sprayPoint + 1.0) * 11.0);
-    float organicNoise = FlowSprayHash21(organicCell + seed * 5.73);
-    float warpedRadius = radius * (1.0 + (organicNoise - 0.5) * lerp(0.075, 0.15, 1.0 - coreHardness));
-    float antialias = max(fwidth(warpedRadius) * 1.35, lerp(0.085, 0.018, coreHardness));
+    // Smooth two-octave breakup avoids the faceted rings produced by one
+    // constant random value per cell while preserving a sprayed edge.
+    float2 organicUv = (sprayPoint + 1.0) * 9.0 + seed * float2(0.071, 0.113);
+    float organicNoise = FlowSprayValueNoise(organicUv) * 0.68 +
+        FlowSprayValueNoise(organicUv * 2.17 + 13.7) * 0.32;
+    float warpedRadius = radius * (1.0 + (organicNoise - 0.5) * lerp(0.065, 0.135, 1.0 - coreHardness));
+    float antialias = max(fwidth(warpedRadius) * 1.5, lerp(0.055, 0.012, coreHardness));
     float core = 1.0 - smoothstep(coreRadius - antialias, coreRadius + antialias, warpedRadius);
     float haloBand = (1.0 - smoothstep(coreRadius, haloRadius, warpedRadius)) * (1.0 - core);
 
@@ -51,7 +66,9 @@ half4 FlowEvaluateSpray(float2 uv, float4 color, float4 profile, float4 spray, f
     float2 dropletUv = frac(dropletGrid) - 0.5;
     float dropletSeed = FlowSprayHash21(dropletCell + seed * 11.9);
     float dropletRadius = lerp(0.08, 0.2, FlowSprayHash21(dropletCell + seed * 19.1));
-    float dropletDot = 1.0 - smoothstep(dropletRadius * 0.55, dropletRadius, length(dropletUv));
+    float dropletDistance = length(dropletUv);
+    float dropletAA = max(fwidth(dropletDistance) * 1.25, 0.008);
+    float dropletDot = 1.0 - smoothstep(dropletRadius - dropletAA, dropletRadius + dropletAA, dropletDistance);
     float dropletBand = smoothstep(coreRadius * 0.72, coreRadius, warpedRadius) *
         (1.0 - smoothstep(haloRadius, haloRadius * 1.13, warpedRadius));
     float dropletChance = lerp(0.9, 0.76, saturate(haloOpacity + instability * 0.45));

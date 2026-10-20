@@ -115,19 +115,102 @@ public sealed class GraffitiInteractionTests
         }
     }
 
-    [Test] public void WheelDepthControlsFootprintAtTheSameWallDistance()
+    [Test] public void AdaptiveGestureControlsFootprintAtTheSameWallDistance()
     {
         Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
         Set(painter, "physicalControlWasActive", true);
+        painter.useAdaptiveSprayDistance = true;
 
-        Set(painter, "smoothedDepth", 1f);
+        Set(painter, "adaptiveCone", 0f);
         float closeWidth = paint.EstimateBrushWidth(3f);
         Assert.That(painter.SprayCone01, Is.EqualTo(0f).Within(0.001f));
 
-        Set(painter, "smoothedDepth", -1f);
+        Set(painter, "adaptiveCone", 1f);
         float farWidth = paint.EstimateBrushWidth(3f);
         Assert.That(painter.SprayCone01, Is.EqualTo(1f).Within(0.001f));
         Assert.That(farWidth, Is.GreaterThan(closeWidth * 3.5f));
+    }
+
+    [Test] public void SlowPrecisionFootprintIsFineAndCoverageStillOpensWide()
+    {
+        Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
+        painter.brushMinSize = 0.08f;
+        painter.brushMaxSize = 0.13f;
+
+        float precisionWidth = paint.EstimateBrushWidth(0.55f);
+        float coverageWidth = paint.EstimateBrushWidth(6f);
+
+        Assert.That(precisionWidth, Is.LessThan(0.04f));
+        Assert.That(coverageWidth, Is.GreaterThan(precisionWidth * 6f));
+    }
+
+    [Test] public void NozzleDiameterDoesNotRandomlyPulseBetweenSamples()
+    {
+        CreatePainter(out GraffitiPainter painter, out _);
+        painter.brushMinSize = 0.08f;
+        painter.brushMaxSize = 0.13f;
+
+        float diameter = painter.GetBrushSize();
+        for (int i = 0; i < 32; i++)
+            Assert.That(painter.GetBrushSize(), Is.EqualTo(diameter).Within(0.000001f));
+    }
+
+    [Test] public void MovingStrokeStretchesSamplesAlongThePath()
+    {
+        Pintando paint = CreatePainter(out GraffitiPainter painter, out RaycastHit hit);
+        painter.brushMinSize = painter.brushMaxSize = 0.1f;
+        painter.brushJitter = 0f;
+        paint.BeginStrokeImmediately(hit);
+
+        hit.point += Vector3.right * 0.25f;
+        Invoke(paint, "SampleStroke", hit, 1f / 60f);
+
+        var canvas = hit.collider.GetComponentInChildren<GraffitiSurfaceCanvas>();
+        Invoke(canvas, "LateUpdate");
+        Vector3[] vertices = canvas.GetComponent<MeshFilter>().sharedMesh.vertices;
+        Assert.That(vertices.Length, Is.GreaterThanOrEqualTo(8));
+        float pathLength = Vector3.Distance(vertices[4], vertices[5]);
+        float crossWidth = Vector3.Distance(vertices[5], vertices[6]);
+        Assert.That(pathLength, Is.GreaterThan(crossWidth * 1.04f));
+    }
+
+    [Test] public void GestureIntentMakesFastSweepsWideAndSharpCornersPrecise()
+    {
+        float precise = GraffitiGestureDynamics.EvaluateCone(
+            0.2f, 0f, true, 0.55f, 6.2f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+        float broad = GraffitiGestureDynamics.EvaluateCone(
+            8f, 0f, true, 0.55f, 6.2f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+        float corner = GraffitiGestureDynamics.EvaluateCone(
+            8f, 800f, true, 0.55f, 6.2f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+
+        Assert.That(precise, Is.LessThan(0.1f));
+        Assert.That(broad, Is.GreaterThan(0.95f));
+        Assert.That(corner, Is.LessThan(broad * 0.35f));
+    }
+
+    [Test] public void HandEdgeTransfersOutwardMotionToCameraButReturnsDirectly()
+    {
+        float centre = GraffitiGestureDynamics.GetCameraShare(0.2f, 0.3f, 1f, 0.68f, 0.94f);
+        float edge = GraffitiGestureDynamics.GetCameraShare(0.92f, 1.02f, 1f, 0.68f, 0.94f);
+        float returning = GraffitiGestureDynamics.GetCameraShare(0.92f, 0.82f, -1f, 0.68f, 0.94f);
+
+        Assert.That(centre, Is.EqualTo(0f));
+        Assert.That(edge, Is.GreaterThan(0.85f));
+        Assert.That(returning, Is.EqualTo(0f));
+    }
+
+    [Test] public void GraffitiLookDeltaExtendsAimAndRespectsVerticalSafetyLimit()
+    {
+        var player = Create("Graffiti camera player");
+        player.AddComponent<CharacterController>();
+        var fps = player.AddComponent<FPSController>();
+        Invoke(fps, "Awake");
+        fps.EnterGraffitiMode();
+
+        fps.ApplyGraffitiLookDelta(55f, -200f);
+        Assert.That(Mathf.DeltaAngle(0f, player.transform.eulerAngles.y), Is.EqualTo(55f).Within(0.01f));
+        float pitch = (float)typeof(FPSController).GetField("pitch", Private).GetValue(fps);
+        Assert.That(pitch, Is.EqualTo(fps.graffitiMinPitch).Within(0.01f));
     }
 
     [Test] public void FullMixtureMaintainsMaximumOpacityAcrossNozzleProfiles()
@@ -178,18 +261,26 @@ public sealed class GraffitiInteractionTests
         Assert.That(previousWidth, Is.GreaterThan(firstWidth * 2.45f));
     }
 
-    [Test] public void CanOrientationDrivesSprayDespiteImportedMeshRotation()
+    [Test] public void SprayRayUsesExactMeshNozzleAndRespectsHierarchyScale()
     {
+        var parent = Create("Scaled camera parent");
+        parent.transform.SetPositionAndRotation(new Vector3(2f, 1f, -3f), Quaternion.Euler(7f, 24f, -3f));
+        parent.transform.localScale = Vector3.one * 1.7f;
         var obj = Create("Rotated imported spray can");
-        obj.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+        obj.transform.SetParent(parent.transform, false);
+        obj.transform.localPosition = new Vector3(0.4f, -0.2f, 0.8f);
+        obj.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+        obj.transform.localScale = Vector3.one * 8.017556f;
         var animation = obj.AddComponent<GraffitiAnimation>();
         animation.enabled = false;
-        // EditMode does not call Awake for ordinary MonoBehaviours.
-        Invoke(animation, "Awake");
-        obj.transform.rotation = Quaternion.Euler(0f, 22f, 0f) * Quaternion.Euler(-90f, 0f, 0f);
-        Ray ray = animation.GetNozzleRay(new Vector3(0f, 0.19f, 0.08f));
-        Assert.That(Vector3.Angle(ray.direction, Quaternion.Euler(0f, 22f, 0f) * Vector3.forward), Is.LessThan(0.01f));
-        Assert.That(Vector3.Distance(ray.origin, obj.transform.position), Is.GreaterThan(0.2f));
+        Ray ray = animation.GetNozzleRay();
+
+        Vector3 expectedOrigin = obj.transform.TransformPoint(GraffitiAnimation.AuthoredNozzleLocalPosition);
+        Vector3 expectedDirection = obj.transform.TransformDirection(Vector3.down).normalized;
+        Assert.That(Vector3.Distance(ray.origin, expectedOrigin), Is.LessThan(0.00001f));
+        Assert.That(Vector3.Angle(ray.direction, expectedDirection), Is.LessThan(0.001f));
+        Assert.That(Vector3.Angle(animation.GetNozzleUp(),
+            obj.transform.TransformDirection(Vector3.forward)), Is.LessThan(0.001f));
     }
 
     [Test] public void MenuRayFollowsPointerWithoutRotatingCamera()
@@ -224,6 +315,20 @@ public sealed class GraffitiInteractionTests
         Invoke(menu, "Awake");
         menu.SetPresentationScale(5f);
         Assert.That(menu.visualRoot.localScale.x, Is.EqualTo(0.3f).Within(0.001f));
+    }
+
+    [Test] public void NozzlePreviewIsAComposedStrokeInsteadOfOneLargeDisk()
+    {
+        CreatePainter(out GraffitiPainter painter, out _);
+        var obj = Create("Drawn Menu Preview");
+        var menu = obj.AddComponent<GraffitiDrawMenu>();
+        Invoke(menu, "Awake");
+        menu.BindPainter(painter);
+
+        Mesh mesh = (Mesh)typeof(GraffitiDrawMenu).GetField("previewMesh", Private).GetValue(menu);
+        Assert.That(mesh, Is.Not.Null);
+        Assert.That(mesh.vertexCount, Is.EqualTo(44));
+        Assert.That(mesh.bounds.size.x, Is.GreaterThan(mesh.bounds.size.y * 2f));
     }
 
     [Test] public void GraffitiMenuUsesOriginalPresentationScaleByDefault()
@@ -261,6 +366,69 @@ public sealed class GraffitiInteractionTests
         Assert.That(painter.sprayResources.Paint, Is.EqualTo(100f));
         Assert.That(painter.sprayResources.OutputOpacity, Is.EqualTo(1f).Within(0.001f));
         CollectionAssert.AreEqual(before, canvas.GetComponent<MeshFilter>().sharedMesh.colors32);
+    }
+
+    [Test] public void CartoonAerosolBuildsFourBoundedBillboardLayersAndNeutralizesLegacyScale()
+    {
+        var owner = Create("Aerosol VFX owner");
+        var root = Create("Aerosol VFX root");
+        root.transform.localScale = Vector3.one * 0.22218f;
+        var primary = root.AddComponent<ParticleSystem>();
+        primary.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var vfx = owner.AddComponent<GraffitiSprayVFX>();
+
+        Assert.That(vfx.Bind(primary), Is.SameAs(primary));
+        Assert.IsTrue(vfx.IsConfigured);
+        Assert.That(vfx.SystemCount, Is.EqualTo(4));
+        Assert.That(root.transform.localScale, Is.EqualTo(Vector3.one));
+
+        ParticleSystem[] layers = root.GetComponentsInChildren<ParticleSystem>(true);
+        Assert.That(layers, Has.Length.EqualTo(4));
+        int particleBudget = 0;
+        foreach (ParticleSystem layer in layers)
+        {
+            particleBudget += layer.main.maxParticles;
+            Assert.That(layer.main.scalingMode, Is.EqualTo(ParticleSystemScalingMode.Shape));
+            var renderer = layer.GetComponent<ParticleSystemRenderer>();
+            Assert.That(renderer.sharedMaterial, Is.Not.Null);
+            Assert.That(renderer.sharedMaterial.shader.name, Is.EqualTo("FLOWSTATE/Graffiti/Cartoon Aerosol Particle"));
+            Assert.That(renderer.renderMode, Is.EqualTo(ParticleSystemRenderMode.Billboard));
+        }
+        Assert.That(particleBudget, Is.LessThanOrEqualTo(402));
+    }
+
+    [Test] public void ChiselAerosolShapesThePuffsAndStartsAtTheNozzleRay()
+    {
+        var owner = Create("Chisel VFX owner");
+        var root = Create("Chisel VFX root");
+        var primary = root.AddComponent<ParticleSystem>();
+        primary.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var vfx = owner.AddComponent<GraffitiSprayVFX>();
+        vfx.Bind(primary);
+
+        Ray ray = new Ray(new Vector3(2f, 3f, 4f), new Vector3(0.2f, -0.1f, 1f).normalized);
+        vfx.UpdatePresentation(ray, 1.25f, 0.5f, Color.black,
+            GraffitiNozzleShape.Chisel, 1f, Vector3.up);
+
+        Assert.That(Vector3.Distance(vfx.EffectRoot.position, ray.origin), Is.LessThan(0.00001f));
+        Assert.That(Vector3.Angle(vfx.EffectRoot.forward, ray.direction), Is.LessThan(0.001f));
+        Assert.IsTrue(primary.main.startSize3D);
+        Assert.That(primary.main.startSizeX.constantMin / primary.main.startSizeY.constantMin,
+            Is.GreaterThan(3f));
+    }
+
+    [Test] public void AerosolNozzleProfilesPreserveReadableCapHierarchy()
+    {
+        Vector3 needle = GraffitiSprayVFX.GetNozzleVisualProfile(GraffitiNozzleShape.Needle);
+        Vector3 soft = GraffitiSprayVFX.GetNozzleVisualProfile(GraffitiNozzleShape.SoftRound);
+        Vector3 fat = GraffitiSprayVFX.GetNozzleVisualProfile(GraffitiNozzleShape.FatCap);
+
+        Assert.That(needle.x, Is.LessThan(soft.x));
+        Assert.That(fat.x, Is.GreaterThan(soft.x));
+        Assert.That(fat.y, Is.GreaterThan(needle.y));
+        Assert.That(fat.z, Is.GreaterThan(needle.z));
+        Vector2 chisel = GraffitiSprayVFX.GetNozzleVisualAspect(GraffitiNozzleShape.Chisel);
+        Assert.That(chisel.x / chisel.y, Is.GreaterThan(3f));
     }
 
 }

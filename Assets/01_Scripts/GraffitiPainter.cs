@@ -24,6 +24,9 @@ public class GraffitiPainter : MonoBehaviour
     public TMP_Text paintText;
     [SerializeField] GraffitiWallCursor wallCursor;
 
+    [Header("Aerosol visual cartoon")]
+    [SerializeField] GraffitiSprayVFX sprayVFX;
+
     [Header("Control fisico de la lata")]
     public bool usePhysicalSprayControl = true;
     [SerializeField] Vector2 handMouseSensitivity = new Vector2(0.048f, 0.048f);
@@ -31,8 +34,25 @@ public class GraffitiPainter : MonoBehaviour
     [SerializeField, Range(0.05f, 0.6f)] float depthTravel = 0.3f;
     [SerializeField, Range(0.01f, 0.25f)] float depthSensitivity = 0.11f;
     [SerializeField, Range(1f, 30f)] float handResponse = 18f;
-    [SerializeField] Vector3 virtualNozzleOffset = new Vector3(-0.015f, 0.19f, 0.08f);
     [SerializeField] Vector3 maximumWristRotation = new Vector3(16f, 22f, 7f);
+
+    [Header("Encuadre continuo")]
+    [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.68f;
+    [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.94f;
+    [SerializeField] Vector2 edgeCameraDegreesPerMouseUnit = new Vector2(3.2f, 2.8f);
+
+    [Header("Distancia adaptativa por gesto")]
+    public bool useAdaptiveSprayDistance = true;
+    [SerializeField, Range(0f, 1f)] float adaptivePrecisionCone = 0.03f;
+    [SerializeField, Range(0f, 1f)] float adaptiveIdleCone = 0.32f;
+    [SerializeField, Min(0f)] float precisionGestureSpeed = 0.55f;
+    [SerializeField, Min(0.1f)] float coverageGestureSpeed = 6.2f;
+    [SerializeField, Min(0f)] float cornerStartDegreesPerSecond = 150f;
+    [SerializeField, Min(1f)] float cornerFullDegreesPerSecond = 650f;
+    [SerializeField, Range(0f, 1f)] float cornerPrecision = 0.86f;
+    [SerializeField, Range(1f, 30f)] float gestureSpeedResponse = 14f;
+    [SerializeField, Range(1f, 30f)] float coneExpandResponse = 8.5f;
+    [SerializeField, Range(1f, 30f)] float conePrecisionResponse = 13f;
 
     [Header("Menu dibujado")]
     public bool menuOpen;
@@ -99,6 +119,9 @@ public class GraffitiPainter : MonoBehaviour
     Vector2 smoothedHandPosition;
     float targetDepth;
     float smoothedDepth;
+    float adaptiveCone;
+    float smoothedGestureSpeed;
+    Vector2 previousGestureDirection;
     Ray currentSprayRay;
     bool hasSprayRay;
     bool physicalControlWasActive;
@@ -107,7 +130,7 @@ public class GraffitiPainter : MonoBehaviour
     public bool CanEmitPaint => isPainting && emissionAllowed && sprayResources != null && sprayResources.HasPaint && !sprayResources.IsShaking && !sprayResources.IsChangingCan;
     public float MinimumStampExposure => Mathf.Max(1f, minimumStampExposure);
     public float SprayCone01 => usePhysicalSprayControl && physicalControlWasActive
-        ? Mathf.SmoothStep(0f, 1f, (1f - smoothedDepth) * 0.5f)
+        ? useAdaptiveSprayDistance ? adaptiveCone : Mathf.SmoothStep(0f, 1f, (1f - smoothedDepth) * 0.5f)
         : 0.5f;
     public bool SurfaceCapacityReached => freePainter != null && freePainter.CapacityReached;
     public float MaximumPaintDistance => freePainter != null && !useDecalMode
@@ -154,6 +177,7 @@ public class GraffitiPainter : MonoBehaviour
         if (raycastUI != null)
             raycastUI.RefreshSurface();
         UpdateWallCursor();
+        UpdateSprayPresentation();
         UpdateUIFade();
         bool graffitiModeActive = IsGraffitiModeActive();
         bool promptAvailable = raycastUI != null && !raycastUI.isPainting && (graffitiModeActive ? raycastUI.CanPaint() : raycastUI.CanDetectGraffitiSurface());
@@ -275,7 +299,18 @@ public class GraffitiPainter : MonoBehaviour
             canvas = FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
 
         resourceHUD.Bind(sprayResources, canvas, paintText != null ? paintText.font : null);
+        EnsureSprayVFX();
         EnsureSprayCanOutline();
+    }
+
+    void EnsureSprayVFX()
+    {
+        if (sprayVFX == null)
+            sprayVFX = GetComponent<GraffitiSprayVFX>();
+        if (sprayVFX == null)
+            sprayVFX = gameObject.AddComponent<GraffitiSprayVFX>();
+
+        sprayParticles = sprayVFX.Bind(sprayParticles);
     }
 
     void EnsureSprayCanOutline()
@@ -389,6 +424,12 @@ public class GraffitiPainter : MonoBehaviour
 
     void SetParticleEmission(bool active)
     {
+        if (sprayVFX != null)
+        {
+            sprayVFX.SetEmission(active);
+            return;
+        }
+
         if (sprayParticles == null || !sprayParticles.gameObject.activeInHierarchy)
             return;
 
@@ -491,7 +532,10 @@ public class GraffitiPainter : MonoBehaviour
 
     public float GetBrushSize()
     {
-        return Random.Range(brushMinSize, brushMaxSize);
+        // The cap defines one stable footprint. Grain and edge breakup belong in
+        // the spray shader; randomizing the whole quad diameter creates the
+        // caterpillar/coin pattern visible in curved strokes.
+        return (brushMinSize + brushMaxSize) * 0.5f;
     }
 
     public float GetBrushSpacing(float size)
@@ -538,15 +582,37 @@ public class GraffitiPainter : MonoBehaviour
             {
                 targetHandPosition = Vector2.zero;
                 smoothedHandPosition = Vector2.zero;
-                targetDepth = 0f;
-                smoothedDepth = 0f;
+                adaptiveCone = useAdaptiveSprayDistance ? adaptiveIdleCone : 0.5f;
+                targetDepth = useAdaptiveSprayDistance ? 1f - adaptiveCone * 2f : 0f;
+                smoothedDepth = targetDepth;
+                smoothedGestureSpeed = 0f;
+                previousGestureDirection = Vector2.zero;
             }
 
             if (!menuOpen)
             {
-                targetHandPosition.x = Mathf.Clamp(targetHandPosition.x + Input.GetAxisRaw("Mouse X") * handMouseSensitivity.x, -1f, 1f);
-                targetHandPosition.y = Mathf.Clamp(targetHandPosition.y + Input.GetAxisRaw("Mouse Y") * handMouseSensitivity.y, -1f, 1f);
-                targetDepth = Mathf.Clamp(targetDepth + Input.GetAxisRaw("Mouse ScrollWheel") * depthSensitivity * 10f, -1f, 1f);
+                Vector2 rawMouse = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
+                Vector2 handDelta = Vector2.Scale(rawMouse, handMouseSensitivity);
+                Vector2 prospectiveHand = targetHandPosition + handDelta;
+                float cameraShareX = GraffitiGestureDynamics.GetCameraShare(
+                    targetHandPosition.x, prospectiveHand.x, rawMouse.x, handComfortZone, maximumEdgeCameraShare);
+                float cameraShareY = GraffitiGestureDynamics.GetCameraShare(
+                    targetHandPosition.y, prospectiveHand.y, rawMouse.y, handComfortZone, maximumEdgeCameraShare);
+
+                targetHandPosition.x = Mathf.Clamp(targetHandPosition.x + handDelta.x * (1f - cameraShareX), -1f, 1f);
+                targetHandPosition.y = Mathf.Clamp(targetHandPosition.y + handDelta.y * (1f - cameraShareY), -1f, 1f);
+
+                if (fps != null && (cameraShareX > 0f || cameraShareY > 0f))
+                {
+                    fps.ApplyGraffitiLookDelta(
+                        rawMouse.x * cameraShareX * edgeCameraDegreesPerMouseUnit.x,
+                        -rawMouse.y * cameraShareY * edgeCameraDegreesPerMouseUnit.y);
+                }
+
+                if (useAdaptiveSprayDistance)
+                    UpdateAdaptiveSprayDistance(rawMouse);
+                else
+                    targetDepth = Mathf.Clamp(targetDepth + Input.GetAxisRaw("Mouse ScrollWheel") * depthSensitivity * 10f, -1f, 1f);
             }
         }
 
@@ -574,6 +640,43 @@ public class GraffitiPainter : MonoBehaviour
         physicalControlWasActive = true;
     }
 
+    void UpdateAdaptiveSprayDistance(Vector2 rawMouse)
+    {
+        float deltaTime = Mathf.Max(Time.deltaTime, 0.0001f);
+        Vector2 normalizedMotion = Vector2.Scale(rawMouse, handMouseSensitivity);
+        float gestureSpeed = normalizedMotion.magnitude / deltaTime;
+        float speedBlend = 1f - Mathf.Exp(-gestureSpeedResponse * deltaTime);
+        smoothedGestureSpeed = Mathf.Lerp(smoothedGestureSpeed, gestureSpeed, speedBlend);
+
+        float turnRate = 0f;
+        if (normalizedMotion.sqrMagnitude > 0.000001f)
+        {
+            Vector2 direction = normalizedMotion.normalized;
+            if (previousGestureDirection.sqrMagnitude > 0.5f)
+                turnRate = Vector2.Angle(previousGestureDirection, direction) / deltaTime;
+            previousGestureDirection = direction;
+        }
+
+        float targetCone = GraffitiGestureDynamics.EvaluateCone(
+            smoothedGestureSpeed,
+            turnRate,
+            isPainting,
+            precisionGestureSpeed,
+            coverageGestureSpeed,
+            adaptivePrecisionCone,
+            adaptiveIdleCone,
+            cornerStartDegreesPerSecond,
+            cornerFullDegreesPerSecond,
+            cornerPrecision);
+        float response = targetCone > adaptiveCone ? coneExpandResponse : conePrecisionResponse;
+        float coneBlend = 1f - Mathf.Exp(-response * deltaTime);
+        adaptiveCone = Mathf.Lerp(adaptiveCone, targetCone, coneBlend);
+
+        // Move the visible can with the inferred intent so the visual feedback and
+        // the deposited footprint always tell the same story.
+        targetDepth = 1f - adaptiveCone * 2f;
+    }
+
     void RefreshPhysicalSprayRay()
     {
         if (!usePhysicalSprayControl || !physicalControlWasActive || sprayCan == null || cam == null)
@@ -582,7 +685,7 @@ public class GraffitiPainter : MonoBehaviour
             return;
         }
 
-        currentSprayRay = sprayCan.GetNozzleRay(virtualNozzleOffset);
+        currentSprayRay = sprayCan.GetNozzleRay();
         // Keep the nozzle on the player's side of thin walls, even at full reach.
         Vector3 reach = currentSprayRay.origin - cam.transform.position;
         if (raycastUI != null && reach.sqrMagnitude > 0.0001f &&
@@ -591,12 +694,34 @@ public class GraffitiPainter : MonoBehaviour
         {
             Vector3 safeOrigin = cam.transform.position + reach.normalized * Mathf.Max(0.05f, obstruction.distance - 0.1f);
             sprayCan.transform.position += safeOrigin - currentSprayRay.origin;
-            currentSprayRay = sprayCan.GetNozzleRay(virtualNozzleOffset);
+            currentSprayRay = sprayCan.GetNozzleRay();
         }
         hasSprayRay = true;
 
         if (sprayParticles != null)
             sprayParticles.transform.SetPositionAndRotation(currentSprayRay.origin, Quaternion.LookRotation(currentSprayRay.direction, cam.transform.up));
+    }
+
+    void UpdateSprayPresentation()
+    {
+        if (sprayVFX == null || (hideSprayCanOutsideGraffiti && !IsGraffitiModeActive()))
+            return;
+
+        Ray sprayRay = GetSprayRay();
+        float targetDistance = MaximumPaintDistance;
+        if (raycastUI != null && raycastUI.CanDetectGraffitiSurface())
+        {
+            RaycastHit hit = raycastUI.GetHit();
+            if (hit.collider != null)
+                targetDistance = hit.distance;
+        }
+
+        float resourcePressure = sprayResources != null
+            ? Mathf.Clamp01(sprayResources.OutputDensity * sprayResources.OutputOpacity)
+            : 1f;
+        Vector3 nozzleUp = sprayCan != null ? sprayCan.GetNozzleUp() : (cam != null ? cam.transform.up : Vector3.up);
+        sprayVFX.UpdatePresentation(sprayRay, targetDistance, SprayCone01, currentSprayColor,
+            currentNozzleShape, resourcePressure, nozzleUp);
     }
 
     public Ray GetSprayRay()
@@ -775,7 +900,11 @@ public class GraffitiPainter : MonoBehaviour
         if (!hideSprayCanOutsideGraffiti)
             return;
 
-        if (sprayParticles != null)
+        if (sprayVFX != null)
+        {
+            sprayVFX.SetVisible(visible);
+        }
+        else if (sprayParticles != null)
         {
             if (!visible)
                 sprayParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);

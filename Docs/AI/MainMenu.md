@@ -2,6 +2,12 @@
 
 Implemented 2026-09-08 in `Assets/02_Escenas/MainMenu_FlowState.unity`.
 
+## Holographic mask backdrop - 2026-10-18
+
+The menu wall composes the supplied monumental black-and-white mask and a reduced chrome FLOW STATE logo beneath the graffiti RenderTexture. `MenuBackdropMotion` adds holographic color separation, scanning sweeps, glitched horizontal slices, sparkle noise, breathing, right-stick parallax and a spring-like response to each can turn while honoring the reduced-motion preference. The Maikol illustration and physical character were deliberately removed from the composition.
+
+The feature is isolated under `Living mural stage · mask + holo`. Re-running `FLOW STATE/Main Menu/Install Holographic Mask Backdrop` replaces only that generated root. `MainMenuController`, `GraffitiMenuPainter`, `CanMotion`, `MenuInput`, `MenuSpray` and `MenuTransition` are not replaced or re-authored.
+
 ## Playing and authoring
 
 Open the scene and enter Play Mode. Keyboard arrows/A-D or gamepad stick/D-pad navigate circularly. Enter/gamepad south button or mouse click confirms; Escape/gamepad east button returns. Mouse wheel also navigates. The menu owns a clone of the existing `InputSystem_Actions` UI map; the original bindings and gameplay input are unchanged.

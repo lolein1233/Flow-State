@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prueba_Escenario
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: c180f9988e56095449de414ff5a89fe5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1438,6 +1442,10 @@ MonoBehaviour:
   sprayOffset: {x: 0, y: -0.05, z: 0.05}
   positionDamping: 15
   rotationDamping: 17
+  nozzleAnchorOverride: {fileID: 0}
+  nozzleLocalPosition: {x: 0, y: -0.0034142, z: 0.0016845}
+  nozzleLocalForward: {x: 0, y: -1, z: 0}
+  nozzleLocalUp: {x: 0, y: 0, z: 1}
   idlePositionAmplitude: {x: 0.0025, y: 0.0035, z: 0.0018}
   idleRotationAmplitude: {x: 0.35, y: 0.42, z: 0.28}
   idleNoiseFrequency: 0.32
@@ -1764,6 +1772,7 @@ MonoBehaviour:
   drawDistance: 3
   selectDistance: 5
   surfaceOffset: 0.02
+  menuScaleMultiplier: 1
   requireWallTag: 0
   wallTag: Wall
 --- !u!114 &895480407
@@ -2346,6 +2355,67 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.021405887, y: 0.021405885, z: 0.02058819}
   m_Center: {x: 0, y: -0.0000000037252903, z: 0.0002940958}
+--- !u!1001 &1151881001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 488.1687
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 32.039024
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 293.2776
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_Name
+      value: Escenario04
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7ef00f3e08b60f7419be85f6d99621dc, type: 3}
 --- !u!1 &1157512915
 GameObject:
   m_ObjectHideFlags: 0
@@ -3836,9 +3906,10 @@ MonoBehaviour:
   continuitySpacingScale: 0.58
   mainPainter: {fileID: 2066424531}
   closeDistance: 0.55
-  farRadiusMultiplier: 1.42
-  farOpacityMultiplier: 0.5
+  controlledCloseRadiusMultiplier: 0.3
+  controlledFarRadiusMultiplier: 2.05
   maximumAngleStretch: 2.25
+  initialBurstExposureFrames: 3
   enableDrips: 1
   dripDwellThreshold: 0.68
   dripLength: 0.24
@@ -3869,10 +3940,14 @@ MonoBehaviour:
   startInGraffitiMode: 0
   graffitiModeKey: 101
   exitGraffitiKey: 27
+  graffitiCursorCanvas: {fileID: 0}
   graffitiRaycast: {fileID: 2066424532}
   requirePaintableToEnterGraffiti: 1
   allowMovementInGraffitiMode: 1
   graffitiMoveSpeed: 2.25
+  lockCameraAimInGraffitiMode: 1
+  graffitiMinPitch: -85
+  graffitiMaxPitch: 85
   walkSpeed: 4.5
   sprintSpeed: 8
   acceleration: 16
@@ -4017,6 +4092,29 @@ MonoBehaviour:
   sprayParticles: {fileID: 0}
   sprayCan: {fileID: 680920735}
   paintText: {fileID: 0}
+  wallCursor: {fileID: 0}
+  sprayVFX: {fileID: 0}
+  usePhysicalSprayControl: 1
+  handMouseSensitivity: {x: 0.048, y: 0.048}
+  handReach: {x: 0.34, y: 0.27}
+  depthTravel: 0.3
+  depthSensitivity: 0.11
+  handResponse: 18
+  maximumWristRotation: {x: 16, y: 22, z: 7}
+  handComfortZone: 0.68
+  maximumEdgeCameraShare: 0.94
+  edgeCameraDegreesPerMouseUnit: {x: 3.2, y: 2.8}
+  useAdaptiveSprayDistance: 1
+  adaptivePrecisionCone: 0.03
+  adaptiveIdleCone: 0.32
+  precisionGestureSpeed: 0.55
+  coverageGestureSpeed: 6.2
+  cornerStartDegreesPerSecond: 150
+  cornerFullDegreesPerSecond: 650
+  cornerPrecision: 0.86
+  gestureSpeedResponse: 14
+  coneExpandResponse: 8.5
+  conePrecisionResponse: 13
   menuOpen: 0
   currentSprayColor: {r: 0, g: 0, b: 0, a: 1}
   brushMinSize: 0.08
@@ -4034,6 +4132,7 @@ MonoBehaviour:
   currentColorValue: 1
   sprayResources: {fileID: 0}
   resourceHUD: {fileID: 0}
+  minimumStampExposure: 0.68
   showSprayCanOutline: 1
   sprayCanOutlineColor: {r: 1, g: 1, b: 1, a: 1}
   sprayCanOutlineWidth: 0.006
@@ -4064,6 +4163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distance: 6
+  graffitiDetectionDistance: 9
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -4071,8 +4171,15 @@ MonoBehaviour:
   promptUI: {fileID: 0}
   cam: {fileID: 895480405}
   fps: {fileID: 2066424529}
+  painter: {fileID: 0}
   enterGraffitiOnInteract: 1
   interactKey: 101
+  enterPrompt: 'PRESIONA [Q] PARA ENTRAR
+
+    AL MODO GRAFFITI'
+  graffitiPrompt: 'MANTEN [CLICK] PARA PINTAR
+
+    [Q] MENU  -  [ESC] SALIR'
 --- !u!143 &2066424533
 CharacterController:
   m_ObjectHideFlags: 0
@@ -4417,3 +4524,4 @@ SceneRoots:
   - {fileID: 86743256}
   - {fileID: 1265236816}
   - {fileID: 2136972141}
+  - {fileID: 1151881001}

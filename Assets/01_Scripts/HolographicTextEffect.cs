@@ -6,16 +6,16 @@ using UnityEngine;
 public sealed class HolographicTextEffect : MonoBehaviour
 {
     [Header("Foil holografico")]
-    [SerializeField] Color readableBase = new Color(0.065f, 0.035f, 0.09f, 1f);
-    [SerializeField] Color coolTint = new Color(0.04f, 0.44f, 0.52f, 1f);
-    [SerializeField] Color warmTint = new Color(0.56f, 0.055f, 0.28f, 1f);
-    [SerializeField] Color acidTint = new Color(0.48f, 0.38f, 0.045f, 1f);
-    [SerializeField] Color violetTint = new Color(0.28f, 0.065f, 0.48f, 1f);
-    [SerializeField] Color pearlTint = new Color(0.72f, 0.72f, 0.82f, 1f);
+    [SerializeField] Color readableBase = new Color(0.09f, 0.045f, 0.12f, 1f);
+    [SerializeField] Color coolTint = new Color(0.055f, 0.62f, 0.72f, 1f);
+    [SerializeField] Color warmTint = new Color(0.72f, 0.07f, 0.38f, 1f);
+    [SerializeField] Color acidTint = new Color(0.64f, 0.52f, 0.065f, 1f);
+    [SerializeField] Color violetTint = new Color(0.42f, 0.1f, 0.66f, 1f);
+    [SerializeField] Color pearlTint = new Color(0.9f, 0.88f, 0.96f, 1f);
     [SerializeField, Range(0f, 1f)] float foilStrength = 0.9f;
-    [SerializeField, Range(0f, 1f)] float reflectionStrength = 0.28f;
+    [SerializeField, Range(0f, 1f)] float reflectionStrength = 0.42f;
     [SerializeField, Range(0.02f, 0.35f)] float reflectionWidth = 0.1f;
-    [SerializeField, Range(0.01f, 0.5f)] float sweepSpeed = 0.095f;
+    [SerializeField, Range(0.01f, 0.5f)] float sweepSpeed = 0.165f;
     [SerializeField, Range(0.5f, 4f)] float bandCount = 1.2f;
     [SerializeField, Range(-1f, 1f)] float diagonalBias = 0.34f;
 
@@ -23,7 +23,7 @@ public sealed class HolographicTextEffect : MonoBehaviour
     [SerializeField, Range(0f, 0.5f)] float outlineWidth = 0.1f;
     [SerializeField, Range(0f, 0.5f)] float outlineSoftness = 0.055f;
     [SerializeField] Color outlineColor = new Color(0.018f, 0.012f, 0.028f, 0.98f);
-    [SerializeField, Range(0f, 1f)] float blurredFoilAlpha = 0.18f;
+    [SerializeField, Range(0f, 1f)] float blurredFoilAlpha = 0.24f;
 
     TMP_Text label;
     Material runtimeMaterial;
@@ -179,6 +179,7 @@ public sealed class HolographicTextEffect : MonoBehaviour
                 float reflectionDistance = WrappedDistance(phase, 0.48f);
                 float reflection = 1f - Mathf.SmoothStep(0f, reflectionWidth, reflectionDistance);
                 readableFoil = Color.Lerp(readableFoil, pearlTint, reflection * reflectionStrength);
+                readableFoil *= 1.08f + reflection * 0.12f;
                 readableFoil.a = label.color.a;
                 colors[vertexIndex + corner] = readableFoil;
             }

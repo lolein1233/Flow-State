@@ -16,6 +16,7 @@ namespace FlowState.Menu
         public MenuTransition transition;
         public MenuSubmenu submenu;
         public TMP_Text legend,exitTag;
+        public GameObject exitBackdrop;
         public GameObject previewWord;
         public FlowStateIntroDirector introDirector;
         public event System.Action MenuEntered;
@@ -50,7 +51,7 @@ namespace FlowState.Menu
             // Absolute-position ambient look requires a free, visible pointer. Gameplay may leave it locked.
             Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
             if(previewWord)previewWord.SetActive(false);
-            exitTag.gameObject.SetActive(false);
+            SetExitPromptVisible(false);
             prepared=true;
             return true;
         }
@@ -111,7 +112,7 @@ namespace FlowState.Menu
             var option=options[SelectedIndex];
             if(option.action==MenuAction.Quit)
             {
-                if(!exitArmed){exitArmed=true;exitDeadline=Time.unscaledTime+5;exitTag.text="¿ÚLTIMA MARCA?\nENTER / A  SALIR    ESC / B  SEGUIR";exitTag.gameObject.SetActive(true);motion.Spray();audioFeedback.Spray(option);return;}
+                if(!exitArmed){exitArmed=true;exitDeadline=Time.unscaledTime+5;exitTag.text="¿ÚLTIMA MARCA?\nENTER / A  SALIR    ESC / B  SEGUIR";SetExitPromptVisible(true);motion.Spray();audioFeedback.Spray(option);return;}
                 painter.Save();
                 #if UNITY_EDITOR
                 Debug.Log("FLOW STATE: exit confirmed (player would quit). Editor remains open.");DisarmExit();
@@ -130,7 +131,12 @@ namespace FlowState.Menu
             pendingConfirm=false;queue.Clear();DisarmExit();
             if(submenu.IsOpen)submenu.Close();
         }
-        void DisarmExit(){exitArmed=false;exitTag.gameObject.SetActive(false);}
+        void DisarmExit(){exitArmed=false;SetExitPromptVisible(false);}
+        void SetExitPromptVisible(bool visible)
+        {
+            if(exitBackdrop)exitBackdrop.SetActive(visible);
+            if(exitTag)exitTag.gameObject.SetActive(visible);
+        }
         void OnDisable()
         {
             input.Navigate-=Navigate;input.Confirm-=Confirm;input.Back-=Back;

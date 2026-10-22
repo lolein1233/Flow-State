@@ -53,6 +53,11 @@ namespace FlowState.Menu.Tests
             Assert.That(menu, Is.Not.Null);
             menu.Confirm();
             Assert.That(menu.transition.IsBusy, Is.True);
+            Material transitionMaterial = menu.transition.inkPlane.sharedMaterial;
+            Assert.That(transitionMaterial.GetTexture("_BackdropMask"), Is.Not.Null,
+                "The loading composition must reuse the monumental menu mask.");
+            Assert.That(transitionMaterial.HasProperty("_LoadingMode"), Is.True);
+            Assert.That(transitionMaterial.HasProperty("_LoadProgress"), Is.True);
 
             float timeout = Time.realtimeSinceStartup + 15f;
             while (SceneManager.GetActiveScene().path != "Assets/02_Escenas/Gameplay.unity" &&
@@ -61,6 +66,27 @@ namespace FlowState.Menu.Tests
 
             Assert.That(SceneManager.GetActiveScene().path, Is.EqualTo("Assets/02_Escenas/Gameplay.unity"),
                 "The existing paint transition must still reach Gameplay; the wider budget accounts for Editor scene-import variance.");
+        }
+
+        [UnityTest]
+        public IEnumerator ExitConfirmationDimsTheBackdropAndKeepsThePromptVisible()
+        {
+            yield return SceneManager.LoadSceneAsync(Scene);
+            yield return new WaitForSecondsRealtime(0.7f);
+
+            MainMenuController menu = Object.FindFirstObjectByType<MainMenuController>();
+            menu.Navigate(-1);
+            yield return new WaitForSecondsRealtime(1.3f);
+            menu.Confirm();
+
+            Assert.That(menu.exitBackdrop, Is.Not.Null);
+            Assert.That(menu.exitBackdrop.activeSelf, Is.True);
+            Assert.That(menu.exitTag.gameObject.activeSelf, Is.True);
+            Assert.That(menu.exitTag.text, Does.Contain("ÚLTIMA MARCA"));
+
+            menu.Back();
+            Assert.That(menu.exitBackdrop.activeSelf, Is.False);
+            Assert.That(menu.exitTag.gameObject.activeSelf, Is.False);
         }
     }
 }

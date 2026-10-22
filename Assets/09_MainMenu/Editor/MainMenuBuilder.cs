@@ -94,6 +94,10 @@ namespace FlowState.Menu.Editor
             Text("Wall caption","LA INDECISIÓN PRODUCE ARTE.",new Vector3(-6.2f,-2.78f,1.6f),new Vector2(8,.5f),2.4f,secondary,root.transform);
             var legend=Text("Input legend","←  →   GIRAR     ENTER / A   PINTAR EL CAMINO",new Vector3(-6.2f,-3.28f,1.6f),new Vector2(10,.5f),2.1f,secondary,root.transform);
             var exit=Text("Last mark confirmation","",new Vector3(-5.8f,-1.6f,1.45f),new Vector2(9,1.1f),2.8f,secondary,root.transform);
+            var exitDimmerMaterial=Material("ExitModalDimmer","FLOWSTATE/Menu/Modal Dimmer");
+            exitDimmerMaterial.SetColor("_Color",new Color(0,0,0,.68f));
+            var exitBackdrop=Shape("Last mark · focus dimmer",PrimitiveType.Quad,new Vector3(0,0,1.52f),new Vector3(20,12,1),exitDimmerMaterial,root.transform);
+            exitBackdrop.SetActive(false);
             var preview=Text("Editor preview · replaced by actual spray in Play","JUGAR",new Vector3(-5.9f,.6f,1.5f),new Vector2(7,2),15,owned,root.transform);
 
             var cameraGO=Node("Menu Camera",root.transform);cameraGO.tag="MainCamera";
@@ -186,7 +190,7 @@ namespace FlowState.Menu.Editor
             var artMat=Material("ArchiveArtwork","Universal Render Pipeline/Unlit");
             submenu.artwork=Shape("Original project artwork",PrimitiveType.Quad,new Vector3(-3,-.03f,-.305f),new Vector3(5.08f,2.34f,1),artMat,sub.transform).GetComponent<Renderer>();
             submenu.gallery=new Texture[]{logo,Asset<Texture2D>("Assets/04_Materiales e Imagenes/imagenes/ChatGPT Image 3 may 2026, 09_07_59 p.m..png"),Asset<Texture2D>("Assets/04_Materiales e Imagenes/imagenes/yslogo-removebg-preview.png")};sub.SetActive(false);
-            var controller=root.AddComponent<MainMenuController>();controller.options=opts;controller.input=input;controller.motion=motion;controller.visual=visual;controller.painter=painter;controller.audioFeedback=audio;controller.cameraFeedback=feedback;controller.spray=spray;controller.transition=transition;controller.submenu=submenu;controller.legend=legend;controller.exitTag=exit;controller.previewWord=preview.gameObject;
+            var controller=root.AddComponent<MainMenuController>();controller.options=opts;controller.input=input;controller.motion=motion;controller.visual=visual;controller.painter=painter;controller.audioFeedback=audio;controller.cameraFeedback=feedback;controller.spray=spray;controller.transition=transition;controller.submenu=submenu;controller.legend=legend;controller.exitTag=exit;controller.exitBackdrop=exitBackdrop;controller.previewWord=preview.gameObject;
             exit.gameObject.SetActive(false);
             AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(scene,ScenePath);
             var buildScenes=EditorBuildSettings.scenes.ToList();if(!buildScenes.Any(s=>s.path==ScenePath))buildScenes.Insert(0,new EditorBuildSettingsScene(ScenePath,true));EditorBuildSettings.scenes=buildScenes.ToArray();

@@ -6,6 +6,33 @@ using UnityEngine;
 /// </summary>
 public static class GraffitiGestureDynamics
 {
+    public static Vector2 CompressControlDelta(
+        Vector2 controlDelta,
+        float linearRadius,
+        float maximumRadius)
+    {
+        float magnitude = controlDelta.magnitude;
+        if (magnitude <= 0.000001f)
+            return Vector2.zero;
+
+        linearRadius = Mathf.Max(0f, linearRadius);
+        maximumRadius = Mathf.Max(linearRadius, maximumRadius);
+        if (magnitude <= linearRadius)
+            return controlDelta;
+
+        // Keep deliberate, slow motion one-to-one, then ease large mouse spikes
+        // toward a ceiling instead of hard-clipping them. The radial scale
+        // preserves gesture direction and avoids different diagonal sensitivity.
+        float compressionRange = maximumRadius - linearRadius;
+        if (compressionRange <= 0.000001f)
+            return controlDelta * (maximumRadius / magnitude);
+
+        float excess = magnitude - linearRadius;
+        float compressedMagnitude = linearRadius
+            + compressionRange * (1f - Mathf.Exp(-excess / compressionRange));
+        return controlDelta * (compressedMagnitude / magnitude);
+    }
+
     public static float GetCameraShare(
         float currentHandAxis,
         float prospectiveHandAxis,

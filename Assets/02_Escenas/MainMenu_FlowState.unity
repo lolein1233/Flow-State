@@ -354,8 +354,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inkPlane: {fileID: 2060735653}
-  minimumLoadingSeconds: 1.25
-  completedHoldSeconds: 0.16
+  minimumLoadingSeconds: 12
+  completedHoldSeconds: 0.5
 --- !u!114 &120336590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,7 +371,7 @@ MonoBehaviour:
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
-  m_CameraType: 0
+  m_CameraType: 1
   m_Cameras: []
   m_RendererIndex: 0
   m_VolumeLayerMask:
@@ -407,9 +407,9 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 120336588}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2

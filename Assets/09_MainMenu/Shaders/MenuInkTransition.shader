@@ -7,6 +7,8 @@ Shader "FLOWSTATE/Menu/Ink Transition"
   _AccentColor("Wet edge",Color)=(1,.45,.04,1)
   _Seed("Spray seed",Float)=17
   _BackdropMask("Monumental mask",2D)="black"{}
+  _LoadingIconAtlas("Animated spray mask",2D)="black"{}
+  [HideInInspector] _LoadingStartTime("Loading animation start",Float)=0
   _LoadingMode("Loading composition",Range(0,1))=0
   _LoadProgress("Scene load",Range(0,1))=0
  }
@@ -18,9 +20,10 @@ Shader "FLOWSTATE/Menu/Ink Transition"
  #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
  struct A{float4 positionOS:POSITION;float2 uv:TEXCOORD0;};struct V{float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;};
  TEXTURE2D(_BackdropMask); SAMPLER(sampler_BackdropMask);
+ TEXTURE2D(_LoadingIconAtlas); SAMPLER(sampler_LoadingIconAtlas);
  CBUFFER_START(UnityPerMaterial)
  float _Progress;float4 _Color;float4 _AccentColor;float _Seed;
- float _LoadingMode;float _LoadProgress;float4 _BackdropParallax;
+ float _LoadingMode;float _LoadProgress;float _LoadingStartTime;float4 _BackdropParallax;
  CBUFFER_END
  V vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.uv=i.uv;return o;}
  float hash21(float2 p){return frac(sin(dot(p,float2(127.1,311.7)))*43758.5453);}
@@ -34,41 +37,20 @@ Shader "FLOWSTATE/Menu/Ink Transition"
   float3 spectrum=.5+.5*cos(6.2831853*(phase+float3(0,.67,.33)));
   return pow(saturate(spectrum),1.3);
  }
- float2 Rotate(float2 p,float angle)
+ float4 SampleLoadingIcon(float2 uv,float screenAspect)
  {
-  float s=sin(angle),c=cos(angle);
-  return float2(c*p.x-s*p.y,s*p.x+c*p.y);
- }
- float SegmentDistance(float2 p,float2 a,float2 b)
- {
-  float2 pa=p-a,ba=b-a;
-  float h=saturate(dot(pa,ba)/dot(ba,ba));
-  return length(pa-ba*h);
- }
- float Hourglass(float2 uv,out float softGlow)
- {
-  float aspect=max(1,_ScreenParams.x/max(1,_ScreenParams.y));
-  float2 p=(uv-float2(.5,.565))*float2(aspect,1);
-  float flipClock=_Time.y*.56;
-  float flipCycle=frac(flipClock);
-  float flip=(floor(flipClock)+smoothstep(.7,1,flipCycle))*3.14159265;
-  p=Rotate(p,flip);
-  float w=.105,h=.14;
-  float frame=1;
-  frame=min(frame,SegmentDistance(p,float2(-w,h),float2(w,h)));
-  frame=min(frame,SegmentDistance(p,float2(-w,-h),float2(w,-h)));
-  frame=min(frame,SegmentDistance(p,float2(-w,h),float2(w,-h)));
-  frame=min(frame,SegmentDistance(p,float2(w,h),float2(-w,-h)));
-  float frameLine=1-smoothstep(.004,.009,frame);
-  float cycle=frac(_Time.y*.56);
-  float upperWidth=max(0,p.y/h)*w*.82;
-  float lowerWidth=max(0,-p.y/h)*w*.82;
-  float upper=step(0,p.y)*step(p.y,h)*step(abs(p.x),upperWidth)*step(p.y,lerp(h*.88,.018,cycle));
-  float lower=step(p.y,0)*step(-h,p.y)*step(abs(p.x),lowerWidth)*step(p.y,lerp(-h*.88,-.012,cycle));
-  float stream=(1-smoothstep(.002,.006,abs(p.x)))*step(-h*.72,p.y)*step(p.y,.018)*step(cycle,.92);
-  float sand=saturate(max(max(upper,lower),stream));
-  softGlow=1-smoothstep(.01,.036,frame);
-  return saturate(frameLine+sand*.82);
+  float animationTime=max(0,_Time.y-_LoadingStartTime);
+  float bob=sin(animationTime*1.85)*.006;
+  float pulse=1+sin(animationTime*2.35)*.012;
+  float2 iconUV=(uv-float2(.5,.57+bob))*float2(screenAspect,1)/(.23*pulse)+.5;
+  float inside=step(0,iconUV.x)*step(iconUV.x,1)*step(0,iconUV.y)*step(iconUV.y,1);
+  float frame=floor(fmod(animationTime*30,81));
+  float2 cell=float2(fmod(frame,9),8-floor(frame/9));
+  // Half-texel padding keeps bilinear filtering inside the selected atlas cell.
+  float2 atlasUV=(cell+lerp(.004,.996,saturate(iconUV)))/9;
+  float4 icon=SAMPLE_TEXTURE2D(_LoadingIconAtlas,sampler_LoadingIconAtlas,atlasUV);
+  icon.a*=inside;
+  return icon;
  }
  half4 frag(V i):SV_Target{
   float screenAspect=max(1,_ScreenParams.x/max(1,_ScreenParams.y));
@@ -96,10 +78,14 @@ Shader "FLOWSTATE/Menu/Ink Transition"
    mono+=foil*(maskEnergy*scan*.025);
    mono*=1-pow(saturate(length((uv-.5)*float2(1.25,.9))),2)*.3;
 
-   float hourglassGlow;
-   float hourglass=Hourglass(uv,hourglassGlow);
    float3 uiFoil=lerp(float3(.86,.89,.95),FoilSpectrum(_Time.y*.12+uv.x*.8),.4);
-   float3 loadingColor=mono+uiFoil*(hourglass*.96+hourglassGlow*.12);
+   float4 icon=SampleLoadingIcon(uv,screenAspect);
+   float iconLuma=dot(icon.rgb,float3(.299,.587,.114));
+   float3 iconFoil=FoilSpectrum(_Time.y*.16+uv.x*.9-uv.y*.45);
+   float3 iconColor=lerp(icon.rgb,iconFoil,.14*iconLuma);
+   iconColor=lerp(iconColor,uiFoil,.07*iconLuma);
+   float3 loadingColor=lerp(mono,iconColor*1.08,saturate(icon.a));
+   loadingColor+=iconFoil*icon.a*iconLuma*.06;
 
    float2 barP=(uv-float2(.5,.326))*float2(screenAspect,1);
    float barTrack=step(abs(barP.x),.29)*step(abs(barP.y),.012);
@@ -113,18 +99,11 @@ Shader "FLOWSTATE/Menu/Ink Transition"
    return half4(loadingColor,1);
   }
 
-  float coarse=noise21(uv*9+_Seed);
-  float2 fromNozzle=(uv-float2(.84,.29))*float2(1.78,1);
-  float distortedRadius=length(fromNozzle)+(coarse-.5)*.28;
-  float front=_Progress*2.16-.09;
-  float body=1-smoothstep(front-.08,front+.055,distortedRadius);
-  float diagonal=_Progress*1.1-(1-uv.x)*.72-abs(uv.y-.29)*.24+(coarse-.5)*.15;
-  float streak=smoothstep(-.035,.07,diagonal)*smoothstep(.02,.16,uv.x);
-  float alpha=saturate(max(body,streak*.72))*step(.001,_Progress);
-  float edge=saturate(1-abs(distortedRadius-front)/.07)*alpha;
-  float wet=noise21(uv*18-_Seed)*.05+edge*.68;
-  float3 pigment=lerp(_Color.rgb,_AccentColor.rgb,saturate(wet));
-  return half4(pigment,alpha);
+  // Outside the loading composition the overlay is a neutral cinematic fade.
+  // Keeping this pure black avoids the former orange pigment flash both before
+  // the loading screen and when gameplay is revealed.
+  float fade=smoothstep(0,1,saturate(_Progress));
+  return half4(0,0,0,fade);
  }
  ENDHLSL
  } }

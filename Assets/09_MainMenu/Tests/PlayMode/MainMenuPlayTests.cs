@@ -74,7 +74,7 @@ namespace FlowState.Menu.Tests
         [UnityTest] public IEnumerator PlayUsesPaintTransitionAndLoadsGameplay()
         {
             menu.Confirm();Assert.That(menu.transition.IsBusy,Is.True);
-            float timeout=Time.realtimeSinceStartup+15f;
+            float timeout=Time.realtimeSinceStartup+30f;
             while(SceneManager.GetActiveScene().path!="Assets/02_Escenas/Gameplay.unity"&&Time.realtimeSinceStartup<timeout)yield return null;
             Assert.That(SceneManager.GetActiveScene().path,Is.EqualTo("Assets/02_Escenas/Gameplay.unity"));
             while(Object.FindFirstObjectByType<MenuTransition>()!=null&&Time.realtimeSinceStartup<timeout)yield return null;

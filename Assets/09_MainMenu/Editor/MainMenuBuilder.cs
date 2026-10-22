@@ -160,11 +160,12 @@ namespace FlowState.Menu.Editor
             var input=root.AddComponent<MenuInput>();input.actions=Asset<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
 
             var transitionRoot=Node("Paint invasion · survives scene load");transitionRoot.transform.position=new Vector3(10000,10000,10000);
-            var overlayCamera=transitionRoot.AddComponent<Camera>();overlayCamera.orthographic=true;overlayCamera.orthographicSize=1;overlayCamera.nearClipPlane=.1f;overlayCamera.farClipPlane=2;overlayCamera.depth=100;overlayCamera.clearFlags=CameraClearFlags.Depth;overlayCamera.cullingMask=1<<31;overlayCamera.GetUniversalAdditionalCameraData().SetRenderer(0);
+            var overlayCamera=transitionRoot.AddComponent<Camera>();overlayCamera.orthographic=true;overlayCamera.orthographicSize=1;overlayCamera.nearClipPlane=.1f;overlayCamera.farClipPlane=2;overlayCamera.depth=100;overlayCamera.clearFlags=CameraClearFlags.Depth;overlayCamera.cullingMask=1<<31;var overlayData=overlayCamera.GetUniversalAdditionalCameraData();overlayData.SetRenderer(0);overlayData.renderType=CameraRenderType.Overlay;
             var inkMat=Material("PaintInvasion","FLOWSTATE/Menu/Ink Transition");
+            inkMat.SetTexture("_LoadingIconAtlas",Asset<Texture2D>(Root+"/Textures/Loading/LataMascaraLoadingAtlas.png"));
             var ink=Shape("Lens pigment",PrimitiveType.Quad,new Vector3(0,0,1),new Vector3(12,4,1),inkMat,transitionRoot.transform);ink.layer=31;
             overlayCamera.enabled=false;
-            var transition=transitionRoot.AddComponent<MenuTransition>();transition.inkPlane=ink.GetComponent<Renderer>();
+            var transition=transitionRoot.AddComponent<MenuTransition>();transition.inkPlane=ink.GetComponent<Renderer>();transition.minimumLoadingSeconds=12f;transition.completedHoldSeconds=.5f;
             var submenu=root.AddComponent<MenuSubmenu>();submenu.motion=motion;submenu.cameraFeedback=feedback;submenu.sound=audio;
             var sub=Node("Pasted sheets · submenus",root.transform);sub.transform.localPosition=new Vector3(.51f,0,0);submenu.presentation=sub;
             var sheetMat=Material("ArchivePaper","Universal Render Pipeline/Unlit");sheetMat.color=new Color(.9f,.87f,.79f);

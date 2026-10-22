@@ -36,6 +36,10 @@ public class GraffitiPainter : MonoBehaviour
     [SerializeField, Range(1f, 30f)] float handResponse = 18f;
     [SerializeField] Vector3 maximumWristRotation = new Vector3(16f, 22f, 7f);
 
+    [Header("Estabilidad en barridos rapidos")]
+    [SerializeField, Range(0.01f, 0.2f)] float linearHandDeltaRadius = 0.06f;
+    [SerializeField, Range(0.03f, 0.3f)] float maximumHandDeltaRadius = 0.13f;
+
     [Header("Encuadre continuo")]
     [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.68f;
     [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.94f;
@@ -592,12 +596,18 @@ public class GraffitiPainter : MonoBehaviour
             if (!menuOpen)
             {
                 Vector2 rawMouse = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
-                Vector2 handDelta = Vector2.Scale(rawMouse, handMouseSensitivity);
+                Vector2 intentHandDelta = Vector2.Scale(rawMouse, handMouseSensitivity);
+                Vector2 handDelta = GraffitiGestureDynamics.CompressControlDelta(
+                    intentHandDelta, linearHandDeltaRadius, maximumHandDeltaRadius);
+                float controlScale = intentHandDelta.sqrMagnitude > 0.000001f
+                    ? handDelta.magnitude / intentHandDelta.magnitude
+                    : 1f;
+                Vector2 controlledMouse = rawMouse * controlScale;
                 Vector2 prospectiveHand = targetHandPosition + handDelta;
                 float cameraShareX = GraffitiGestureDynamics.GetCameraShare(
-                    targetHandPosition.x, prospectiveHand.x, rawMouse.x, handComfortZone, maximumEdgeCameraShare);
+                    targetHandPosition.x, prospectiveHand.x, controlledMouse.x, handComfortZone, maximumEdgeCameraShare);
                 float cameraShareY = GraffitiGestureDynamics.GetCameraShare(
-                    targetHandPosition.y, prospectiveHand.y, rawMouse.y, handComfortZone, maximumEdgeCameraShare);
+                    targetHandPosition.y, prospectiveHand.y, controlledMouse.y, handComfortZone, maximumEdgeCameraShare);
 
                 targetHandPosition.x = Mathf.Clamp(targetHandPosition.x + handDelta.x * (1f - cameraShareX), -1f, 1f);
                 targetHandPosition.y = Mathf.Clamp(targetHandPosition.y + handDelta.y * (1f - cameraShareY), -1f, 1f);
@@ -605,10 +615,12 @@ public class GraffitiPainter : MonoBehaviour
                 if (fps != null && (cameraShareX > 0f || cameraShareY > 0f))
                 {
                     fps.ApplyGraffitiLookDelta(
-                        rawMouse.x * cameraShareX * edgeCameraDegreesPerMouseUnit.x,
-                        -rawMouse.y * cameraShareY * edgeCameraDegreesPerMouseUnit.y);
+                        controlledMouse.x * cameraShareX * edgeCameraDegreesPerMouseUnit.x,
+                        -controlledMouse.y * cameraShareY * edgeCameraDegreesPerMouseUnit.y);
                 }
 
+                // Width reads the uncompressed gesture: a quick sweep still asks
+                // for a broad cap even though the hand and camera no longer jump.
                 if (useAdaptiveSprayDistance)
                     UpdateAdaptiveSprayDistance(rawMouse);
                 else

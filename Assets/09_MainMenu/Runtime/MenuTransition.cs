@@ -8,13 +8,14 @@ namespace FlowState.Menu
     {
         public Renderer inkPlane;
         [Header("Loading presentation")]
-        [Min(.25f)] public float minimumLoadingSeconds=1.25f;
-        [Min(0f)] public float completedHoldSeconds=.16f;
+        [Min(.25f)] public float minimumLoadingSeconds=12f;
+        [Min(0f)] public float completedHoldSeconds=.5f;
         Material ink;
         Camera overlay;
         public bool IsBusy {get;private set;}
         static readonly int LoadingModeId=Shader.PropertyToID("_LoadingMode");
         static readonly int LoadingProgressId=Shader.PropertyToID("_LoadProgress");
+        static readonly int LoadingStartTimeId=Shader.PropertyToID("_LoadingStartTime");
         static readonly int BackdropMaskId=Shader.PropertyToID("_BackdropMask");
         static readonly int BackdropParallaxId=Shader.PropertyToID("_BackdropParallax");
         void Awake()
@@ -50,6 +51,7 @@ namespace FlowState.Menu
             ink.SetColor("_AccentColor",Color.Lerp(option.accentColor,Color.white,.08f));
             ink.SetFloat("_Seed",Random.Range(3f,91f));
             yield return Wipe(0,1,option.transitionDuration);
+            ink.SetFloat(LoadingStartTimeId,Time.time);
             yield return BlendLoading(0,1,.2f);
             var load=SceneManager.LoadSceneAsync(option.scenePath);
             if(load!=null)
@@ -118,6 +120,19 @@ namespace FlowState.Menu
             }
             ink.SetFloat("_Progress",to);
         }
-        void OnDestroy(){SceneManager.sceneLoaded-=Attach;if(ink)Destroy(ink);}
+        void OnDestroy()
+        {
+            SceneManager.sceneLoaded-=Attach;
+            if(overlay)
+            {
+                foreach(var camera in Camera.allCameras)
+                {
+                    if(!camera||camera==overlay)continue;
+                    var stack=camera.GetUniversalAdditionalCameraData().cameraStack;
+                    if(stack!=null)stack.Remove(overlay);
+                }
+            }
+            if(ink)Destroy(ink);
+        }
     }
 }

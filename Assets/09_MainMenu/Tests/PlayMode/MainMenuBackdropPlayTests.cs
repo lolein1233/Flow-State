@@ -56,10 +56,14 @@ namespace FlowState.Menu.Tests
             Material transitionMaterial = menu.transition.inkPlane.sharedMaterial;
             Assert.That(transitionMaterial.GetTexture("_BackdropMask"), Is.Not.Null,
                 "The loading composition must reuse the monumental menu mask.");
+            Assert.That(transitionMaterial.GetTexture("_LoadingIconAtlas"), Is.Not.Null,
+                "The loading composition must include the animated spray-mask atlas.");
             Assert.That(transitionMaterial.HasProperty("_LoadingMode"), Is.True);
             Assert.That(transitionMaterial.HasProperty("_LoadProgress"), Is.True);
+            Assert.That(menu.transition.minimumLoadingSeconds, Is.InRange(10f, 15f),
+                "The loading presentation must remain visible long enough to appreciate the animated can.");
 
-            float timeout = Time.realtimeSinceStartup + 15f;
+            float timeout = Time.realtimeSinceStartup + 30f;
             while (SceneManager.GetActiveScene().path != "Assets/02_Escenas/Gameplay.unity" &&
                    Time.realtimeSinceStartup < timeout)
                 yield return null;

@@ -199,6 +199,36 @@ public sealed class GraffitiInteractionTests
         Assert.That(returning, Is.EqualTo(0f));
     }
 
+    [Test] public void FastSweepCompressionPreservesPrecisionDirectionAndLimitsTravel()
+    {
+        Vector2 precisionDelta = new Vector2(0.048f, 0f);
+        Vector2 fastDelta = new Vector2(0.384f, 0.192f);
+
+        Vector2 controlledPrecision = GraffitiGestureDynamics.CompressControlDelta(
+            precisionDelta, 0.06f, 0.13f);
+        Vector2 controlledFast = GraffitiGestureDynamics.CompressControlDelta(
+            fastDelta, 0.06f, 0.13f);
+
+        Assert.That(controlledPrecision, Is.EqualTo(precisionDelta));
+        Assert.That(controlledFast.magnitude, Is.LessThanOrEqualTo(0.13f));
+        Assert.That(controlledFast.magnitude, Is.LessThan(fastDelta.magnitude * 0.35f));
+        Assert.That(Vector2.Angle(controlledFast, fastDelta), Is.LessThan(0.001f));
+    }
+
+    [Test] public void FastSweepKeepsBroadIntentWhilePhysicalTravelIsCompressed()
+    {
+        const float deltaTime = 1f / 60f;
+        Vector2 intentDelta = new Vector2(8f * 0.048f, 0f);
+        Vector2 controlledDelta = GraffitiGestureDynamics.CompressControlDelta(
+            intentDelta, 0.06f, 0.13f);
+        float broadCone = GraffitiGestureDynamics.EvaluateCone(
+            intentDelta.magnitude / deltaTime, 0f, true,
+            0.55f, 6.2f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+
+        Assert.That(broadCone, Is.GreaterThan(0.95f));
+        Assert.That(controlledDelta.x * 0.34f, Is.LessThan(0.045f));
+    }
+
     [Test] public void GraffitiLookDeltaExtendsAimAndRespectsVerticalSafetyLimit()
     {
         var player = Create("Graffiti camera player");

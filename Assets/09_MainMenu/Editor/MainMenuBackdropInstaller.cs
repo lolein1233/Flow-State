@@ -67,6 +67,8 @@ namespace FlowState.Menu.Editor
             motion.accessibility = menu.cameraFeedback;
             motion.wallMotion = 0.82f;
             motion.hologramIntensity = 0.88f;
+            motion.foilStrength = 0.74f;
+            motion.foilDarkness = 0.28f;
 
             Selection.activeGameObject = stage;
             EditorUtility.SetDirty(root);
@@ -108,6 +110,8 @@ namespace FlowState.Menu.Editor
             wall.SetColor("_BackdropAccent", new Color(1f, 0.015f, 0.31f, 1f));
             wall.SetFloat("_BackdropMotion", 0.82f);
             wall.SetFloat("_BackdropHoloIntensity", 0.88f);
+            wall.SetFloat("_BackdropFoilStrength", 0.74f);
+            wall.SetFloat("_BackdropFoilDarkness", 0.28f);
         }
 
         static void ConfigureMenuTypography(GameObject root)

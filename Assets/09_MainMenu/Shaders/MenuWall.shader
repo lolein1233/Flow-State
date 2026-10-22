@@ -11,6 +11,8 @@ Shader "FLOWSTATE/Menu/Living Wall"
   _BackdropAccent("Holo accent",Color)=(1,.015,.31,1)
   _BackdropMotion("Motion amount",Range(0,1))=.82
   _BackdropHoloIntensity("Hologram intensity",Range(0,1))=.88
+  _BackdropFoilStrength("Sticker foil strength",Range(0,1))=.74
+  _BackdropFoilDarkness("Sticker foil darkness",Range(0,1))=.28
  }
  SubShader { Tags {"RenderPipeline"="UniversalPipeline" "RenderType"="Opaque"} Pass {
  HLSLPROGRAM
@@ -29,10 +31,15 @@ Shader "FLOWSTATE/Menu/Living Wall"
  float4 _FreshRect,_FreshColor,_FreshAccent;
  float4 _BackdropParallax;
  float _FreshAngle,_FreshReveal,_FreshGrain,_Wetness;
- float _BackdropMotion,_BackdropHoloIntensity,_BackdropImpulse,_BackdropDirection;
+ float _BackdropMotion,_BackdropHoloIntensity,_BackdropFoilStrength,_BackdropFoilDarkness,_BackdropImpulse,_BackdropDirection;
  CBUFFER_END
  V vert(A i){V o;o.positionCS=TransformObjectToHClip(i.positionOS.xyz);o.uv=i.uv;return o;}
  float Hash21(float2 p){p=frac(p*float2(123.34,345.45));p+=dot(p,p+34.345);return frac(p.x*p.y);}
+ float3 FoilSpectrum(float phase)
+ {
+  float3 spectrum=.5+.5*cos(6.2831853*(phase+float3(0,.67,.33)));
+  return pow(saturate(spectrum),1.28);
+ }
  half4 frag(V i):SV_Target{
  float grain=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,i.uv*3).r;
  float vignette=pow(saturate(length((i.uv-.5)*float2(1,.7))),2)*.35;
@@ -57,12 +64,22 @@ Shader "FLOWSTATE/Menu/Living Wall"
  float maskLuma=dot(maskPlate.rgb,float3(.299,.587,.114));
  float neighborLuma=dot(SAMPLE_TEXTURE2D(_BackdropMask,sampler_BackdropMask,maskUV+float2(.0025,0)).rgb,float3(.299,.587,.114));
  float holoEdge=saturate(abs(maskLuma-neighborLuma)*9+fwidth(maskLuma)*2.4);
- float holoSweep=pow(saturate(1-abs(frac(maskUV.y*1.65-time*.105)-.5)*2),7);
+ float pointerPhase=dot(_BackdropParallax.xy,float2(.34,-.26));
+ float foilPhase=dot(maskUV,float2(1.38,.92))+pointerPhase-time*.032*motion;
+ float3 foilSpectrum=FoilSpectrum(foilPhase);
+ float foilBand=.34+.66*pow(.5+.5*sin(foilPhase*6.2831853),1.45);
+ float foilReflection=pow(saturate(1-abs(frac(foilPhase*.52)-.5)*2),3.2);
+ float pointerEnergy=saturate(length(_BackdropParallax.xy));
  float sparkle=step(.994,Hash21(floor(maskUV*float2(720,405))+maskTick))*maskLuma*motion;
- float3 coolHolo=float3(.28,.92,1.22);
- float3 holoColor=lerp(maskPlate.rgb,chromaticMask*lerp(float3(.72,.78,.88),coolHolo,holoSweep*.62),_BackdropHoloIntensity*.42);
- holoColor=lerp(holoColor,_BackdropAccent.rgb,holoEdge*(.18+_BackdropImpulse*.28));
- holoColor+=coolHolo*(holoSweep*.11+sparkle*.48)*motion*_BackdropHoloIntensity;
+ float foilAmount=_BackdropFoilStrength*_BackdropHoloIntensity;
+ float3 darkSpectrum=foilSpectrum*(.34+maskLuma*.38);
+ float3 foilPlate=chromaticMask*(.7+darkSpectrum*.55);
+ foilPlate=lerp(foilPlate,darkSpectrum,foilBand*foilAmount*.36);
+ foilPlate=lerp(foilPlate,foilSpectrum*(.3+maskLuma*.42),foilReflection*foilAmount*(.24+pointerEnergy*.18));
+ foilPlate*=lerp(1,.58,_BackdropFoilDarkness);
+ float3 holoColor=lerp(maskPlate.rgb,foilPlate,foilAmount);
+ holoColor=lerp(holoColor,_BackdropAccent.rgb,holoEdge*(.12+_BackdropImpulse*.22));
+ holoColor+=foilSpectrum*(sparkle*.26+foilReflection*.035)*motion*_BackdropHoloIntensity;
  float maskFlicker=.72+scan*.075*motion+_BackdropImpulse*.1;
  wall=lerp(wall,holoColor*maskFlicker,maskPlate.a*.9);
 

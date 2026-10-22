@@ -66,7 +66,7 @@ namespace FlowState.Menu.Editor
             }
             var model=Asset<GameObject>("Assets/LATA/Spray Test update.fbx");
             var owned=Asset<TMP_FontAsset>("Assets/05_Tipografias/owned SDF.asset");
-            var secondary=Asset<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+            var secondary=Asset<TMP_FontAsset>("Assets/05_Tipografias/SpaceGrotesk-Bold SDF.asset");
             var logo=Asset<Texture2D>("Assets/04_Materiales e Imagenes/imagenes/YakuzaStudio_FLOWSTATE (1).png");
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var root=Node("FLOW STATE · Living Graffiti Menu");
@@ -75,6 +75,8 @@ namespace FlowState.Menu.Editor
             var wallMat=Material("LivingWall","FLOWSTATE/Menu/Living Wall");
             wallMat.SetColor("_BaseColor",new Color(.85f,.83f,.76f));
             wallMat.SetTexture("_MainTex",Asset<Texture2D>(Fssrs+"/Textures/Grunge/FS_PrintGrain_01.png"));
+            wallMat.SetFloat("_BackdropFoilStrength",.74f);
+            wallMat.SetFloat("_BackdropFoilDarkness",.28f);
             var wall=Shape("Memory Wall · consolidated pigment",PrimitiveType.Quad,new Vector3(0,0,2),new Vector3(16,9,1),wallMat,root.transform);
             var composite=Material("PaintAccumulator","FLOWSTATE/Menu/Paint Composite");
             var painter=root.AddComponent<GraffitiMenuPainter>();painter.wall=wall.GetComponent<Renderer>();painter.compositeTemplate=composite;painter.seed=0;

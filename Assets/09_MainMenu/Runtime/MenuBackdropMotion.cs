@@ -14,6 +14,8 @@ namespace FlowState.Menu
         [Header("Holographic mask")]
         [Range(0f, 1f)] public float wallMotion = 0.82f;
         [Range(0f, 1f)] public float hologramIntensity = 0.88f;
+        [Range(0f, 1f)] public float foilStrength = 0.74f;
+        [Range(0f, 1f)] public float foilDarkness = 0.28f;
 
         public float CanImpulse => canImpulse;
 
@@ -22,6 +24,8 @@ namespace FlowState.Menu
         static readonly int CanDirectionId = Shader.PropertyToID("_BackdropDirection");
         static readonly int ParallaxId = Shader.PropertyToID("_BackdropParallax");
         static readonly int HologramIntensityId = Shader.PropertyToID("_BackdropHoloIntensity");
+        static readonly int FoilStrengthId = Shader.PropertyToID("_BackdropFoilStrength");
+        static readonly int FoilDarknessId = Shader.PropertyToID("_BackdropFoilDarkness");
 
         MaterialPropertyBlock wallProperties;
         float canImpulse;
@@ -77,6 +81,8 @@ namespace FlowState.Menu
             wall.GetPropertyBlock(wallProperties);
             wallProperties.SetFloat(MotionAmountId, wallMotion * reducedMotion);
             wallProperties.SetFloat(HologramIntensityId, hologramIntensity);
+            wallProperties.SetFloat(FoilStrengthId, foilStrength);
+            wallProperties.SetFloat(FoilDarknessId, foilDarkness);
             wallProperties.SetFloat(CanImpulseId, canImpulse * reducedMotion);
             wallProperties.SetFloat(CanDirectionId, canDirection);
             wallProperties.SetVector(ParallaxId, new Vector4(parallax.x, parallax.y, 0f, 0f));

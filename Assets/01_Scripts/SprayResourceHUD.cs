@@ -111,7 +111,7 @@ public sealed class SprayResourceHUD : MonoBehaviour
         }
         else if (!resources.HasPaint)
         {
-            warning.text = "[" + resources.ChangeCanKey + "] LATA NUEVA";
+            warning.text = "[" + resources.ChangeCanKey + "] CAMBIAR LATA";
             warning.color = Color.Lerp(criticalColor, Color.white, pulse * 0.35f);
         }
         else if (resources.IsShaking)
@@ -193,7 +193,9 @@ public sealed class SprayResourceHUD : MonoBehaviour
         artworkShadow.effectColor = new Color(0f, 0f, 0f, 0.88f);
         artworkShadow.effectDistance = new Vector2(3f, -3f);
 
-        warning = CreateText(root, string.Empty, new Vector2(118f, 162f), new Vector2(310f, 28f), 20f, font, TextAlignmentOptions.Left, criticalColor);
+        // Esta indicacion se consulta en pleno movimiento, por eso tiene una escala
+        // mayor que las etiquetas de recursos y conserva una sola linea legible.
+        warning = CreateText(root, string.Empty, new Vector2(118f, 157f), new Vector2(310f, 38f), 28f, font, TextAlignmentOptions.Left, criticalColor);
         UpdateResponsiveScale();
         built = true;
     }

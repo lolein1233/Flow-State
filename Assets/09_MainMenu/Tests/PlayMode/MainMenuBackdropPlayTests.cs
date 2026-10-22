@@ -31,6 +31,9 @@ namespace FlowState.Menu.Tests
             Assert.That(wall.HasProperty("_BackdropEcho"), Is.False,
                 "The removed Maikol image must no longer be part of the wall shader.");
             Assert.That(wall.HasProperty("_BackdropHoloIntensity"), Is.True);
+            Assert.That(wall.HasProperty("_BackdropFoilStrength"), Is.True);
+            Assert.That(wall.HasProperty("_BackdropFoilDarkness"), Is.True);
+            Assert.That(backdrop.foilStrength, Is.GreaterThan(0.5f));
 
             menu.Navigate(1);
             yield return new WaitForSecondsRealtime(0.1f);

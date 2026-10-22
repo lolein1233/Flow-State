@@ -36,7 +36,10 @@ public class FPSController : MonoBehaviour
     public float walkSpeed = 4.5f;
     public float sprintSpeed = 8f;
     public float acceleration = 16f;
+    public float deceleration = 22f;
     public float airControl = 0.45f;
+    public float airDeceleration = 1.4f;
+    public float directionChangeBoost = 1.5f;
     public float rotationSmoothTime = 0.08f;
     public KeyCode sprintKey = KeyCode.LeftShift;
     public KeyCode jumpKey = KeyCode.Space;
@@ -81,6 +84,8 @@ public class FPSController : MonoBehaviour
 
     [Header("Parkour")]
     public LayerMask parkourMask = ~0;
+    [Tooltip("Capas fisicas que pueden servir como suelo o bloquear el cuerpo durante vaults y subidas. Debe incluir Default ademas de Wall/Parkour.")]
+    public LayerMask movementCollisionMask = ~0;
     public float wallCheckDistance = 1.15f;
     public float wallCheckHeight = 0.6f;
     public float vaultMaxHeight = 1.15f;
@@ -93,6 +98,7 @@ public class FPSController : MonoBehaviour
     public float climbArcHeight = 0.25f;
     public float landingProbeHeight = 2.4f;
     public float wallProbeRadius = 0.16f;
+    public float groundProbeRadius = 0.18f;
     public float landingClearance = 0.06f;
     public float minimumGroundNormal = 0.55f;
 
@@ -129,6 +135,9 @@ public class FPSController : MonoBehaviour
     public float climbInputDeadZone = 0.08f;
     public float climbAnimationResponse = 10f;
     public float climbContactGraceTime = 0.12f;
+    public float climbProbeVerticalSpread = 0.5f;
+    public float climbProbeSideSpread = 0.24f;
+    public float climbNormalContinuityWeight = 0.45f;
 
     [Header("Salto entre paredes")]
     public bool enableWallJump = true;
@@ -169,6 +178,9 @@ public class FPSController : MonoBehaviour
     Camera playerCamera;
     Transform cameraTransform;
     readonly HashSet<int> animatorParameters = new HashSet<int>();
+    const int PhysicsQueryCapacity = 64;
+    readonly RaycastHit[] physicsHitBuffer = new RaycastHit[PhysicsQueryCapacity];
+    readonly Collider[] physicsOverlapBuffer = new Collider[PhysicsQueryCapacity];
 
     float pitch;
     float orbitYaw;
@@ -185,6 +197,7 @@ public class FPSController : MonoBehaviour
     float turnVelocity;
     float verticalVelocity;
     float currentPlanarSpeed;
+    Vector3 currentPlanarVelocity;
     float lastGroundedTime = -999f;
     float jumpPressedTime = -999f;
     int groundAlignmentFramesRemaining;
@@ -603,12 +616,11 @@ public class FPSController : MonoBehaviour
         bool canApplyInput = canMove && (!graffitiMode || allowMovementInGraffitiMode);
         float targetSpeed = 0f;
 
-        if (canApplyInput && rawInput.sqrMagnitude > 0.01f)
+        bool hasMovementInput = canApplyInput && rawInput.sqrMagnitude > 0.01f;
+
+        if (hasMovementInput)
         {
             targetSpeed = graffitiMode ? graffitiMoveSpeed : (Input.GetKey(sprintKey) ? sprintSpeed : Mathf.Max(speed, walkSpeed));
-
-            if (!grounded)
-                targetSpeed *= airControl;
 
             if (!graffitiMode && !hasCombatLockPoint)
                 RotateToward(moveDirection);
@@ -617,8 +629,35 @@ public class FPSController : MonoBehaviour
         if (!graffitiMode && hasCombatLockPoint)
             RotateTowardCombatLockPoint();
 
-        currentPlanarSpeed = Mathf.MoveTowards(currentPlanarSpeed, targetSpeed, acceleration * Time.deltaTime);
-        Vector3 planarVelocity = canApplyInput ? moveDirection * currentPlanarSpeed : Vector3.zero;
+        Vector3 desiredPlanarVelocity = hasMovementInput ? moveDirection * targetSpeed : Vector3.zero;
+        float planarResponse;
+
+        if (grounded)
+        {
+            bool accelerating = desiredPlanarVelocity.sqrMagnitude > currentPlanarVelocity.sqrMagnitude;
+            planarResponse = accelerating ? acceleration : deceleration;
+        }
+        else
+        {
+            // En el aire se conserva el impulso. airControl limita cuanto puede corregirse,
+            // mientras airDeceleration evita que soltar una tecla congele al personaje.
+            planarResponse = hasMovementInput
+                ? acceleration * Mathf.Clamp01(airControl)
+                : Mathf.Max(0f, airDeceleration);
+        }
+
+        if (hasMovementInput && currentPlanarVelocity.sqrMagnitude > 0.01f &&
+            Vector3.Dot(currentPlanarVelocity.normalized, desiredPlanarVelocity.normalized) < 0.25f)
+        {
+            planarResponse *= Mathf.Max(1f, directionChangeBoost);
+        }
+
+        currentPlanarVelocity = Vector3.MoveTowards(
+            currentPlanarVelocity,
+            desiredPlanarVelocity,
+            Mathf.Max(0f, planarResponse) * Time.deltaTime);
+        currentPlanarVelocity.y = 0f;
+        currentPlanarSpeed = currentPlanarVelocity.magnitude;
 
         if (Time.time - jumpPressedTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime && canApplyInput && !graffitiMode)
         {
@@ -630,7 +669,7 @@ public class FPSController : MonoBehaviour
         }
 
         verticalVelocity += gravity * Time.deltaTime;
-        controller.Move((planarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
+        controller.Move((currentPlanarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
     }
 
     bool TryStartAirRoll(bool grounded)
@@ -723,7 +762,7 @@ public class FPSController : MonoBehaviour
         if (!TryFindParkourWall(origin, desiredForward, out RaycastHit wallHit))
             return false;
 
-        Bounds bounds = wallHit.collider.bounds;
+        Bounds bounds = GetParkourSurfaceBounds(wallHit.collider);
         float obstacleHeight = bounds.max.y - GetControllerBottomY();
 
         if (obstacleHeight <= vaultMaxHeight)
@@ -826,6 +865,7 @@ public class FPSController : MonoBehaviour
         climbSpeedMultiplier = climbable != null ? Mathf.Max(0.1f, climbable.speedMultiplier) : 1f;
         verticalVelocity = 0f;
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
         climbInput = 0f;
         climbAnimationInput = 0f;
         climbContactLostTimer = 0f;
@@ -842,39 +882,64 @@ public class FPSController : MonoBehaviour
     bool TryFindParkourWall(Vector3 origin, Vector3 desiredForward, out RaycastHit bestHit)
     {
         float probeRadius = Mathf.Max(0.01f, wallProbeRadius);
-        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, desiredForward, wallCheckDistance, parkourMask, QueryTriggerInteraction.Ignore);
-        float bestDistance = float.MaxValue;
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            probeRadius,
+            desiredForward,
+            physicsHitBuffer,
+            wallCheckDistance,
+            parkourMask,
+            QueryTriggerInteraction.Collide);
+        float bestScore = float.MaxValue;
         bestHit = default;
 
-        foreach (RaycastHit hit in hits)
+        for (int index = 0; index < hitCount; index++)
         {
+            RaycastHit hit = physicsHitBuffer[index];
             if (hit.collider == null || IsSelf(hit.collider))
+                continue;
+
+            // Los triggers solo son validos como sensores explicitos de escalada.
+            if (hit.collider.isTrigger && hit.collider.GetComponentInParent<ClimbableSurface>() == null)
                 continue;
 
             if (Mathf.Abs(Vector3.Dot(hit.normal, Vector3.up)) > 0.35f)
                 continue;
 
-            if (hit.distance < bestDistance)
+            float score = hit.distance;
+            if (hit.collider.isTrigger)
+                score -= 0.08f;
+
+            if (score < bestScore)
             {
-                bestDistance = hit.distance;
+                bestScore = score;
                 bestHit = hit;
             }
         }
 
-        return bestDistance < float.MaxValue;
+        return bestScore < float.MaxValue;
     }
 
     bool TryFindGround(Vector3 nearPoint, out Vector3 groundPoint)
     {
         Vector3 origin = nearPoint + Vector3.up * landingProbeHeight;
         float probeDistance = landingProbeHeight + climbMaxHeight + 0.5f;
-        RaycastHit[] hits = Physics.RaycastAll(origin, Vector3.down, probeDistance, parkourMask, QueryTriggerInteraction.Ignore);
+        float radius = Mathf.Clamp(groundProbeRadius, 0.02f, Mathf.Max(0.02f, GetControllerWorldRadius() * 0.9f));
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            radius,
+            Vector3.down,
+            physicsHitBuffer,
+            probeDistance,
+            movementCollisionMask,
+            QueryTriggerInteraction.Ignore);
         float bestDistance = float.MaxValue;
         groundPoint = nearPoint;
         bool found = false;
 
-        foreach (RaycastHit hit in hits)
+        for (int index = 0; index < hitCount; index++)
         {
+            RaycastHit hit = physicsHitBuffer[index];
             if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
                 continue;
 
@@ -888,6 +953,65 @@ public class FPSController : MonoBehaviour
         }
 
         return found;
+    }
+
+    Bounds GetParkourSurfaceBounds(Collider hitCollider)
+    {
+        if (hitCollider == null)
+            return default;
+
+        ClimbableSurface owner = hitCollider.GetComponentInParent<ClimbableSurface>();
+        if (owner == null)
+            return hitCollider.bounds;
+
+        Collider[] colliders = owner.GetComponentsInChildren<Collider>(true);
+        Bounds combined = hitCollider.bounds;
+        bool foundSolid = false;
+
+        foreach (Collider candidate in colliders)
+        {
+            if (candidate == null || !candidate.enabled || candidate.isTrigger)
+                continue;
+
+            if (candidate.GetComponentInParent<ClimbableSurface>() != owner)
+                continue;
+
+            if (!foundSolid)
+            {
+                combined = candidate.bounds;
+                foundSolid = true;
+            }
+            else
+            {
+                combined.Encapsulate(candidate.bounds);
+            }
+        }
+
+        // Un sensor de escalada aislado puede ser trigger y no tener geometria solida hija.
+        if (!foundSolid)
+        {
+            bool foundAny = false;
+            foreach (Collider candidate in colliders)
+            {
+                if (candidate == null || !candidate.enabled)
+                    continue;
+
+                if (candidate.GetComponentInParent<ClimbableSurface>() != owner)
+                    continue;
+
+                if (!foundAny)
+                {
+                    combined = candidate.bounds;
+                    foundAny = true;
+                }
+                else
+                {
+                    combined.Encapsulate(candidate.bounds);
+                }
+            }
+        }
+
+        return combined;
     }
 
     float GetControllerBottomY()
@@ -923,11 +1047,24 @@ public class FPSController : MonoBehaviour
         float segmentHalfHeight = Mathf.Max(0f, height * 0.5f - radius);
         Vector3 top = center + Vector3.up * segmentHalfHeight;
         Vector3 bottom = center - Vector3.up * segmentHalfHeight;
-        Collider[] overlaps = Physics.OverlapCapsule(top, bottom, radius, parkourMask, QueryTriggerInteraction.Ignore);
+        int overlapCount = Physics.OverlapCapsuleNonAlloc(
+            top,
+            bottom,
+            radius,
+            physicsOverlapBuffer,
+            movementCollisionMask,
+            QueryTriggerInteraction.Ignore);
+        ClimbableSurface supportOwner = supportCollider != null
+            ? supportCollider.GetComponentInParent<ClimbableSurface>()
+            : null;
 
-        foreach (Collider overlap in overlaps)
+        for (int index = 0; index < overlapCount; index++)
         {
+            Collider overlap = physicsOverlapBuffer[index];
             if (overlap == null || overlap == supportCollider || IsSelf(overlap))
+                continue;
+
+            if (supportOwner != null && overlap.GetComponentInParent<ClimbableSurface>() == supportOwner)
                 continue;
 
             return false;
@@ -1066,13 +1203,21 @@ public class FPSController : MonoBehaviour
     bool TryFindWallJumpTarget(Vector3 origin, Vector3 direction, out RaycastHit bestHit, out ClimbableSurface climbable)
     {
         float probeRadius = Mathf.Max(0.05f, wallJumpProbeRadius);
-        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, direction, wallJumpDistance, parkourMask, QueryTriggerInteraction.Ignore);
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            probeRadius,
+            direction,
+            physicsHitBuffer,
+            wallJumpDistance,
+            parkourMask,
+            QueryTriggerInteraction.Collide);
         float bestDistance = float.MaxValue;
         bestHit = default;
         climbable = null;
 
-        foreach (RaycastHit hit in hits)
+        for (int index = 0; index < hitCount; index++)
         {
+            RaycastHit hit = physicsHitBuffer[index];
             if (hit.collider == climbCollider || !IsValidClimbHit(hit, out ClimbableSurface candidate))
                 continue;
 
@@ -1137,27 +1282,79 @@ public class FPSController : MonoBehaviour
     bool TryFindClimbSurface(Vector3 origin, Vector3 direction, out RaycastHit bestHit, out ClimbableSurface climbable)
     {
         direction = direction.sqrMagnitude > 0.001f ? direction.normalized : transform.forward;
-        float probeRadius = Mathf.Max(0.01f, wallProbeRadius);
-        float contactOffset = GetClimbSurfaceOffset();
-        RaycastHit[] hits = Physics.SphereCastAll(origin, probeRadius, direction, contactOffset + climbDetectDistance, parkourMask, QueryTriggerInteraction.Ignore);
-        float bestDistance = float.MaxValue;
+        float bestScore = float.MaxValue;
         bestHit = default;
         climbable = null;
 
-        foreach (RaycastHit hit in hits)
+        TryFindClimbSurfaceAtProbe(origin, direction, ref bestScore, ref bestHit, ref climbable);
+
+        float verticalSpread = Mathf.Max(0f, climbProbeVerticalSpread);
+        if (verticalSpread > 0.001f)
         {
+            TryFindClimbSurfaceAtProbe(origin + Vector3.up * verticalSpread, direction, ref bestScore, ref bestHit, ref climbable);
+            TryFindClimbSurfaceAtProbe(origin - Vector3.up * verticalSpread, direction, ref bestScore, ref bestHit, ref climbable);
+        }
+
+        Vector3 side = Vector3.Cross(Vector3.up, direction);
+        float sideSpread = Mathf.Max(0f, climbProbeSideSpread);
+        if (side.sqrMagnitude > 0.001f && sideSpread > 0.001f)
+        {
+            side.Normalize();
+            TryFindClimbSurfaceAtProbe(origin + side * sideSpread, direction, ref bestScore, ref bestHit, ref climbable);
+            TryFindClimbSurfaceAtProbe(origin - side * sideSpread, direction, ref bestScore, ref bestHit, ref climbable);
+        }
+
+        return bestScore < float.MaxValue;
+    }
+
+    void TryFindClimbSurfaceAtProbe(
+        Vector3 origin,
+        Vector3 direction,
+        ref float bestScore,
+        ref RaycastHit bestHit,
+        ref ClimbableSurface bestClimbable)
+    {
+        float probeRadius = Mathf.Max(0.01f, wallProbeRadius);
+        float contactOffset = GetClimbSurfaceOffset();
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            probeRadius,
+            direction,
+            physicsHitBuffer,
+            contactOffset + climbDetectDistance,
+            parkourMask,
+            QueryTriggerInteraction.Collide);
+        ClimbableSurface currentOwner = climbCollider != null
+            ? climbCollider.GetComponentInParent<ClimbableSurface>()
+            : null;
+
+        for (int index = 0; index < hitCount; index++)
+        {
+            RaycastHit hit = physicsHitBuffer[index];
             if (!IsValidClimbHit(hit, out ClimbableSurface candidate))
                 continue;
 
-            if (hit.distance < bestDistance)
-            {
-                bestDistance = hit.distance;
-                bestHit = hit;
-                climbable = candidate;
-            }
-        }
+            float facing = Vector3.Dot(hit.normal, -direction);
+            if (facing < 0.15f)
+                continue;
 
-        return bestDistance < float.MaxValue;
+            float continuityPenalty = climbNormal.sqrMagnitude > 0.5f
+                ? (1f - Mathf.Clamp01(Vector3.Dot(hit.normal, climbNormal))) * Mathf.Max(0f, climbNormalContinuityWeight)
+                : 0f;
+            float score = hit.distance + continuityPenalty;
+
+            if (hit.collider == climbCollider)
+                score -= 0.12f;
+            else if (currentOwner != null && candidate == currentOwner)
+                score -= 0.07f;
+
+            if (score >= bestScore)
+                continue;
+
+            bestScore = score;
+            bestHit = hit;
+            bestClimbable = candidate;
+        }
     }
 
     bool IsValidClimbHit(RaycastHit hit, out ClimbableSurface climbable)
@@ -1200,26 +1397,39 @@ public class FPSController : MonoBehaviour
         topOutPoint = transform.position;
         Vector3 highProbe = transform.position + Vector3.up * climbTopProbeHeight;
 
-        if (TryFindClimbSurface(highProbe, -climbNormal, out _, out _))
+        float highProbeScore = float.MaxValue;
+        RaycastHit highProbeHit = default;
+        ClimbableSurface highProbeSurface = null;
+        TryFindClimbSurfaceAtProbe(highProbe, -climbNormal, ref highProbeScore, ref highProbeHit, ref highProbeSurface);
+        if (highProbeScore < float.MaxValue)
             return false;
 
         float worldRadius = GetControllerWorldRadius();
         float minimumForwardDistance = Mathf.Max(climbTopForwardOffset, worldRadius + landingClearance);
         float probeStep = Mathf.Max(0.2f, worldRadius * 0.5f);
+        Vector3 climbSide = Vector3.Cross(climbNormal, Vector3.up);
+        if (climbSide.sqrMagnitude > 0.001f)
+            climbSide.Normalize();
 
-        for (int probeIndex = 0; probeIndex < 4; probeIndex++)
+        for (int lateralIndex = 0; lateralIndex < 3; lateralIndex++)
         {
-            float forwardDistance = minimumForwardDistance + probeStep * probeIndex;
-            Vector3 groundProbe = transform.position - climbNormal * forwardDistance + Vector3.up * (climbTopProbeHeight + 0.25f);
+            int lateralSign = lateralIndex == 0 ? 0 : (lateralIndex == 1 ? -1 : 1);
+            Vector3 lateralOffset = climbSide * (lateralSign * worldRadius * 0.7f);
 
-            if (!TryFindGround(groundProbe, out Vector3 groundPoint))
-                continue;
+            for (int probeIndex = 0; probeIndex < 4; probeIndex++)
+            {
+                float forwardDistance = minimumForwardDistance + probeStep * probeIndex;
+                Vector3 groundProbe = transform.position - climbNormal * forwardDistance + lateralOffset + Vector3.up * (climbTopProbeHeight + 0.25f);
 
-            if (groundPoint.y < transform.position.y + 0.25f)
-                continue;
+                if (!TryFindGround(groundProbe, out Vector3 groundPoint))
+                    continue;
 
-            topOutPoint = groundPoint;
-            return true;
+                if (groundPoint.y < transform.position.y + 0.25f)
+                    continue;
+
+                topOutPoint = groundPoint;
+                return true;
+            }
         }
 
         return false;
@@ -1237,6 +1447,7 @@ public class FPSController : MonoBehaviour
         climbCollider = null;
         verticalVelocity = -2f;
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
         SetAnimatorBool(ClimbingHash, false);
         SetAnimatorFloat(ClimbInputHash, 0f);
 
@@ -1295,6 +1506,7 @@ public class FPSController : MonoBehaviour
 
         verticalVelocity = -2f;
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
         airborneAnimationTime = 0f;
         lastAirborneVerticalSpeed = 0f;
         landingAnimationQueued = false;
@@ -1376,6 +1588,7 @@ public class FPSController : MonoBehaviour
 
         verticalVelocity = -2f;
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
         isParkouring = false;
         SetAnimatorBool(ParkourHash, false);
     }
@@ -1662,17 +1875,19 @@ public class FPSController : MonoBehaviour
         Vector3 origin = transform.position;
         origin.y = GetControllerBottomY() + probePadding;
 
-        RaycastHit[] hits = Physics.RaycastAll(
+        int hitCount = Physics.RaycastNonAlloc(
             origin,
             Vector3.down,
+            physicsHitBuffer,
             maxDistance + probePadding,
-            parkourMask,
+            movementCollisionMask,
             QueryTriggerInteraction.Ignore);
 
         float closestGroundDistance = float.MaxValue;
 
-        foreach (RaycastHit hit in hits)
+        for (int index = 0; index < hitCount; index++)
         {
+            RaycastHit hit = physicsHitBuffer[index];
             if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
                 continue;
 
@@ -1772,6 +1987,7 @@ public class FPSController : MonoBehaviour
         airRollEndTime = -999f;
         verticalVelocity = 0f;
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
         turnVelocity = 0f;
         jumpPressedTime = lastGroundedTime = -999f;
         groundAlignmentFramesRemaining = 0;
@@ -1842,6 +2058,7 @@ public class FPSController : MonoBehaviour
         cameraDistance = -1f;
         ResetCameraVelocities();
         currentPlanarSpeed = 0f;
+        currentPlanarVelocity = Vector3.zero;
     }
 
     public void ExitGraffitiMode()

@@ -45,6 +45,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BackdropFoilDarkness: 0.28
+    - _BackdropFoilStrength: 0.74
     - _BackdropHoloIntensity: 0.88
     - _BackdropMotion: 0.82
     m_Colors:

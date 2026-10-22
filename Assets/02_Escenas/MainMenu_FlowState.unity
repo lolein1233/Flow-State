@@ -492,8 +492,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3725294bb5992b842a80dcddeb5d0958, type: 3}
-  m_Resource: {fileID: 8300000, guid: 3725294bb5992b842a80dcddeb5d0958, type: 3}
+  m_audioClip: {fileID: 8300000, guid: bcf58c1f3b67dcf4e925f6386337e981, type: 3}
+  m_Resource: {fileID: 8300000, guid: bcf58c1f3b67dcf4e925f6386337e981, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.13
   m_Pitch: 1
@@ -892,8 +892,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
+  m_sharedMaterial: {fileID: -4039767952476308157, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -987,7 +987,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: -4039767952476308157, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7540,7 +7540,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8618694021610527115, guid: 5f0c8f1432797224f99dcb5ecd4d5a88, type: 2}
+  - {fileID: -4039767952476308157, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7584,8 +7584,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: esc/salir
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5f0c8f1432797224f99dcb5ecd4d5a88, type: 2}
-  m_sharedMaterial: {fileID: -8618694021610527115, guid: 5f0c8f1432797224f99dcb5ecd4d5a88, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
+  m_sharedMaterial: {fileID: -4039767952476308157, guid: afcbd04768ca0dc4b895dd838d52af97, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9819,6 +9819,8 @@ MonoBehaviour:
   accessibility: {fileID: 320452557}
   wallMotion: 0.82
   hologramIntensity: 0.88
+  foilStrength: 0.74
+  foilDarkness: 0.28
 --- !u!1 &1947633288
 GameObject:
   m_ObjectHideFlags: 0
@@ -9866,7 +9868,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4279439634
+    rgba: 4284224767
   m_fontColor: {r: 1, g: 0.08, b: 0.36, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3

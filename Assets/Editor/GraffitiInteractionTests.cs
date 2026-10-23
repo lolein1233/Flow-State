@@ -215,6 +215,27 @@ public sealed class GraffitiInteractionTests
         Assert.That(Vector2.Angle(controlledFast, fastDelta), Is.LessThan(0.001f));
     }
 
+    [Test] public void FastSweepCameraDeltaIsBoundedWithoutChangingItsDirection()
+    {
+        Vector2 requested = new Vector2(3.2f, -2.4f);
+        Vector2 limited = GraffitiGestureDynamics.LimitCameraDelta(requested, new Vector2(0.55f, 0.45f));
+
+        Assert.That(Mathf.Abs(limited.x), Is.LessThanOrEqualTo(0.55001f));
+        Assert.That(Mathf.Abs(limited.y), Is.LessThanOrEqualTo(0.45001f));
+        Assert.That(Vector2.Angle(new Vector2(limited.x / 0.55f, limited.y / 0.45f),
+            new Vector2(requested.x / 0.55f, requested.y / 0.45f)), Is.LessThan(0.001f));
+    }
+
+    [Test] public void RawFastGestureOpensTheConeBeforeTheSpeedFilterCatchesUp()
+    {
+        float responsiveSpeed = GraffitiGestureDynamics.GetResponsiveGestureSpeed(0.4f, 5f, 0.78f);
+        float cone = GraffitiGestureDynamics.EvaluateCone(
+            responsiveSpeed, 0f, true, 0.7f, 3f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+
+        Assert.That(responsiveSpeed, Is.EqualTo(3.9f).Within(0.001f));
+        Assert.That(cone, Is.GreaterThan(0.95f));
+    }
+
     [Test] public void FastSweepKeepsBroadIntentWhilePhysicalTravelIsCompressed()
     {
         const float deltaTime = 1f / 60f;
@@ -233,8 +254,8 @@ public sealed class GraffitiInteractionTests
     [Test] public void EveryNozzleHasClearlySeparatedPrecisionAndCoverageWidths()
     {
         Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
-        Set(paint, "controlledCloseRadiusMultiplier", 0.55f);
-        Set(paint, "controlledFarRadiusMultiplier", 3.25f);
+        Set(paint, "controlledCloseRadiusMultiplier", 0.22f);
+        Set(paint, "controlledFarRadiusMultiplier", 3.8f);
         Set(painter, "physicalControlWasActive", true);
         painter.useAdaptiveSprayDistance = true;
 
@@ -245,7 +266,29 @@ public sealed class GraffitiInteractionTests
             float precisionWidth = paint.EstimateBrushWidth(3f);
             Set(painter, "adaptiveCone", 1f);
             float coverageWidth = paint.EstimateBrushWidth(3f);
-            Assert.That(coverageWidth, Is.GreaterThan(precisionWidth * 5f), nozzle.ToString());
+            Assert.That(coverageWidth, Is.GreaterThan(precisionWidth * 16f), nozzle.ToString());
+        }
+    }
+
+    [Test] public void SmallAndMediumCapsReceiveExtraCoverageRange()
+    {
+        Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
+        Set(paint, "controlledCloseRadiusMultiplier", 0.22f);
+        Set(paint, "controlledFarRadiusMultiplier", 3.8f);
+        Set(painter, "physicalControlWasActive", true);
+        painter.useAdaptiveSprayDistance = true;
+
+        foreach (GraffitiNozzleShape nozzle in new[]
+                 { GraffitiNozzleShape.Needle, GraffitiNozzleShape.SoftRound, GraffitiNozzleShape.Chisel })
+        {
+            painter.currentNozzleShape = nozzle;
+            Set(painter, "adaptiveCone", 0.03f);
+            float precisionWidth = paint.EstimateBrushWidth(3f);
+            Set(painter, "adaptiveCone", 1f);
+            float coverageWidth = paint.EstimateBrushWidth(3f);
+
+            Assert.That(precisionWidth, Is.LessThan(0.025f), nozzle.ToString());
+            Assert.That(coverageWidth, Is.GreaterThan(0.19f), nozzle.ToString());
         }
     }
 

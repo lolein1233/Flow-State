@@ -54,6 +54,29 @@ public static class GraffitiGestureDynamics
         return Mathf.SmoothStep(0f, Mathf.Clamp01(maximumShare), edge01);
     }
 
+    public static Vector2 LimitCameraDelta(Vector2 requestedDegrees, Vector2 maximumDegrees)
+    {
+        maximumDegrees.x = Mathf.Max(0.001f, Mathf.Abs(maximumDegrees.x));
+        maximumDegrees.y = Mathf.Max(0.001f, Mathf.Abs(maximumDegrees.y));
+
+        // Limit the full two-axis gesture as an ellipse. Clamping each axis on
+        // its own makes diagonals rotate the camera faster than straight lines.
+        Vector2 normalized = new Vector2(
+            requestedDegrees.x / maximumDegrees.x,
+            requestedDegrees.y / maximumDegrees.y);
+        float magnitude = normalized.magnitude;
+        if (magnitude <= 1f)
+            return requestedDegrees;
+
+        normalized /= magnitude;
+        return new Vector2(normalized.x * maximumDegrees.x, normalized.y * maximumDegrees.y);
+    }
+
+    public static float GetResponsiveGestureSpeed(float smoothedSpeed, float immediateSpeed, float immediateWeight)
+    {
+        return Mathf.Max(Mathf.Max(0f, smoothedSpeed), Mathf.Max(0f, immediateSpeed) * Mathf.Clamp01(immediateWeight));
+    }
+
     public static float EvaluateCone(
         float gestureSpeed,
         float turnRateDegrees,

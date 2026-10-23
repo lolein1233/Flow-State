@@ -16,8 +16,8 @@ public class Pintando : MonoBehaviour
 
     [Header("Distancia y proyeccion")]
     [SerializeField] float closeDistance = 0.55f;
-    [SerializeField, Range(0.2f, 0.9f)] float controlledCloseRadiusMultiplier = 0.3f;
-    [SerializeField, Range(1.4f, 4.5f)] float controlledFarRadiusMultiplier = 3.25f;
+    [SerializeField, Range(0.2f, 0.9f)] float controlledCloseRadiusMultiplier = 0.22f;
+    [SerializeField, Range(1.4f, 4.5f)] float controlledFarRadiusMultiplier = 3.8f;
     [SerializeField] float maximumAngleStretch = 2.25f;
 
     [Header("Ataque inicial")]
@@ -57,6 +57,10 @@ public class Pintando : MonoBehaviour
         // Older scenes serialized a looser spacing value. Cap it here so every
         // existing wall receives the denser, continuous stroke without a scene migration.
         continuitySpacingScale = Mathf.Min(continuitySpacingScale, 0.5f);
+        // Older scenes stored a thick precision footprint. Preserve any more
+        // demanding tuning, while migrating them to the new fine-to-coverage range.
+        controlledCloseRadiusMultiplier = Mathf.Min(controlledCloseRadiusMultiplier, 0.22f);
+        controlledFarRadiusMultiplier = Mathf.Max(controlledFarRadiusMultiplier, 3.8f);
         EnsureMaterial();
     }
 
@@ -273,7 +277,13 @@ public class Pintando : MonoBehaviour
 
     public float GetRadiusMultiplier(float distance01)
     {
-        return Mathf.Lerp(controlledCloseRadiusMultiplier, controlledFarRadiusMultiplier, Mathf.Clamp01(distance01));
+        float cone = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(distance01));
+        float precisionScale = mainPainter != null ? mainPainter.GetPrecisionRadiusScale() : 1f;
+        float coverageScale = mainPainter != null ? mainPainter.GetCoverageRadiusScale() : 1f;
+        return Mathf.Lerp(
+            controlledCloseRadiusMultiplier * precisionScale,
+            controlledFarRadiusMultiplier * coverageScale,
+            cone);
     }
 
     float GetEffectiveDistance01(float distanceToSurface)

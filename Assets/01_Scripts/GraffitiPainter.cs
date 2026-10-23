@@ -29,7 +29,7 @@ public class GraffitiPainter : MonoBehaviour
 
     [Header("Control fisico de la lata")]
     public bool usePhysicalSprayControl = true;
-    [SerializeField] Vector2 handMouseSensitivity = new Vector2(0.048f, 0.048f);
+    [SerializeField] Vector2 handMouseSensitivity = new Vector2(0.036f, 0.036f);
     [SerializeField] Vector2 handReach = new Vector2(0.34f, 0.27f);
     [SerializeField, Range(0.05f, 0.6f)] float depthTravel = 0.3f;
     [SerializeField, Range(0.01f, 0.25f)] float depthSensitivity = 0.11f;
@@ -37,26 +37,28 @@ public class GraffitiPainter : MonoBehaviour
     [SerializeField] Vector3 maximumWristRotation = new Vector3(16f, 22f, 7f);
 
     [Header("Estabilidad en barridos rapidos")]
-    [SerializeField, Range(0.01f, 0.1f)] float linearHandDeltaRadius = 0.045f;
-    [SerializeField, Range(0.03f, 0.12f)] float maximumHandDeltaRadius = 0.06f;
+    [SerializeField, Range(0.01f, 0.1f)] float linearHandDeltaRadius = 0.03f;
+    [SerializeField, Range(0.03f, 0.12f)] float maximumHandDeltaRadius = 0.042f;
 
     [Header("Encuadre continuo")]
-    [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.68f;
-    [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.94f;
-    [SerializeField] Vector2 edgeCameraDegreesPerMouseUnit = new Vector2(2.4f, 2.1f);
+    [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.74f;
+    [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.82f;
+    [SerializeField] Vector2 edgeCameraDegreesPerMouseUnit = new Vector2(0.9f, 0.75f);
+    [SerializeField] Vector2 maximumCameraDegreesPerFrame = new Vector2(0.55f, 0.45f);
 
     [Header("Distancia adaptativa por gesto")]
     public bool useAdaptiveSprayDistance = true;
     [SerializeField, Range(0f, 1f)] float adaptivePrecisionCone = 0.03f;
     [SerializeField, Range(0f, 1f)] float adaptiveIdleCone = 0.32f;
-    [SerializeField, Min(0f)] float precisionGestureSpeed = 0.55f;
-    [SerializeField, Min(0.1f)] float coverageGestureSpeed = 4.6f;
+    [SerializeField, Min(0f)] float precisionGestureSpeed = 0.7f;
+    [SerializeField, Min(0.1f)] float coverageGestureSpeed = 3f;
     [SerializeField, Min(0f)] float cornerStartDegreesPerSecond = 150f;
     [SerializeField, Min(1f)] float cornerFullDegreesPerSecond = 650f;
     [SerializeField, Range(0f, 1f)] float cornerPrecision = 0.86f;
-    [SerializeField, Range(1f, 30f)] float gestureSpeedResponse = 14f;
-    [SerializeField, Range(1f, 30f)] float coneExpandResponse = 8.5f;
-    [SerializeField, Range(1f, 30f)] float conePrecisionResponse = 13f;
+    [SerializeField, Range(0f, 1f)] float immediateGestureWeight = 0.78f;
+    [SerializeField, Range(1f, 30f)] float gestureSpeedResponse = 16f;
+    [SerializeField, Range(1f, 30f)] float coneExpandResponse = 24f;
+    [SerializeField, Range(1f, 30f)] float conePrecisionResponse = 18f;
 
     [Header("Menu dibujado")]
     public bool menuOpen;
@@ -371,6 +373,15 @@ public class GraffitiPainter : MonoBehaviour
             currentGraffiti = decal.GetComponent<GraffitiFade>();
         }
 
+        // A stationary or deliberately slow press must begin with the fine cap,
+        // not with the wider idle preview left on screen before the click.
+        if (useAdaptiveSprayDistance && smoothedGestureSpeed < precisionGestureSpeed)
+        {
+            adaptiveCone = adaptivePrecisionCone;
+            targetDepth = 1f - adaptiveCone * 2f;
+            smoothedDepth = targetDepth;
+        }
+
         isPainting = true;
         sprayResources.BeginSpray(currentNozzleShape);
         emissionAllowed = sprayResources.CanEmitAt(Time.time);
@@ -614,9 +625,14 @@ public class GraffitiPainter : MonoBehaviour
 
                 if (fps != null && (cameraShareX > 0f || cameraShareY > 0f))
                 {
-                    fps.ApplyGraffitiLookDelta(
+                    Vector2 requestedLookDelta = new Vector2(
                         controlledMouse.x * cameraShareX * edgeCameraDegreesPerMouseUnit.x,
                         -controlledMouse.y * cameraShareY * edgeCameraDegreesPerMouseUnit.y);
+                    Vector2 safeLookDelta = GraffitiGestureDynamics.LimitCameraDelta(
+                        requestedLookDelta, maximumCameraDegreesPerFrame);
+                    fps.ApplyGraffitiLookDelta(
+                        safeLookDelta.x,
+                        safeLookDelta.y);
                 }
 
                 // Width reads the uncompressed gesture: a quick sweep still asks
@@ -669,8 +685,10 @@ public class GraffitiPainter : MonoBehaviour
             previousGestureDirection = direction;
         }
 
+        float responsiveGestureSpeed = GraffitiGestureDynamics.GetResponsiveGestureSpeed(
+            smoothedGestureSpeed, gestureSpeed, immediateGestureWeight);
         float targetCone = GraffitiGestureDynamics.EvaluateCone(
-            smoothedGestureSpeed,
+            responsiveGestureSpeed,
             turnRate,
             isPainting,
             precisionGestureSpeed,
@@ -809,6 +827,30 @@ public class GraffitiPainter : MonoBehaviour
             case GraffitiNozzleShape.FatCap: return new Vector2(1.18f, 1.18f);
             case GraffitiNozzleShape.Chisel: return new Vector2(1.58f, 0.56f);
             default: return Vector2.one;
+        }
+    }
+
+    public float GetPrecisionRadiusScale()
+    {
+        switch (currentNozzleShape)
+        {
+            case GraffitiNozzleShape.Needle: return 0.8f;
+            case GraffitiNozzleShape.SoftRound: return 0.9f;
+            case GraffitiNozzleShape.Chisel: return 0.86f;
+            case GraffitiNozzleShape.Splatter: return 0.92f;
+            default: return 0.95f;
+        }
+    }
+
+    public float GetCoverageRadiusScale()
+    {
+        switch (currentNozzleShape)
+        {
+            case GraffitiNozzleShape.Needle: return 1.25f;
+            case GraffitiNozzleShape.SoftRound: return 1.15f;
+            case GraffitiNozzleShape.Chisel: return 1.1f;
+            case GraffitiNozzleShape.Splatter: return 1.1f;
+            default: return 1f;
         }
     }
 

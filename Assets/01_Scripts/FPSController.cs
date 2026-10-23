@@ -167,6 +167,7 @@ public class FPSController : MonoBehaviour
     public Transform visualRoot;
     public Animator animator;
     public bool hideVisualInGraffitiMode = true;
+    public bool useGroundContactShadow = true;
 
     [Header("Apoyo al suelo")]
     public bool alignFeetToGroundOnStart = true;
@@ -194,6 +195,7 @@ public class FPSController : MonoBehaviour
     CharacterController controller;
     GraffitiMenuDrawer graffitiMenu;
     CapsuleCollider legacyCapsuleCollider;
+    PlayerGroundContactShadow groundContactShadow;
     Camera playerCamera;
     Transform cameraTransform;
     readonly HashSet<int> animatorParameters = new HashSet<int>();
@@ -284,6 +286,7 @@ public class FPSController : MonoBehaviour
         legacyCapsuleCollider = GetComponent<CapsuleCollider>();
         ResolveReferences();
         CacheAnimatorParameters();
+        ConfigureGroundContactShadow();
     }
 
     void Start()
@@ -434,6 +437,25 @@ public class FPSController : MonoBehaviour
 
         controller.minMoveDistance = 0f;
         SetControllerStepOffset(controller.isGrounded);
+    }
+
+    void ConfigureGroundContactShadow()
+    {
+        groundContactShadow = GetComponent<PlayerGroundContactShadow>();
+
+        if (!useGroundContactShadow)
+        {
+            if (groundContactShadow != null)
+                groundContactShadow.enabled = false;
+
+            return;
+        }
+
+        if (groundContactShadow == null)
+            groundContactShadow = gameObject.AddComponent<PlayerGroundContactShadow>();
+
+        groundContactShadow.enabled = true;
+        groundContactShadow.Configure(controller, animator, visualRoot, movementCollisionMask);
     }
 
     void UpdateInitialGroundAlignment()
@@ -2142,6 +2164,9 @@ public class FPSController : MonoBehaviour
 
     void UpdateVisualState()
     {
+        if (groundContactShadow != null)
+            groundContactShadow.SetGrounded(stableGrounded && !graffitiMode);
+
         if (visualRoot == null || !hideVisualInGraffitiMode)
             return;
 

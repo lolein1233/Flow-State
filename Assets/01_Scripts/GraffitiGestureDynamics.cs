@@ -30,6 +30,7 @@ public static class GraffitiGestureDynamics
         float excess = magnitude - linearRadius;
         float compressedMagnitude = linearRadius
             + compressionRange * (1f - Mathf.Exp(-excess / compressionRange));
+        compressedMagnitude = Mathf.Min(compressedMagnitude, maximumRadius);
         return controlDelta * (compressedMagnitude / magnitude);
     }
 

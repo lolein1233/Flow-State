@@ -2527,7 +2527,7 @@ CharacterController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 71293784}
-  m_Material: {fileID: 711336453}
+  m_Material: {fileID: 1194084670}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2552,7 +2552,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 71293784}
-  m_Material: {fileID: 1998249510}
+  m_Material: {fileID: 1781571718}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -2713,14 +2713,16 @@ MonoBehaviour:
   depthSensitivity: 0.11
   handResponse: 18
   maximumWristRotation: {x: 16, y: 22, z: 7}
+  linearHandDeltaRadius: 0.045
+  maximumHandDeltaRadius: 0.06
   handComfortZone: 0.68
   maximumEdgeCameraShare: 0.94
-  edgeCameraDegreesPerMouseUnit: {x: 3.2, y: 2.8}
+  edgeCameraDegreesPerMouseUnit: {x: 2.4, y: 2.1}
   useAdaptiveSprayDistance: 1
   adaptivePrecisionCone: 0.03
   adaptiveIdleCone: 0.32
   precisionGestureSpeed: 0.55
-  coverageGestureSpeed: 6.2
+  coverageGestureSpeed: 4.6
   cornerStartDegreesPerSecond: 150
   cornerFullDegreesPerSecond: 650
   cornerPrecision: 0.86
@@ -2828,6 +2830,9 @@ MonoBehaviour:
   thirdPersonRotationSharpness: 18
   thirdPersonLookAheadDistance: 0.62
   thirdPersonLookAheadSmoothTime: 0.16
+  thirdPersonLateralLookAheadMultiplier: 0
+  thirdPersonBackwardLookAheadMultiplier: 0.3
+  thirdPersonLookAheadDeadZone: 0.2
   thirdPersonMinCameraDistance: 0.28
   cameraCollisionSnapSmoothTime: 0.025
   cameraCollisionReturnSmoothTime: 0.18
@@ -2900,6 +2905,7 @@ MonoBehaviour:
   wallJumpProbeRadius: 0.2
   fallingAnimationVelocity: -0.85
   minimumFallingAirTime: 0.12
+  minimumFallingDistance: 0.35
   landingAnimationLeadTime: 0.34
   landingAnimationProbeDistance: 4
   enableAirRoll: 1
@@ -2910,10 +2916,20 @@ MonoBehaviour:
   hideVisualInGraffitiMode: 1
   alignFeetToGroundOnStart: 1
   controllerSkinWidthOnGround: 0.03
-  footGroundPadding: 0.015
+  footGroundPadding: -0.005
   footGroundProbeHeight: 5
   footGroundProbeDistance: 20
   maxFootGroundSnap: 0.35
+  groundedStepOffset: 0.52
+  airborneStepOffset: 0
+  groundSnapDistance: 0.52
+  groundSnapSpeed: 13
+  groundStickVelocity: 3.5
+  groundProbeStartOffset: 0.06
+  groundProbeRadiusScale: 0.74
+  jumpGroundProbeLockout: 0.16
+  stepSurfaceProbeInset: 0.16
+  stepHeightTolerance: 0.06
 --- !u!114 &71293795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2939,7 +2955,7 @@ MonoBehaviour:
   mainPainter: {fileID: 71293793}
   closeDistance: 0.55
   controlledCloseRadiusMultiplier: 0.55
-  controlledFarRadiusMultiplier: 2.05
+  controlledFarRadiusMultiplier: 3.25
   maximumAngleStretch: 2.25
   initialBurstExposureFrames: 3
   enableDrips: 1
@@ -20104,6 +20120,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 883416018}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!134 &570932663
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!64 &572410906
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -24697,19 +24726,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 710528009}
   m_Mesh: {fileID: -5111577697236650007, guid: 5ad81a0e748821c44be0e0b202eb6bc7, type: 3}
---- !u!134 &711336453
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance) (Instance)'
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!64 &713285154
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -38766,7 +38782,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1139679410}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 570932663}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -44363,6 +44379,14 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f54cce2cf07e26047b87abf945d60b25, type: 2}
+    - target: {fileID: -7415637882050499111, guid: 2b4ee9f029e69f144ba6fe22154c1437, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 297.87
+      objectReference: {fileID: 0}
+    - target: {fileID: -7415637882050499111, guid: 2b4ee9f029e69f144ba6fe22154c1437, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 183.94
+      objectReference: {fileID: 0}
     - target: {fileID: -7383653822403966870, guid: 2b4ee9f029e69f144ba6fe22154c1437, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -44451,6 +44475,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5571322138962881102, guid: 2b4ee9f029e69f144ba6fe22154c1437, type: 3}
+      propertyPath: 'm_Materials.Array.data[6]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b4de41099d970b040b79cd073179b75a, type: 2}
     - target: {fileID: -5552395107106413210, guid: 2b4ee9f029e69f144ba6fe22154c1437, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -50410,6 +50438,19 @@ MonoBehaviour:
   canClimb: 1
   allowSideways: 1
   speedMultiplier: 1
+--- !u!134 &1194084670
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance) (Instance) (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &1194447582
 GameObject:
   m_ObjectHideFlags: 0
@@ -72459,6 +72500,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1781431314}
   m_Mesh: {fileID: -1865627495626015447, guid: 5ad81a0e748821c44be0e0b202eb6bc7, type: 3}
+--- !u!134 &1781571718
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ' (Instance) (Instance) (Instance) (Instance)'
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &1782883090
 GameObject:
   m_ObjectHideFlags: 0
@@ -77930,19 +77984,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1996609114}
   m_Mesh: {fileID: 7886196680224090806, guid: 5ad81a0e748821c44be0e0b202eb6bc7, type: 3}
---- !u!134 &1998249510
-PhysicsMaterial:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: ' (Instance) (Instance)'
-  serializedVersion: 2
-  m_DynamicFriction: 0.6
-  m_StaticFriction: 0.6
-  m_Bounciness: 0
-  m_FrictionCombine: 0
-  m_BounceCombine: 0
 --- !u!1 &1999259742
 GameObject:
   m_ObjectHideFlags: 0

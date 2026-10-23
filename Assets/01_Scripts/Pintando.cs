@@ -17,7 +17,7 @@ public class Pintando : MonoBehaviour
     [Header("Distancia y proyeccion")]
     [SerializeField] float closeDistance = 0.55f;
     [SerializeField, Range(0.2f, 0.9f)] float controlledCloseRadiusMultiplier = 0.3f;
-    [SerializeField, Range(1.4f, 3f)] float controlledFarRadiusMultiplier = 2.05f;
+    [SerializeField, Range(1.4f, 4.5f)] float controlledFarRadiusMultiplier = 3.25f;
     [SerializeField] float maximumAngleStretch = 2.25f;
 
     [Header("Ataque inicial")]

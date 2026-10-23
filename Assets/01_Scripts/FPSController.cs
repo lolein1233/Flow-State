@@ -68,6 +68,9 @@ public class FPSController : MonoBehaviour
     public float thirdPersonRotationSharpness = 18f;
     public float thirdPersonLookAheadDistance = 0.65f;
     public float thirdPersonLookAheadSmoothTime = 0.16f;
+    [Range(0f, 1f)] public float thirdPersonLateralLookAheadMultiplier = 0f;
+    [Range(0f, 1f)] public float thirdPersonBackwardLookAheadMultiplier = 0.3f;
+    public float thirdPersonLookAheadDeadZone = 0.2f;
     public float thirdPersonMinCameraDistance = 0.28f;
     public float cameraCollisionSnapSmoothTime = 0.025f;
     public float cameraCollisionReturnSmoothTime = 0.18f;
@@ -151,6 +154,7 @@ public class FPSController : MonoBehaviour
     [Header("Caida y aterrizaje")]
     public float fallingAnimationVelocity = -0.85f;
     public float minimumFallingAirTime = 0.12f;
+    public float minimumFallingDistance = 0.35f;
     public float landingAnimationLeadTime = 0.34f;
     public float landingAnimationProbeDistance = 4f;
 
@@ -167,10 +171,25 @@ public class FPSController : MonoBehaviour
     [Header("Apoyo al suelo")]
     public bool alignFeetToGroundOnStart = true;
     public float controllerSkinWidthOnGround = 0.03f;
-    public float footGroundPadding = 0.015f;
+    [Tooltip("Compensacion visual de la suela. Un valor levemente negativo evita que el contorno cartoon deje una linea de aire visible.")]
+    public float footGroundPadding = -0.005f;
     public float footGroundProbeHeight = 5f;
     public float footGroundProbeDistance = 20f;
     public float maxFootGroundSnap = 0.35f;
+
+    [Header("Contacto dinamico y escaleras")]
+    [Tooltip("Altura mundial de escalon usada solo cuando existe suelo estable. Debe superar el peldaño mas alto con un margen pequeno.")]
+    public float groundedStepOffset = 0.52f;
+    public float airborneStepOffset = 0f;
+    [Tooltip("Distancia mundial maxima que se sigue hacia abajo sin entrar en caida. Cubre peldaños y bordes pequenos.")]
+    public float groundSnapDistance = 0.52f;
+    public float groundSnapSpeed = 13f;
+    public float groundStickVelocity = 3.5f;
+    public float groundProbeStartOffset = 0.06f;
+    [Range(0.25f, 0.95f)] public float groundProbeRadiusScale = 0.74f;
+    public float jumpGroundProbeLockout = 0.16f;
+    public float stepSurfaceProbeInset = 0.16f;
+    public float stepHeightTolerance = 0.06f;
 
     CharacterController controller;
     GraffitiMenuDrawer graffitiMenu;
@@ -228,6 +247,13 @@ public class FPSController : MonoBehaviour
     Vector3 climbNormal;
     Collider climbCollider;
     bool wasGrounded;
+    bool stableGrounded;
+    bool hasStableGroundHit;
+    RaycastHit stableGroundHit;
+    float stableGroundDistance;
+    CollisionFlags lastMovementCollisionFlags;
+    float airbornePeakBottomY;
+    float airborneDropDistance;
     bool landingAnimationQueued;
     bool isAirRolling;
     bool hasCombatLockPoint;
@@ -272,7 +298,10 @@ public class FPSController : MonoBehaviour
         graffitiMode = startInGraffitiMode;
         jumpPressedTime = -999f;
         lastGroundedTime = -999f;
-        wasGrounded = controller.isGrounded;
+        stableGrounded = controller.isGrounded;
+        wasGrounded = stableGrounded;
+        airbornePeakBottomY = GetControllerBottomY();
+        airborneDropDistance = 0f;
         landingAnimationQueued = false;
         lastAirborneVerticalSpeed = 0f;
         airborneAnimationTime = 0f;
@@ -397,10 +426,14 @@ public class FPSController : MonoBehaviour
 
     void ConfigureGroundContact()
     {
-        if (controller == null || controllerSkinWidthOnGround <= 0f)
+        if (controller == null)
             return;
 
-        controller.skinWidth = Mathf.Min(controller.skinWidth, controllerSkinWidthOnGround);
+        if (controllerSkinWidthOnGround > 0f)
+            controller.skinWidth = Mathf.Min(controller.skinWidth, controllerSkinWidthOnGround);
+
+        controller.minMoveDistance = 0f;
+        SetControllerStepOffset(controller.isGrounded);
     }
 
     void UpdateInitialGroundAlignment()
@@ -408,10 +441,13 @@ public class FPSController : MonoBehaviour
         if (groundAlignmentFramesRemaining <= 0)
             return;
 
-        groundAlignmentFramesRemaining--;
-
-        if (controller != null && !controller.isGrounded)
+        // Los intentos cuentan solo cuando ya existe contacto estable. Antes se
+        // consumian durante la caida inicial y el visual podia quedar con el
+        // offset de importacion, separado del suelo al aterrizar.
+        if (controller != null && !controller.isGrounded && !stableGrounded)
             return;
+
+        groundAlignmentFramesRemaining--;
 
         if (AlignVisualFeetToGround())
             groundAlignmentFramesRemaining = 0;
@@ -583,14 +619,19 @@ public class FPSController : MonoBehaviour
 
     void HandleMovement()
     {
-        bool grounded = controller.isGrounded;
+        bool grounded = RefreshStableGroundContact();
 
         if (grounded)
         {
             lastGroundedTime = Time.time;
 
             if (verticalVelocity < 0f)
-                verticalVelocity = -2f;
+            {
+                float snapVelocity = hasStableGroundHit && stableGroundDistance > controller.skinWidth
+                    ? Mathf.Min(Mathf.Max(groundStickVelocity, groundSnapSpeed), stableGroundDistance / Mathf.Max(Time.deltaTime, 0.0001f))
+                    : Mathf.Max(0.1f, groundStickVelocity);
+                verticalVelocity = -snapVelocity;
+            }
         }
 
         float h = Input.GetAxisRaw("Horizontal");
@@ -665,11 +706,105 @@ public class FPSController : MonoBehaviour
             jumpPressedTime = -999f;
             lastJumpStartedTime = Time.time;
             isAirRolling = false;
+            stableGrounded = false;
+            hasStableGroundHit = false;
+            SetControllerStepOffset(false);
             TriggerAnimator(JumpHash);
         }
 
         verticalVelocity += gravity * Time.deltaTime;
-        controller.Move((currentPlanarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
+        lastMovementCollisionFlags = controller.Move((currentPlanarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
+        UpdateGroundContactAfterMove();
+    }
+
+    bool RefreshStableGroundContact()
+    {
+        bool directlyGrounded = controller.isGrounded || (lastMovementCollisionFlags & CollisionFlags.Below) != 0;
+        bool canProbe = verticalVelocity <= 0f && Time.time - lastJumpStartedTime >= Mathf.Max(0f, jumpGroundProbeLockout);
+        hasStableGroundHit = canProbe && TryProbeWalkableGround(Mathf.Max(0f, groundSnapDistance), out stableGroundHit, out stableGroundDistance);
+
+        if (!hasStableGroundHit)
+            stableGroundDistance = float.MaxValue;
+
+        stableGrounded = directlyGrounded || hasStableGroundHit;
+        SetControllerStepOffset(stableGrounded);
+        return stableGrounded;
+    }
+
+    void UpdateGroundContactAfterMove()
+    {
+        bool hitGround = controller.isGrounded || (lastMovementCollisionFlags & CollisionFlags.Below) != 0;
+
+        if (verticalVelocity > 0f)
+        {
+            stableGrounded = false;
+            hasStableGroundHit = false;
+        }
+        else if (hitGround)
+        {
+            stableGrounded = true;
+            hasStableGroundHit = false;
+            lastGroundedTime = Time.time;
+            verticalVelocity = -Mathf.Max(0.1f, groundStickVelocity);
+        }
+
+        SetControllerStepOffset(stableGrounded);
+    }
+
+    bool TryProbeWalkableGround(float maximumDistance, out RaycastHit bestHit, out float groundDistance)
+    {
+        bestHit = default;
+        groundDistance = float.MaxValue;
+
+        float worldRadius = GetControllerWorldRadius();
+        float worldHeight = Mathf.Max(controller.height * Mathf.Abs(transform.lossyScale.y), worldRadius * 2f);
+        float probeRadius = Mathf.Clamp(worldRadius * groundProbeRadiusScale, 0.05f, Mathf.Max(0.05f, worldRadius - controller.skinWidth));
+        Vector3 capsuleCenter = transform.position + transform.TransformVector(controller.center);
+        Vector3 bottomSphereCenter = capsuleCenter - Vector3.up * Mathf.Max(0f, worldHeight * 0.5f - worldRadius);
+        float startOffset = Mathf.Max(0.01f, groundProbeStartOffset);
+        float radiusDifference = Mathf.Max(0f, worldRadius - probeRadius);
+        Vector3 origin = bottomSphereCenter + Vector3.up * startOffset;
+        float castDistance = Mathf.Max(0.01f, maximumDistance + startOffset + radiusDifference);
+        int hitCount = Physics.SphereCastNonAlloc(
+            origin,
+            probeRadius,
+            Vector3.down,
+            physicsHitBuffer,
+            castDistance,
+            movementCollisionMask,
+            QueryTriggerInteraction.Ignore);
+        float bottomY = GetControllerBottomY();
+
+        for (int index = 0; index < hitCount; index++)
+        {
+            RaycastHit hit = physicsHitBuffer[index];
+            if (IsSelf(hit.collider) || !IsWalkableGroundNormal(hit.normal))
+                continue;
+
+            float candidateDistance = Mathf.Max(0f, bottomY - hit.point.y);
+            if (candidateDistance > maximumDistance + controller.skinWidth || candidateDistance >= groundDistance)
+                continue;
+
+            groundDistance = candidateDistance;
+            bestHit = hit;
+        }
+
+        return groundDistance < float.MaxValue;
+    }
+
+    void SetControllerStepOffset(bool grounded)
+    {
+        if (controller == null || !controller.enabled)
+            return;
+
+        float requestedOffset = grounded ? groundedStepOffset : airborneStepOffset;
+        controller.stepOffset = Mathf.Clamp(requestedOffset, 0f, Mathf.Max(0f, controller.height - controller.skinWidth));
+    }
+
+    bool IsWalkableGroundNormal(Vector3 normal)
+    {
+        float slopeNormal = Mathf.Cos(Mathf.Clamp(controller.slopeLimit, 0f, 89.9f) * Mathf.Deg2Rad);
+        return normal.y >= Mathf.Max(minimumGroundNormal, slopeNormal);
     }
 
     bool TryStartAirRoll(bool grounded)
@@ -760,6 +895,11 @@ public class FPSController : MonoBehaviour
         origin.y = GetControllerBottomY() + wallCheckHeight;
 
         if (!TryFindParkourWall(origin, desiredForward, out RaycastHit wallHit))
+            return false;
+
+        // Bordillos y peldaños se resuelven con el CharacterController. No deben
+        // convertirse en un vault o en una pared de escalada por compartir la capa Parkour.
+        if (IsWalkableStepAhead(wallHit, desiredForward))
             return false;
 
         Bounds bounds = GetParkourSurfaceBounds(wallHit.collider);
@@ -920,6 +1060,43 @@ public class FPSController : MonoBehaviour
         return bestScore < float.MaxValue;
     }
 
+    bool IsWalkableStepAhead(RaycastHit wallHit, Vector3 desiredForward)
+    {
+        if (wallHit.collider == null || wallHit.collider.isTrigger)
+            return false;
+
+        desiredForward.y = 0f;
+        if (desiredForward.sqrMagnitude <= 0.001f)
+            return false;
+
+        desiredForward.Normalize();
+        float maximumStepHeight = Mathf.Max(0f, groundedStepOffset) + Mathf.Max(0f, stepHeightTolerance);
+        float bottomY = GetControllerBottomY();
+        Vector3 origin = wallHit.point + desiredForward * Mathf.Max(0.02f, stepSurfaceProbeInset);
+        origin.y = bottomY + maximumStepHeight + Mathf.Max(0.05f, groundProbeStartOffset);
+        float probeDistance = maximumStepHeight + Mathf.Max(0.05f, groundProbeStartOffset) + controller.skinWidth;
+        int hitCount = Physics.RaycastNonAlloc(
+            origin,
+            Vector3.down,
+            physicsHitBuffer,
+            probeDistance,
+            movementCollisionMask,
+            QueryTriggerInteraction.Ignore);
+
+        for (int index = 0; index < hitCount; index++)
+        {
+            RaycastHit hit = physicsHitBuffer[index];
+            if (IsSelf(hit.collider) || !IsWalkableGroundNormal(hit.normal))
+                continue;
+
+            float rise = hit.point.y - bottomY;
+            if (rise >= -controller.skinWidth && rise <= maximumStepHeight)
+                return true;
+        }
+
+        return false;
+    }
+
     bool TryFindGround(Vector3 nearPoint, out Vector3 groundPoint)
     {
         Vector3 origin = nearPoint + Vector3.up * landingProbeHeight;
@@ -940,7 +1117,7 @@ public class FPSController : MonoBehaviour
         for (int index = 0; index < hitCount; index++)
         {
             RaycastHit hit = physicsHitBuffer[index];
-            if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
+            if (IsSelf(hit.collider) || !IsWalkableGroundNormal(hit.normal))
                 continue;
 
             Vector3 candidate = BuildGroundedRootPosition(hit.point);
@@ -1677,14 +1854,8 @@ public class FPSController : MonoBehaviour
         previousCameraPlayerPosition = transform.position;
         playerDelta.y = 0f;
 
-        Vector3 desiredLookAhead = Vector3.zero;
-        float playerSpeed = playerDelta.magnitude / deltaTime;
-
-        if (playerSpeed > 0.05f)
-        {
-            float speedFactor = Mathf.InverseLerp(walkSpeed, sprintSpeed, playerSpeed);
-            desiredLookAhead = playerDelta.normalized * thirdPersonLookAheadDistance * speedFactor;
-        }
+        Vector3 planarVelocity = playerDelta / deltaTime;
+        Vector3 desiredLookAhead = CalculateThirdPersonLookAhead(planarVelocity, orbitYaw);
 
         cameraLookAhead = Vector3.SmoothDamp(cameraLookAhead, desiredLookAhead, ref cameraLookAheadVelocity, thirdPersonLookAheadSmoothTime, Mathf.Infinity, deltaTime);
 
@@ -1695,6 +1866,30 @@ public class FPSController : MonoBehaviour
 
         smoothedCameraTarget = Vector3.SmoothDamp(smoothedCameraTarget, desiredTarget, ref cameraTargetVelocity, thirdPersonTargetSmoothTime, Mathf.Infinity, deltaTime);
         return smoothedCameraTarget;
+    }
+
+    Vector3 CalculateThirdPersonLookAhead(Vector3 planarVelocity, float yaw)
+    {
+        planarVelocity.y = 0f;
+        float deadZone = Mathf.Max(0f, thirdPersonLookAheadDeadZone);
+
+        if (planarVelocity.sqrMagnitude <= deadZone * deadZone)
+            return Vector3.zero;
+
+        Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
+        Vector3 cameraForward = yawRotation * Vector3.forward;
+        Vector3 cameraRight = yawRotation * Vector3.right;
+        float forwardSpeed = Vector3.Dot(planarVelocity, cameraForward);
+        float lateralSpeed = Vector3.Dot(planarVelocity, cameraRight);
+        float referenceSpeed = Mathf.Max(0.1f, sprintSpeed);
+        float forwardAmount = Mathf.Clamp(forwardSpeed / referenceSpeed, -1f, 1f);
+        float lateralAmount = Mathf.Clamp(lateralSpeed / referenceSpeed, -1f, 1f);
+
+        if (forwardAmount < 0f)
+            forwardAmount *= Mathf.Clamp01(thirdPersonBackwardLookAheadMultiplier);
+
+        lateralAmount *= Mathf.Clamp01(thirdPersonLateralLookAheadMultiplier);
+        return (cameraForward * forwardAmount + cameraRight * lateralAmount) * Mathf.Max(0f, thirdPersonLookAheadDistance);
     }
 
     Vector3 GetCombatCameraTarget(Vector3 playerTarget)
@@ -1814,7 +2009,7 @@ public class FPSController : MonoBehaviour
         UpdateAirborneAnimator();
         SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : currentPlanarSpeed);
         SetAnimatorFloat(VerticalSpeedHash, verticalVelocity);
-        SetAnimatorBool(GroundedHash, controller.isGrounded);
+        SetAnimatorBool(GroundedHash, stableGrounded);
         SetAnimatorBool(GraffitiModeHash, graffitiMode);
         SetAnimatorBool(ParkourHash, isParkouring);
         SetAnimatorBool(ClimbingHash, isClimbing);
@@ -1823,22 +2018,40 @@ public class FPSController : MonoBehaviour
 
     void UpdateAirborneAnimator()
     {
-        bool grounded = controller.isGrounded;
+        bool grounded = stableGrounded;
         bool canUseAirborneAnimations = !graffitiMode && !isParkouring && !isClimbing;
 
         if (isAirRolling && (grounded || !canUseAirborneAnimations || Time.time >= airRollEndTime))
             isAirRolling = false;
 
-        if (grounded)
-            airborneAnimationTime = 0f;
-        else
-            airborneAnimationTime += Time.deltaTime;
+        float currentBottomY = GetControllerBottomY();
 
-        bool falling =
-            canUseAirborneAnimations &&
-            !grounded &&
-            airborneAnimationTime >= Mathf.Max(0f, minimumFallingAirTime) &&
-            verticalVelocity <= fallingAnimationVelocity;
+        if (grounded)
+        {
+            airborneAnimationTime = 0f;
+        }
+        else
+        {
+            if (wasGrounded)
+            {
+                airbornePeakBottomY = currentBottomY;
+                airborneDropDistance = 0f;
+            }
+
+            airbornePeakBottomY = Mathf.Max(airbornePeakBottomY, currentBottomY);
+            airborneDropDistance = Mathf.Max(airborneDropDistance, airbornePeakBottomY - currentBottomY);
+            airborneAnimationTime += Time.deltaTime;
+        }
+
+        bool falling = ShouldPlayFallingAnimation(
+            canUseAirborneAnimations,
+            grounded,
+            airborneAnimationTime,
+            minimumFallingAirTime,
+            airborneDropDistance,
+            minimumFallingDistance,
+            verticalVelocity,
+            fallingAnimationVelocity);
 
         if (!grounded)
             lastAirborneVerticalSpeed = verticalVelocity;
@@ -1854,7 +2067,9 @@ public class FPSController : MonoBehaviour
         {
             isAirRolling = false;
 
-            if (canUseAirborneAnimations && !landingAnimationQueued && lastAirborneVerticalSpeed <= fallingAnimationVelocity)
+            if (canUseAirborneAnimations && !landingAnimationQueued &&
+                airborneDropDistance >= Mathf.Max(0f, minimumFallingDistance) &&
+                lastAirborneVerticalSpeed <= fallingAnimationVelocity)
                 TriggerAnimator(LandHash);
 
             landingAnimationQueued = false;
@@ -1866,6 +2081,24 @@ public class FPSController : MonoBehaviour
 
         SetAnimatorBool(FallingHash, falling && !landingAnimationQueued && !isAirRolling);
         wasGrounded = grounded;
+    }
+
+    static bool ShouldPlayFallingAnimation(
+        bool canUseAirborneAnimations,
+        bool grounded,
+        float airTime,
+        float requiredAirTime,
+        float dropDistance,
+        float requiredDropDistance,
+        float downwardVelocity,
+        float velocityThreshold)
+    {
+        return
+            canUseAirborneAnimations &&
+            !grounded &&
+            airTime >= Mathf.Max(0f, requiredAirTime) &&
+            dropDistance >= Mathf.Max(0f, requiredDropDistance) &&
+            downwardVelocity <= velocityThreshold;
     }
 
     bool IsLandingImminent()
@@ -1888,7 +2121,7 @@ public class FPSController : MonoBehaviour
         for (int index = 0; index < hitCount; index++)
         {
             RaycastHit hit = physicsHitBuffer[index];
-            if (IsSelf(hit.collider) || hit.normal.y < minimumGroundNormal)
+            if (IsSelf(hit.collider) || !IsWalkableGroundNormal(hit.normal))
                 continue;
 
             float distance = Mathf.Max(0f, origin.y - hit.point.y - probePadding);
@@ -1990,8 +2223,13 @@ public class FPSController : MonoBehaviour
         currentPlanarVelocity = Vector3.zero;
         turnVelocity = 0f;
         jumpPressedTime = lastGroundedTime = -999f;
-        groundAlignmentFramesRemaining = 0;
+        groundAlignmentFramesRemaining = alignFeetToGroundOnStart ? 12 : 0;
         airborneAnimationTime = lastAirborneVerticalSpeed = 0f;
+        airborneDropDistance = 0f;
+        stableGrounded = false;
+        hasStableGroundHit = false;
+        lastMovementCollisionFlags = CollisionFlags.None;
+        wasGrounded = false;
         landingAnimationQueued = false;
         hasCombatLockPoint = false;
         if (controller == null) controller = GetComponent<CharacterController>();
@@ -2000,6 +2238,7 @@ public class FPSController : MonoBehaviour
         transform.SetPositionAndRotation(position, rotation);
         controller.enabled = wasEnabled;
         Physics.SyncTransforms();
+        airbornePeakBottomY = GetControllerBottomY();
         orbitYaw = rotation.eulerAngles.y;
         ResetMovementAnimator();
         ApplyModeInstant();

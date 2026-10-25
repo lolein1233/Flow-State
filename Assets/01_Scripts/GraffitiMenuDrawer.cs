@@ -40,6 +40,7 @@ public class GraffitiMenuDrawer : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         if (currentMenu != null && fps != null && !fps.IsGraffitiMode())
         {
             CloseMenu();

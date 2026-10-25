@@ -54,6 +54,7 @@ public sealed class DemoEmotionMenu : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         if (Input.GetKeyDown(toggleKey))
         {
             SetVisible(!visible);

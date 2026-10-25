@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,8 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
-/// Creates and controls the gameplay pause menu at runtime.
-/// Keeping the bootstrap here avoids adding more serialized state to the gameplay scene.
+/// Uses the editable scene menus, with a runtime fallback for older scenes.
 /// </summary>
 [DefaultExecutionOrder(-10000)]
 public sealed class PauseMenuController : MonoBehaviour
@@ -23,15 +24,25 @@ public sealed class PauseMenuController : MonoBehaviour
 
     public static PauseMenuController Instance { get; private set; }
     public bool IsPaused { get; private set; }
+    public bool IsControlsOpen { get; private set; }
+    public static bool GameplayInputBlocked => Instance != null && Instance.IsPaused;
 
-    private GameObject menuRoot;
-    private CanvasGroup canvasGroup;
-    private Button resumeButton;
+    [Header("Menús editables de la escena")]
+    [SerializeField] private GameObject menuRoot;
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private Button resumeButton;
+    [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Button quitButton;
+    [SerializeField] private Button controlsButton;
+    [SerializeField] private Button controlsCloseButton;
     private FPSController fpsController;
     private GraffitiPainter graffitiPainter;
     private float previousTimeScale = 1f;
     private CursorLockMode previousCursorLock;
     private bool previousCursorVisible;
+    private bool previousAudioPause;
+    private bool closing;
+    private readonly List<Canvas> hiddenHud = new List<Canvas>();
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetStatics()
@@ -71,8 +82,15 @@ public sealed class PauseMenuController : MonoBehaviour
         if (!scene.isLoaded || scene.path != GameplayScenePath)
             return;
 
-        if (Instance != null || Object.FindFirstObjectByType<PauseMenuController>(FindObjectsInactive.Include) != null)
+        if (Instance != null)
             return;
+
+        var existing = Object.FindFirstObjectByType<PauseMenuController>(FindObjectsInactive.Include);
+        if (existing != null)
+        {
+            Instance = existing;
+            return;
+        }
 
         new GameObject("PauseMenuController").AddComponent<PauseMenuController>();
     }
@@ -88,17 +106,71 @@ public sealed class PauseMenuController : MonoBehaviour
         Instance = this;
         fpsController = Object.FindFirstObjectByType<FPSController>(FindObjectsInactive.Include);
         graffitiPainter = Object.FindFirstObjectByType<GraffitiPainter>(FindObjectsInactive.Include);
+        if (menuRoot == null || controlsRoot == null)
+            CreateEditableMenus();
+        menuRoot.SetActive(false);
+        controlsRoot.SetActive(false);
+        WireMenuCallbacks();
+    }
+
+    public void CreateEditableMenus()
+    {
+        if (menuRoot != null || controlsRoot != null) return;
+        fpsController = Object.FindFirstObjectByType<FPSController>(FindObjectsInactive.Include);
+        graffitiPainter = Object.FindFirstObjectByType<GraffitiPainter>(FindObjectsInactive.Include);
         BuildMenu();
         menuRoot.SetActive(false);
+        BuildControlsFromOriginal();
+        EnhancePausePresentation();
+        WireMenuCallbacks();
+    }
+
+    private void WireMenuCallbacks()
+    {
+        resumeButton.onClick.RemoveAllListeners();
+        resumeButton.onClick.AddListener(ResumeGame);
+        mainMenuButton.onClick.RemoveAllListeners();
+        mainMenuButton.onClick.AddListener(GoToMainMenu);
+        quitButton.onClick.RemoveAllListeners();
+        quitButton.onClick.AddListener(QuitGame);
+        controlsButton.onClick.RemoveAllListeners();
+        controlsButton.onClick.AddListener(ShowControlsMenu);
+        controlsCloseButton.onClick.RemoveAllListeners();
+        controlsCloseButton.onClick.AddListener(ResumeGame);
+        for (int i = 0; i < controlsTabs.Length; i++)
+        {
+            int page = i;
+            controlsTabs[i].onClick.RemoveAllListeners();
+            controlsTabs[i].onClick.AddListener(() => SetControlsPage(page));
+        }
     }
 
     private void Update()
     {
         if (IsPaused)
         {
+            if (closing)
+                return;
+
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                if (IsControlsOpen) ResumeGame();
+                else ShowControlsMenu();
+                return;
+            }
+
             if (Input.GetKeyDown(KeyCode.Escape))
                 ResumeGame();
 
+            if (IsControlsOpen && Input.GetKeyDown(KeyCode.RightArrow)) SetControlsPage(1);
+            if (IsControlsOpen && Input.GetKeyDown(KeyCode.LeftArrow)) SetControlsPage(0);
+
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            ShowControlsMenu();
             return;
         }
 
@@ -117,16 +189,27 @@ public sealed class PauseMenuController : MonoBehaviour
 
     public void PauseGame()
     {
-        if (IsPaused)
+        if (closing)
             return;
+
+        if (!IsPaused)
+            BeginPause();
+
+        IsControlsOpen = false;
+        controlsRoot.SetActive(false);
+        menuRoot.SetActive(true);
+        SelectMenuButton(resumeButton);
+    }
+
+    private void BeginPause()
+    {
 
         previousTimeScale = Time.timeScale;
         previousCursorLock = Cursor.lockState;
         previousCursorVisible = Cursor.visible;
+        previousAudioPause = AudioListener.pause;
 
         IsPaused = true;
-        canvasGroup.alpha = 1f;
-        menuRoot.SetActive(true);
         Time.timeScale = 0f;
         AudioListener.pause = true;
         Cursor.lockState = CursorLockMode.None;
@@ -137,21 +220,44 @@ public sealed class PauseMenuController : MonoBehaviour
         if (fpsController != null)
             fpsController.SetPauseInputSuspended(true);
 
-        EventSystem.current?.SetSelectedGameObject(null);
-        EventSystem.current?.SetSelectedGameObject(resumeButton.gameObject);
+        if (graffitiPainter != null)
+            graffitiPainter.CancelPaintingForMenu();
+
+        hiddenHud.Clear();
+        foreach (Canvas canvas in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        {
+            if (!canvas.enabled || !canvas.isRootCanvas || canvas.renderMode == RenderMode.WorldSpace ||
+                canvas.transform.IsChildOf(transform))
+                continue;
+            hiddenHud.Add(canvas);
+            canvas.enabled = false;
+        }
     }
 
     public void ResumeGame()
     {
-        if (!IsPaused)
+        if (!IsPaused || closing)
             return;
 
+        StartCoroutine(CloseMenus());
+    }
+
+    private IEnumerator CloseMenus()
+    {
+        closing = true;
+        SelectMenuButton(null);
+        var motion = (IsControlsOpen ? controlsRoot : menuRoot).GetComponent<PunkMenuMotion>();
+        if (motion != null) motion.PlayClose();
+        yield return new WaitForSecondsRealtime(0.18f);
         RestoreGameplayState();
         menuRoot.SetActive(false);
+        controlsRoot.SetActive(false);
+        closing = false;
     }
 
     public void GoToMainMenu()
     {
+        StopAllCoroutines();
         RestoreGameplayState();
         SceneManager.LoadScene(MainMenuScenePath);
     }
@@ -178,13 +284,25 @@ public sealed class PauseMenuController : MonoBehaviour
     private void RestoreGameplayState()
     {
         IsPaused = false;
+        IsControlsOpen = false;
         Time.timeScale = Mathf.Approximately(previousTimeScale, 0f) ? 1f : previousTimeScale;
-        AudioListener.pause = false;
+        AudioListener.pause = previousAudioPause;
         Cursor.lockState = previousCursorLock;
         Cursor.visible = previousCursorVisible;
 
         if (fpsController != null)
             fpsController.SetPauseInputSuspended(false);
+
+        foreach (Canvas canvas in hiddenHud)
+            if (canvas != null) canvas.enabled = true;
+        hiddenHud.Clear();
+    }
+
+    private static void SelectMenuButton(Button button)
+    {
+        if (EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+        if (button != null) EventSystem.current.SetSelectedGameObject(button.gameObject);
     }
 
     private void OnDestroy()
@@ -194,6 +312,7 @@ public sealed class PauseMenuController : MonoBehaviour
 
         if (IsPaused)
             RestoreGameplayState();
+
     }
 
     private void BuildMenu()
@@ -260,6 +379,8 @@ public sealed class PauseMenuController : MonoBehaviour
         resumeButton = CreateButton("ResumeButton", panel, font, "VOLVER", "01", new Vector2(0f, -326f));
         Button mainMenuButton = CreateButton("MainMenuButton", panel, font, "MENÚ PRINCIPAL", "02", new Vector2(0f, -456f));
         Button quitButton = CreateButton("QuitButton", panel, font, "SALIR", "03", new Vector2(0f, -586f));
+        this.mainMenuButton = mainMenuButton;
+        this.quitButton = quitButton;
 
         resumeButton.onClick.AddListener(ResumeGame);
         mainMenuButton.onClick.AddListener(GoToMainMenu);
@@ -267,7 +388,7 @@ public sealed class PauseMenuController : MonoBehaviour
 
         TextMeshProUGUI hint = CreateText("Hint", panel, font, "ESC  ·  VOLVER AL JUEGO", 18f, Ink,
             TextAlignmentOptions.Center, FontStyles.Bold);
-        SetRect(hint.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(54f, 23f), new Vector2(-54f, 32f));
+        SetRect(hint.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(54f, 16f), new Vector2(-54f, 46f));
         hint.alpha = 0.62f;
 
         Navigation resumeNavigation = resumeButton.navigation;
@@ -382,10 +503,282 @@ public sealed class PauseMenuController : MonoBehaviour
 
     private static void EnsureEventSystem()
     {
-        if (EventSystem.current != null)
+        if (EventSystem.current != null || Object.FindFirstObjectByType<EventSystem>(FindObjectsInactive.Include) != null)
             return;
 
         GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
-        Object.DontDestroyOnLoad(eventSystem);
+        if (Application.isPlaying) Object.DontDestroyOnLoad(eventSystem);
     }
+    [SerializeField] private GameObject controlsRoot;
+    [SerializeField] private GameObject[] controlsPages;
+    [SerializeField] private Button[] controlsTabs;
+    [SerializeField] private TextMeshProUGUI controlsPageLabel;
+
+    public void ShowControlsMenu()
+    {
+        if (closing) return;
+        if (!IsPaused) BeginPause();
+        IsControlsOpen = true;
+        menuRoot.SetActive(false);
+        controlsRoot.SetActive(true);
+        SetControlsPage(0);
+        SelectMenuButton(controlsTabs[0]);
+    }
+
+    public void SetControlsPage(int page)
+    {
+        page = Mathf.Clamp(page, 0, controlsPages.Length - 1);
+        for (int i = 0; i < controlsPages.Length; i++)
+        {
+            controlsPages[i].SetActive(i == page);
+            controlsTabs[i].transform.Find("Accent").GetComponent<UnityEngine.UI.Image>().color =
+                i == page ? OrangeBright : PaperMuted;
+        }
+        controlsPageLabel.text = page == 0 ? "GUÍA DE CALLE / 01 · MOVIMIENTO + GRAFFITI" : "GUÍA DE CALLE / 02 · MÚSICA + PRESENTACIÓN";
+    }
+
+    private void BuildControlsFromOriginal()
+    {
+        // Duplicar antes de añadir animaciones: conservar el diseño original de pausa.
+        controlsRoot = Instantiate(menuRoot, transform, false);
+        controlsRoot.name = "ControlsMenu - Original Pause Design";
+        controlsRoot.GetComponent<Canvas>().sortingOrder = 32000;
+        var shade = (RectTransform)controlsRoot.transform.Find("NightShade");
+        var panel = (RectTransform)shade.Find("GraffitiPaper");
+        var shadow = (RectTransform)shade.Find("PanelShadow");
+        panel.sizeDelta = shadow.sizeDelta = new Vector2(1460f, 940f);
+
+        var title = panel.Find("Title").GetComponent<TextMeshProUGUI>();
+        title.text = "MENÚ DE BOTONES";
+        title.fontSize = 85f;
+        SetRect(title.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(70f, -216f), new Vector2(-70f, -102f));
+        panel.Find("Divider").GetComponent<RectTransform>().anchoredPosition = new Vector2(62f, -226f);
+        panel.Find("MainMenuButton").gameObject.SetActive(false);
+        panel.Find("QuitButton").gameObject.SetActive(false);
+
+        var close = panel.Find("ResumeButton").GetComponent<UnityEngine.UI.Button>();
+        controlsCloseButton = close;
+        close.onClick.RemoveAllListeners();
+        close.onClick.AddListener(ResumeGame);
+        close.GetComponent<RectTransform>().anchoredPosition = new Vector2(455f, -838f);
+        close.GetComponent<RectTransform>().sizeDelta = new Vector2(390f, 74f);
+        close.transform.Find("Label").GetComponent<TMP_Text>().text = "VOLVER AL JUEGO";
+        close.transform.Find("Number").GetComponent<TMP_Text>().text = "B";
+        panel.Find("Hint").GetComponent<TMP_Text>().text = "B / ESC · CERRAR     |     ← → · CAMBIAR PÁGINA     |     EL JUEGO ESTÁ EN PAUSA";
+
+        TMP_FontAsset bodyFont = ResolveReadableFont();
+        controlsPageLabel = CreateText("PageLabel", panel.Find("TopInk"), bodyFont, string.Empty, 23f, Paper,
+            TextAlignmentOptions.Left, FontStyles.Bold);
+        SetRect(controlsPageLabel.rectTransform, Vector2.zero, Vector2.one, new Vector2(64f, 0f), new Vector2(-40f, 0f));
+
+        controlsPages = new GameObject[2];
+        controlsTabs = new Button[2];
+        string[] tabs = { "MOVERSE / PINTAR", "MÚSICA / DEMO" };
+        for (int i = 0; i < 2; i++)
+        {
+            controlsPages[i] = CreateRect("ControlsPage" + (i + 1), panel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
+            controlsPages[i].transform.SetAsFirstSibling();
+            // Detrás del texto fijo, pero sobre el papel del padre.
+            controlsTabs[i] = CreateButton("ControlsTab" + i, panel, title.font, tabs[i], (i + 1).ToString("00"), new Vector2(-455f + i * 455f, -838f));
+            controlsTabs[i].GetComponent<RectTransform>().sizeDelta = new Vector2(430f, 74f);
+            int page = i;
+            controlsTabs[i].onClick.AddListener(() => SetControlsPage(page));
+        }
+        WireNavigation(controlsTabs[0], controlsTabs[1], close);
+
+        string jump = KeyLabel(fpsController != null ? fpsController.jumpKey : KeyCode.Space);
+        string sprint = KeyLabel(fpsController != null ? fpsController.sprintKey : KeyCode.LeftShift);
+        string graffiti = KeyLabel(fpsController != null ? fpsController.graffitiModeKey : KeyCode.Q);
+        var drawer = fpsController != null ? fpsController.GetComponentInChildren<GraffitiMenuDrawer>(true) : null;
+        var resources = graffitiPainter != null ? graffitiPainter.sprayResources : null;
+        // Estos sistemas pueden crearse en Awake después del menú de pausa.
+        string shake = KeyLabel(resources != null ? resources.ShakeKey : KeyCode.R);
+        string can = KeyLabel(resources != null ? resources.ChangeCanKey : KeyCode.F);
+
+        AddControlsColumn(controlsPages[0].transform, bodyFont, "01 / MUÉVETE POR LA CIUDAD", 0, new string[,]
+        {
+            { "W A S D", "Moverte" },
+            { "MOUSE", "Mirar y orientar la cámara" },
+            { sprint, "Correr" },
+            { jump, "Saltar" },
+            { jump + " / PARED", "Frente a un obstáculo: parkour / escalar" },
+            { jump + " x2", "Doble toque rápido: rodada aérea" },
+            { "W A S D / PARED", "Mientras cuelgas: moverte por la pared" },
+            { jump + " / COLGADO", "Subir al borde o saltar entre paredes" },
+            { "CTRL / ESC", "Soltarte de la pared" },
+            { "ESC", "Pausa / volver al juego" }
+        });
+        AddControlsColumn(controlsPages[0].transform, bodyFont, "02 / DEJA TU MARCA", 1, new string[,]
+        {
+            { graffiti + " / PARED", "Entrar al modo graffiti" },
+            { graffiti + " OTRA VEZ", "Abrir / cerrar colores y boquillas" },
+            { "CLIC IZQUIERDO", "Mantener para pintar" },
+            { KeyLabel(drawer != null ? drawer.selectKey : KeyCode.E) + " / CLIC", "Elegir color o boquilla en el menú" },
+            { "TAB", "Cambiar de boquilla" },
+            { shake, "Agitar y recuperar la mezcla" },
+            { can, "Cambiar la lata cuando esté vacía" },
+            { "RUEDA MOUSE", "Acercar / alejar la lata" },
+            { "ESC", "Cerrar menú; otra vez: salir de graffiti" },
+            { "B", "Abrir / cerrar esta ayuda" }
+        });
+        var music = fpsController != null ? fpsController.GetComponent<DiegeticMusicPlayer>() : null;
+        AddControlsColumn(controlsPages[1].transform, bodyFont, "03 / LLEVA TU RITMO", 0, new string[,]
+        {
+            { KeyLabel(music != null ? music.toggleKey : KeyCode.M), "Abrir / guardar el reproductor" },
+            { KeyLabel(music != null ? music.playKey : KeyCode.P), "Reproducir / pausar música (abierto)" },
+            { "1 / 2 / 3 / 4", "Elegir pista (reproductor abierto)" },
+            { "↑ / ↓", "Subir / bajar BPM (abierto)" },
+            { "CLIC DERECHO", "Fijar / soltar un objetivo cercano" },
+            { "F / FUERA GRAFFITI", "Sentarte / levantarte para una pose" }
+        });
+        AddControlsColumn(controlsPages[1].transform, bodyFont, "04 / PRESENTACIÓN", 1, new string[,]
+        {
+            { "F7", "Volver a Lugar 1" },
+            { "F8", "Ir a Lugar 2" },
+            { "F1", "Abrir / cerrar menú de emociones" },
+            { "F2 / F3 / F4", "Neutral / duda / ira (menú abierto)" },
+            { "F5 / F6", "Flow creativo / claridad (menú abierto)" },
+            { "B / ESC", "Cerrar esta ayuda y volver al juego" }
+        });
+        var note = CreateText("ContextNote", controlsPages[1].transform, bodyFont,
+            "LOS ATAJOS DE PINTURA FUNCIONAN EN MODO GRAFFITI.\nACÉRCATE A UNA SUPERFICIE PINTABLE Y MÍRALA PARA EMPEZAR.",
+            25f, Ink, TextAlignmentOptions.Center, FontStyles.Bold);
+        SetRect(note.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(75f, -770f), new Vector2(-75f, -670f));
+
+        var motion = controlsRoot.AddComponent<PunkMenuMotion>();
+        motion.Configure(panel, shadow, null, controlsRoot.GetComponent<CanvasGroup>(), false);
+        controlsRoot.SetActive(false);
+        SetControlsPage(0);
+    }
+
+    private static void AddControlsColumn(Transform parent, TMP_FontAsset font, string heading, int column, string[,] rows)
+    {
+        float left = 70f + column * 690f;
+        var section = CreateText(heading, parent, font, heading, 28f, Ink, TextAlignmentOptions.Left, FontStyles.Bold);
+        SetRect(section.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(left, -284f), new Vector2(left + 650f, -244f));
+        for (int i = 0; i < rows.GetLength(0); i++)
+        {
+            float y = -316f - i * 47f;
+            var key = CreateRect("Key" + i, parent, new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Vector2(left + 112f, y), new Vector2(224f, 37f));
+            key.gameObject.AddComponent<UnityEngine.UI.Image>().color = Ink;
+            var keyText = CreateText("KeyLabel", key, font, rows[i, 0], 22f, Paper, TextAlignmentOptions.Center, FontStyles.Bold);
+            keyText.enableAutoSizing = true;
+            keyText.fontSizeMin = 16f;
+            keyText.fontSizeMax = 22f;
+            var description = CreateText("Action" + i, parent, font, rows[i, 1], 23f, Ink, TextAlignmentOptions.Left, FontStyles.Normal);
+            SetRect(description.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f),
+                new Vector2(left + 239f, y - 20f), new Vector2(left + 650f, y + 20f));
+            description.enableAutoSizing = true;
+            description.fontSizeMin = 19f;
+            description.fontSizeMax = 23f;
+        }
+    }
+
+    private static TMP_FontAsset ResolveReadableFont()
+    {
+        foreach (TMP_FontAsset font in Resources.FindObjectsOfTypeAll<TMP_FontAsset>())
+            if (font != null && font.name == "SpaceGrotesk-Bold SDF") return font;
+        return TMP_Settings.defaultFontAsset;
+    }
+
+    private static string KeyLabel(KeyCode key)
+    {
+        if (key == KeyCode.Space) return "ESPACIO";
+        if (key == KeyCode.LeftShift || key == KeyCode.RightShift) return "SHIFT";
+        return key.ToString().ToUpperInvariant();
+    }
+
+    private static void WireNavigation(params Button[] buttons)
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            var navigation = buttons[i].navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnUp = navigation.selectOnLeft = buttons[(i + buttons.Length - 1) % buttons.Length];
+            navigation.selectOnDown = navigation.selectOnRight = buttons[(i + 1) % buttons.Length];
+            buttons[i].navigation = navigation;
+        }
+    }
+
+private void EnhancePausePresentation()
+    {
+        var shade = (RectTransform)menuRoot.transform.Find("NightShade");
+        shade.GetComponent<UnityEngine.UI.Image>().color = new Color(0.035f, 0.018f, 0.06f, 0.38f);
+        var panel = (RectTransform)shade.Find("GraffitiPaper");
+        var shadow = (RectTransform)shade.Find("PanelShadow");
+        panel.sizeDelta = shadow.sizeDelta = new Vector2(900f, 900f);
+        var title = panel.Find("Title").GetComponent<TextMeshProUGUI>();
+        title.fontSize = 162f;
+        SetRect(title.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(66f, -268f), new Vector2(-62f, -95f));
+
+        // Ecos de registro de tinta, como el desdoblamiento cromático del menú principal.
+        MakeTitleEcho(title, "CyanRegistration", new Vector2(-6f, 3f), new Color(0.03f, 0.67f, 0.72f, 0.28f));
+        MakeTitleEcho(title, "MagentaRegistration", new Vector2(6f, -2f), new Color(0.83f, 0.08f, 0.31f, 0.22f));
+        title.gameObject.AddComponent<HolographicTextEffect>();
+        var subtitle = CreateText("PauseSubtitle", panel, ResolveReadableFont(), "RESPIRA. VUELVE A DEJAR TU MARCA.",
+            22f, Ink, TextAlignmentOptions.Left, FontStyles.Bold);
+        SetRect(subtitle.rectTransform, new Vector2(0f, 1f), Vector2.one, new Vector2(70f, -300f), new Vector2(-60f, -264f));
+        panel.Find("Divider").GetComponent<RectTransform>().anchoredPosition = new Vector2(62f, -312f);
+
+        var edition = CreateText("Edition", panel.Find("TopInk"), ResolveReadableFont(), "FLOWSTATE / INTERMEDIO", 24f,
+            Paper, TextAlignmentOptions.Left, FontStyles.Bold);
+        SetRect(edition.rectTransform, Vector2.zero, Vector2.one, new Vector2(65f, 0f), new Vector2(-40f, 0f));
+
+        var main = panel.Find("MainMenuButton").GetComponent<UnityEngine.UI.Button>();
+        var quit = panel.Find("QuitButton").GetComponent<UnityEngine.UI.Button>();
+        var controls = CreateButton("ControlsButton", panel, title.font, "MENÚ DE BOTONES", "B", new Vector2(0f, -500f));
+        controlsButton = controls;
+        controls.onClick.AddListener(ShowControlsMenu);
+        var buttons = new[] { resumeButton, controls, main, quit };
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            var rect = buttons[i].GetComponent<RectTransform>();
+            rect.anchoredPosition = new Vector2(0f, -386f - i * 118f);
+            rect.sizeDelta = new Vector2(748f, 98f);
+            var image = buttons[i].GetComponent<UnityEngine.UI.Image>();
+            image.color = Color.white;
+            var colors = buttons[i].colors;
+            colors.normalColor = Ink;
+            colors.highlightedColor = OrangeBright;
+            colors.selectedColor = Orange;
+            colors.pressedColor = PaperMuted;
+            colors.fadeDuration = 0.1f;
+            buttons[i].colors = colors;
+            var label = buttons[i].transform.Find("Label").GetComponent<TextMeshProUGUI>();
+            label.fontSizeMax = 41f;
+            label.fontSize = 41f;
+            buttons[i].gameObject.AddComponent<PunkMenuButton>().Configure(Paper, Ink);
+        }
+        main.transform.Find("Number").GetComponent<TMP_Text>().text = "02";
+        quit.transform.Find("Number").GetComponent<TMP_Text>().text = "03";
+        panel.Find("Hint").GetComponent<TMP_Text>().text = "ESC · VOLVER AL JUEGO";
+        WireNavigation(buttons);
+
+        var backdrop = shade.Find("OrangeWash").GetComponent<UnityEngine.UI.Image>();
+        backdrop.name = "HolographicBackdrop";
+        SetRect(backdrop.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+        Material foilMaterial = Resources.Load<Material>("UI/PauseHolographicFoil");
+        if (foilMaterial != null)
+        {
+            backdrop.material = foilMaterial;
+            backdrop.color = Color.white;
+        }
+
+        var motion = menuRoot.AddComponent<PunkMenuMotion>();
+        motion.Configure(panel, shadow, title.rectTransform, canvasGroup, true, backdrop);
+        foreach (UnityEngine.UI.Graphic graphic in menuRoot.GetComponentsInChildren<UnityEngine.UI.Graphic>(true))
+            if (graphic.GetComponent<UnityEngine.UI.Button>() == null && graphic.name != "NightShade")
+                graphic.raycastTarget = false;
+    }
+
+    private static void MakeTitleEcho(TextMeshProUGUI source, string name, Vector2 offset, Color color)
+    {
+        var echo = Instantiate(source, source.transform.parent, false);
+        echo.name = name;
+        echo.rectTransform.anchoredPosition += offset;
+        echo.color = color;
+        echo.transform.SetSiblingIndex(source.transform.GetSiblingIndex());
+    }
+
 }

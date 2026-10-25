@@ -57,6 +57,7 @@ Material:
     - _LightColorStrength: 0.38
     - _Metallic: 0
     - _PaletteInfluence: 0.88
+    - _PrintRefinement: 1
     - _RimPower: 3
     - _RimStrength: 0.82
     - _Smoothness: 0.2

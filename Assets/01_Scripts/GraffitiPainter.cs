@@ -29,36 +29,38 @@ public class GraffitiPainter : MonoBehaviour
 
     [Header("Control fisico de la lata")]
     public bool usePhysicalSprayControl = true;
-    [SerializeField] Vector2 handMouseSensitivity = new Vector2(0.036f, 0.036f);
+    [SerializeField] Vector2 handMouseSensitivity = new Vector2(0.041f, 0.041f);
     [SerializeField] Vector2 handReach = new Vector2(0.34f, 0.27f);
     [SerializeField, Range(0.05f, 0.6f)] float depthTravel = 0.3f;
     [SerializeField, Range(0.01f, 0.25f)] float depthSensitivity = 0.11f;
-    [SerializeField, Range(1f, 30f)] float handResponse = 18f;
+    [SerializeField, Range(1f, 30f)] float handResponse = 24f;
     [SerializeField] Vector3 maximumWristRotation = new Vector3(16f, 22f, 7f);
 
     [Header("Estabilidad en barridos rapidos")]
     [SerializeField, Range(0.01f, 0.1f)] float linearHandDeltaRadius = 0.03f;
-    [SerializeField, Range(0.03f, 0.12f)] float maximumHandDeltaRadius = 0.042f;
+    [SerializeField, Range(0.02f, 0.12f)] float maximumHandDeltaRadius = 0.045f;
 
     [Header("Encuadre continuo")]
-    [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.74f;
-    [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.82f;
-    [SerializeField] Vector2 edgeCameraDegreesPerMouseUnit = new Vector2(0.9f, 0.75f);
-    [SerializeField] Vector2 maximumCameraDegreesPerFrame = new Vector2(0.55f, 0.45f);
+    [SerializeField, Range(0.35f, 0.9f)] float handComfortZone = 0.75f;
+    [SerializeField, Range(0.5f, 1f)] float maximumEdgeCameraShare = 0.8f;
+    [SerializeField] Vector2 edgeCameraDegreesPerMouseUnit = new Vector2(0.82f, 0.68f);
+    [SerializeField] Vector2 maximumCameraDegreesPerFrame = new Vector2(0.48f, 0.4f);
 
     [Header("Distancia adaptativa por gesto")]
     public bool useAdaptiveSprayDistance = true;
+    [SerializeField] Vector2 gestureIntentSensitivity = new Vector2(0.045f, 0.045f);
     [SerializeField, Range(0f, 1f)] float adaptivePrecisionCone = 0.03f;
-    [SerializeField, Range(0f, 1f)] float adaptiveIdleCone = 0.32f;
-    [SerializeField, Min(0f)] float precisionGestureSpeed = 0.7f;
-    [SerializeField, Min(0.1f)] float coverageGestureSpeed = 3f;
-    [SerializeField, Min(0f)] float cornerStartDegreesPerSecond = 150f;
-    [SerializeField, Min(1f)] float cornerFullDegreesPerSecond = 650f;
-    [SerializeField, Range(0f, 1f)] float cornerPrecision = 0.86f;
-    [SerializeField, Range(0f, 1f)] float immediateGestureWeight = 0.78f;
-    [SerializeField, Range(1f, 30f)] float gestureSpeedResponse = 16f;
-    [SerializeField, Range(1f, 30f)] float coneExpandResponse = 24f;
-    [SerializeField, Range(1f, 30f)] float conePrecisionResponse = 18f;
+    [SerializeField, Range(0f, 1f)] float adaptiveIdleCone = 0.28f;
+    [SerializeField, Min(0f)] float precisionGestureSpeed = 0.75f;
+    [SerializeField, Min(0.1f)] float coverageGestureSpeed = 5.4f;
+    [SerializeField, Min(0f)] float cornerStartDegreesPerSecond = 900f;
+    [SerializeField, Min(1f)] float cornerFullDegreesPerSecond = 2800f;
+    [SerializeField, Range(0f, 1f)] float cornerPrecision = 0.45f;
+    [SerializeField, Range(0f, 1f)] float immediateGestureWeight = 0.76f;
+    [SerializeField, Range(1f, 30f)] float gestureSpeedResponse = 14f;
+    [SerializeField, Range(1f, 80f)] float coneExpandResponse = 20f;
+    [SerializeField, Range(1f, 30f)] float conePrecisionResponse = 12f;
+    [SerializeField, Range(0f, 1f)] float immediateConeAttack = 0.26f;
 
     [Header("Menu dibujado")]
     public bool menuOpen;
@@ -172,6 +174,7 @@ public class GraffitiPainter : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         bool active = IsGraffitiModeActive();
         SetGraffitiToolVisible(active);
         UpdatePhysicalSprayControl(active);
@@ -179,6 +182,7 @@ public class GraffitiPainter : MonoBehaviour
 
     void LateUpdate()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         RefreshPhysicalSprayRay();
         if (raycastUI != null)
             raycastUI.RefreshSurface();
@@ -671,7 +675,9 @@ public class GraffitiPainter : MonoBehaviour
     void UpdateAdaptiveSprayDistance(Vector2 rawMouse)
     {
         float deltaTime = Mathf.Max(Time.deltaTime, 0.0001f);
-        Vector2 normalizedMotion = Vector2.Scale(rawMouse, handMouseSensitivity);
+        // Width intent is intentionally independent from physical hand travel.
+        // This lets a fast flick open the cap without throwing the cursor/camera.
+        Vector2 normalizedMotion = Vector2.Scale(rawMouse, gestureIntentSensitivity);
         float gestureSpeed = normalizedMotion.magnitude / deltaTime;
         float speedBlend = 1f - Mathf.Exp(-gestureSpeedResponse * deltaTime);
         smoothedGestureSpeed = Mathf.Lerp(smoothedGestureSpeed, gestureSpeed, speedBlend);
@@ -698,9 +704,13 @@ public class GraffitiPainter : MonoBehaviour
             cornerStartDegreesPerSecond,
             cornerFullDegreesPerSecond,
             cornerPrecision);
-        float response = targetCone > adaptiveCone ? coneExpandResponse : conePrecisionResponse;
-        float coneBlend = 1f - Mathf.Exp(-response * deltaTime);
-        adaptiveCone = Mathf.Lerp(adaptiveCone, targetCone, coneBlend);
+        adaptiveCone = GraffitiGestureDynamics.AdvanceCone(
+            adaptiveCone,
+            targetCone,
+            deltaTime,
+            coneExpandResponse,
+            conePrecisionResponse,
+            immediateConeAttack);
 
         // Move the visible can with the inferred intent so the visual feedback and
         // the deposited footprint always tell the same story.
@@ -834,11 +844,11 @@ public class GraffitiPainter : MonoBehaviour
     {
         switch (currentNozzleShape)
         {
-            case GraffitiNozzleShape.Needle: return 0.8f;
+            case GraffitiNozzleShape.Needle: return 0.78f;
             case GraffitiNozzleShape.SoftRound: return 0.9f;
-            case GraffitiNozzleShape.Chisel: return 0.86f;
-            case GraffitiNozzleShape.Splatter: return 0.92f;
-            default: return 0.95f;
+            case GraffitiNozzleShape.Chisel: return 0.84f;
+            case GraffitiNozzleShape.Splatter: return 0.9f;
+            default: return 0.94f;
         }
     }
 
@@ -846,11 +856,11 @@ public class GraffitiPainter : MonoBehaviour
     {
         switch (currentNozzleShape)
         {
-            case GraffitiNozzleShape.Needle: return 1.25f;
+            case GraffitiNozzleShape.Needle: return 1.18f;
             case GraffitiNozzleShape.SoftRound: return 1.15f;
-            case GraffitiNozzleShape.Chisel: return 1.1f;
-            case GraffitiNozzleShape.Splatter: return 1.1f;
-            default: return 1f;
+            case GraffitiNozzleShape.Chisel: return 1.12f;
+            case GraffitiNozzleShape.Splatter: return 1.08f;
+            default: return 1.03f;
         }
     }
 

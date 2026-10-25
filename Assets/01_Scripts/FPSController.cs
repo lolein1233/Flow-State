@@ -89,8 +89,8 @@ public class FPSController : MonoBehaviour
     public LayerMask parkourMask = ~0;
     [Tooltip("Capas fisicas que pueden servir como suelo o bloquear el cuerpo durante vaults y subidas. Debe incluir Default ademas de Wall/Parkour.")]
     public LayerMask movementCollisionMask = ~0;
-    public float wallCheckDistance = 1.15f;
-    public float wallCheckHeight = 0.6f;
+    public float wallCheckDistance = 1.45f;
+    public float wallCheckHeight = 0.52f;
     public float vaultMaxHeight = 1.15f;
     public float climbMaxHeight = 2.6f;
     public float vaultForwardDistance = 1.35f;
@@ -100,7 +100,7 @@ public class FPSController : MonoBehaviour
     public float vaultArcHeight = 0.55f;
     public float climbArcHeight = 0.25f;
     public float landingProbeHeight = 2.4f;
-    public float wallProbeRadius = 0.16f;
+    public float wallProbeRadius = 0.22f;
     public float groundProbeRadius = 0.18f;
     public float landingClearance = 0.06f;
     public float minimumGroundNormal = 0.55f;
@@ -917,7 +917,30 @@ public class FPSController : MonoBehaviour
         origin.y = GetControllerBottomY() + wallCheckHeight;
 
         if (!TryFindParkourWall(origin, desiredForward, out RaycastHit wallHit))
-            return false;
+        {
+            // Third-person camera steering can leave the requested input a few
+            // degrees away from a low module even while the body is visibly
+            // facing it. Give the stable body heading one chance to acquire it.
+            Vector3 bodyForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+            if (bodyForward.sqrMagnitude <= 0.001f)
+                return false;
+            bodyForward.Normalize();
+            if (Vector3.Dot(bodyForward, desiredForward) < 0.25f ||
+                !TryFindParkourWall(origin, bodyForward, out wallHit))
+                return false;
+            desiredForward = bodyForward;
+        }
+
+        // Cross the obstacle along its normal instead of preserving a slight
+        // diagonal approach. This prevents shallow low vaults from landing on
+        // their own edge and cancelling the move.
+        Vector3 surfaceForward = Vector3.ProjectOnPlane(-wallHit.normal, Vector3.up);
+        if (surfaceForward.sqrMagnitude > 0.001f)
+        {
+            surfaceForward.Normalize();
+            if (Vector3.Dot(surfaceForward, desiredForward) > 0.2f)
+                desiredForward = surfaceForward;
+        }
 
         // Bordillos y peldaños se resuelven con el CharacterController. No deben
         // convertirse en un vault o en una pared de escalada por compartir la capa Parkour.
@@ -1111,12 +1134,40 @@ public class FPSController : MonoBehaviour
             if (IsSelf(hit.collider) || !IsWalkableGroundNormal(hit.normal))
                 continue;
 
+            // The downward ray can start inside a taller parkour box. Unity then
+            // ignores that box and returns the floor underneath it; a small skin
+            // offset made that floor look like a valid 4-5 cm stair. A real step
+            // must resolve its front and top on the same physical surface.
+            if (!IsSameWalkableStepSurface(wallHit.collider, hit.collider))
+                continue;
+
             float rise = hit.point.y - bottomY;
-            if (rise >= -controller.skinWidth && rise <= maximumStepHeight)
+            // Si el probe nace dentro de un obstaculo mas alto que un peldaño,
+            // Physics.Raycast ignora ese collider y puede devolver el suelo que
+            // hay debajo (rise ~= 0). Eso convertia vaults y mantles completos en
+            // "escalones" y cancelaba sus animaciones antes de iniciarlas.
+            float minimumStepRise = Mathf.Max(0.01f, controller.skinWidth * 0.5f);
+            if (rise >= minimumStepRise && rise <= maximumStepHeight)
                 return true;
         }
 
         return false;
+    }
+
+    static bool IsSameWalkableStepSurface(Collider wallCollider, Collider topCollider)
+    {
+        if (wallCollider == null || topCollider == null)
+            return false;
+
+        if (wallCollider == topCollider)
+            return true;
+
+        ClimbableSurface wallSurface = wallCollider.GetComponentInParent<ClimbableSurface>();
+        if (wallSurface != null && topCollider.GetComponentInParent<ClimbableSurface>() == wallSurface)
+            return true;
+
+        Rigidbody wallBody = wallCollider.attachedRigidbody;
+        return wallBody != null && topCollider.attachedRigidbody == wallBody;
     }
 
     bool TryFindGround(Vector3 nearPoint, out Vector3 groundPoint)
@@ -2209,7 +2260,21 @@ public class FPSController : MonoBehaviour
     {
         teleportTransitionActive = active;
         if (!active) return;
+        bool interruptedParkour = isParkouring;
         StopAllCoroutines();
+
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        if (interruptedParkour)
+        {
+            if (controller != null)
+                controller.enabled = true;
+
+            if (legacyCapsuleCollider != null)
+                legacyCapsuleCollider.enabled = true;
+        }
+
         ExitClimb(false);
         isParkouring = false;
         ResetMovementAnimator();
@@ -2236,9 +2301,45 @@ public class FPSController : MonoBehaviour
         ResetCameraVelocities();
     }
 
+    // Los marcadores representan el suelo, no el centro de la capsula.
+    public bool TryTeleportToGround(Transform destination)
+    {
+        if (destination == null)
+            return false;
+
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        Physics.SyncTransforms();
+        if (!TryFindGround(destination.position, out Vector3 position))
+            return false;
+
+        position.x = destination.position.x;
+        position.z = destination.position.z;
+        TeleportTo(position, destination.rotation);
+        return true;
+    }
+
     public void TeleportTo(Vector3 position, Quaternion rotation)
     {
+        bool interruptedParkour = isParkouring;
         StopAllCoroutines();
+
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        // Vault y top-out desactivan temporalmente ambos colliders. Si una
+        // transicion corta la coroutine, su bloque final no alcanza a
+        // restaurarlos; el teletransporte debe apropiarse de esa limpieza.
+        if (interruptedParkour)
+        {
+            if (controller != null)
+                controller.enabled = true;
+
+            if (legacyCapsuleCollider != null)
+                legacyCapsuleCollider.enabled = true;
+        }
+
         ExitClimb(false);
         isParkouring = false;
         isAirRolling = false;
@@ -2257,7 +2358,6 @@ public class FPSController : MonoBehaviour
         wasGrounded = false;
         landingAnimationQueued = false;
         hasCombatLockPoint = false;
-        if (controller == null) controller = GetComponent<CharacterController>();
         bool wasEnabled = controller.enabled;
         controller.enabled = false;
         transform.SetPositionAndRotation(position, rotation);

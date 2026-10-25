@@ -20,6 +20,7 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
         _RimColor("Rim Color", Color) = (0.15, 0.75, 0.9, 1)
         _RimStrength("Rim Strength", Range(0, 2)) = 0.2
         _RimPower("Rim Power", Range(0.5, 8)) = 3
+        _PrintRefinement("Print Refinement (Character)", Range(0, 1)) = 0
 
         [Header(Print Surface)]
         _InkTexture("Ink Breakup", 2D) = "white" {}
@@ -113,6 +114,7 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
                 half _HatchScale;
                 half _HalftoneStrength;
                 half _HalftoneScale;
+                half _PrintRefinement;
             CBUFFER_END
 
             struct Attributes
@@ -200,6 +202,15 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
                 FSSRSLightResult lighting = FSSRS_EvaluateLights(inputData, inputData.shadowMask);
                 half ambient = saturate(FSSRS_Luminance(inputData.bakedGI) * _AmbientStrength);
                 half band = FSSRS_Quantize(max(lighting.intensity, ambient), _BandCount);
+                if (_PrintRefinement > 0.0h)
+                {
+                    // Keep the exact original plateaus; filter only their subpixel boundaries.
+                    float steps = max(_BandCount - 1.0, 1.0);
+                    float scaled = saturate(max(lighting.intensity, ambient)) * steps;
+                    float edgeWidth = clamp(fwidth(scaled) * 0.5, 0.0001, 0.25);
+                    half filtered = (floor(scaled) + smoothstep(0.5 - edgeWidth, 0.5 + edgeWidth, frac(scaled))) / steps;
+                    band = lerp(band, filtered, _PrintRefinement);
+                }
 
                 half globalPaletteValidity = step(0.02h, FSSRS_Luminance(_FSSRS_HighlightColor.rgb));
                 half paletteMix = saturate(_PaletteInfluence) * globalPaletteValidity;
@@ -209,6 +220,14 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
                 half3 ramp = FSSRS_PaletteRamp(band, shadowColor, midColor, highlightColor);
 
                 half3 lightTint = lerp(1.0h, saturate(lighting.color + inputData.bakedGI), _LightColorStrength);
+                if (_PrintRefinement > 0.0h)
+                {
+                    // Preserve colored highlights when an HDR channel exceeds one, without changing the value ramp.
+                    half3 incoming = lighting.color + inputData.bakedGI;
+                    half peak = max(incoming.r, max(incoming.g, incoming.b));
+                    half3 pigmentTint = lerp(1.0h, incoming / max(peak, 1.0h), _LightColorStrength);
+                    lightTint = lerp(lightTint, pigmentTint, _PrintRefinement * 0.18h);
+                }
                 half valueRamp = lerp(0.68h, 1.18h, band);
                 half rampLuma = max(FSSRS_Luminance(ramp), 0.2h);
                 half3 chromaRamp = lerp(1.0h, ramp / rampLuma, paletteMix * 0.62h);
@@ -225,6 +244,15 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
 
                 float2 pixelPosition = input.positionCS.xy;
                 half hatch = FSSRS_CrossHatch(pixelPosition, _HatchScale, 1.0h - band);
+                if (_PrintRefinement > 0.0h)
+                {
+                    float2 diagonal = float2(pixelPosition.x + pixelPosition.y * 0.72, -pixelPosition.x + pixelPosition.y * 0.72);
+                    diagonal /= max(float2(_HatchScale, _HatchScale * 1.17), 1.0);
+                    float2 footprint = min(fwidth(diagonal) * 0.25, 0.10);
+                    half2 lines = 1.0 - smoothstep(0.10 - footprint, 0.23 + footprint, abs(frac(diagonal) - 0.5));
+                    half filteredHatch = saturate(lines.x + lines.y * saturate((1.0h - band) * 1.5h - 0.35h));
+                    hatch = lerp(hatch, filteredHatch, _PrintRefinement);
+                }
                 half hatchTexture = SAMPLE_TEXTURE2D(_HatchTexture, sampler_HatchTexture,
                     input.positionWS.xz * _InkTiling).r;
                 half hatchAmount = hatch * hatchTexture * (1.0h - band) * _HatchStrength;
@@ -239,6 +267,7 @@ Shader "FLOWSTATE/FSSRS/Stylized Lit"
                 color *= breakup;
 
                 half rim = pow(saturate(1.0h - dot(normalWS, inputData.viewDirectionWS)), _RimPower) * _RimStrength;
+                rim *= 1.0h + sin(_Time.y * 0.95) * saturate(_FSSRS_EmotionEnergy) * _PrintRefinement * 0.025h;
                 half3 emotionalRim = lerp(_RimColor.rgb, _FSSRS_AccentColor.rgb,
                     paletteMix * (0.58h + _FSSRS_EmotionEnergy * 0.28h));
                 color += emotionalRim * rim + _EmissionColor.rgb;

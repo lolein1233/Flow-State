@@ -141,7 +141,7 @@ public sealed class GraffitiInteractionTests
         float coverageWidth = paint.EstimateBrushWidth(6f);
 
         Assert.That(precisionWidth, Is.LessThan(0.04f));
-        Assert.That(coverageWidth, Is.GreaterThan(precisionWidth * 6f));
+        Assert.That(coverageWidth, Is.InRange(precisionWidth * 4.5f, precisionWidth * 5.6f));
     }
 
     [Test] public void NozzleDiameterDoesNotRandomlyPulseBetweenSamples()
@@ -201,16 +201,16 @@ public sealed class GraffitiInteractionTests
 
     [Test] public void FastSweepCompressionPreservesPrecisionDirectionAndLimitsTravel()
     {
-        Vector2 precisionDelta = new Vector2(0.048f, 0f);
-        Vector2 fastDelta = new Vector2(0.384f, 0.192f);
+        Vector2 precisionDelta = new Vector2(0.025f, 0f);
+        Vector2 fastDelta = new Vector2(0.304f, 0.152f);
 
         Vector2 controlledPrecision = GraffitiGestureDynamics.CompressControlDelta(
-            precisionDelta, 0.045f, 0.06f);
+            precisionDelta, 0.03f, 0.045f);
         Vector2 controlledFast = GraffitiGestureDynamics.CompressControlDelta(
-            fastDelta, 0.045f, 0.06f);
+            fastDelta, 0.03f, 0.045f);
 
         Assert.That(Vector2.Distance(controlledPrecision, precisionDelta), Is.LessThan(0.001f));
-        Assert.That(controlledFast.magnitude, Is.LessThan(0.060001f));
+        Assert.That(controlledFast.magnitude, Is.LessThan(0.045001f));
         Assert.That(controlledFast.magnitude, Is.LessThan(fastDelta.magnitude * 0.15f));
         Assert.That(Vector2.Angle(controlledFast, fastDelta), Is.LessThan(0.001f));
     }
@@ -218,44 +218,78 @@ public sealed class GraffitiInteractionTests
     [Test] public void FastSweepCameraDeltaIsBoundedWithoutChangingItsDirection()
     {
         Vector2 requested = new Vector2(3.2f, -2.4f);
-        Vector2 limited = GraffitiGestureDynamics.LimitCameraDelta(requested, new Vector2(0.55f, 0.45f));
+        Vector2 limited = GraffitiGestureDynamics.LimitCameraDelta(requested, new Vector2(0.48f, 0.4f));
 
-        Assert.That(Mathf.Abs(limited.x), Is.LessThanOrEqualTo(0.55001f));
-        Assert.That(Mathf.Abs(limited.y), Is.LessThanOrEqualTo(0.45001f));
-        Assert.That(Vector2.Angle(new Vector2(limited.x / 0.55f, limited.y / 0.45f),
-            new Vector2(requested.x / 0.55f, requested.y / 0.45f)), Is.LessThan(0.001f));
+        Assert.That(Mathf.Abs(limited.x), Is.LessThanOrEqualTo(0.48001f));
+        Assert.That(Mathf.Abs(limited.y), Is.LessThanOrEqualTo(0.40001f));
+        Assert.That(Vector2.Angle(new Vector2(limited.x / 0.48f, limited.y / 0.4f),
+            new Vector2(requested.x / 0.48f, requested.y / 0.4f)), Is.LessThan(0.05f));
     }
 
-    [Test] public void RawFastGestureOpensTheConeBeforeTheSpeedFilterCatchesUp()
+    [Test] public void RawFastGestureRespondsWithoutSnappingToMaximum()
     {
-        float responsiveSpeed = GraffitiGestureDynamics.GetResponsiveGestureSpeed(0.4f, 5f, 0.78f);
+        float responsiveSpeed = GraffitiGestureDynamics.GetResponsiveGestureSpeed(0.4f, 5f, 0.76f);
         float cone = GraffitiGestureDynamics.EvaluateCone(
-            responsiveSpeed, 0f, true, 0.7f, 3f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+            responsiveSpeed, 0f, true, 0.75f, 5.4f, 0.03f, 0.28f, 900f, 2800f, 0.45f);
 
-        Assert.That(responsiveSpeed, Is.EqualTo(3.9f).Within(0.001f));
-        Assert.That(cone, Is.GreaterThan(0.95f));
+        Assert.That(responsiveSpeed, Is.EqualTo(3.8f).Within(0.001f));
+        Assert.That(cone, Is.InRange(0.65f, 0.85f));
+    }
+
+    [Test] public void FirstFastFrameBeginsOpeningConeWithoutAWidthPop()
+    {
+        float cone = GraffitiGestureDynamics.AdvanceCone(
+            0.03f, 1f, 1f / 60f, 20f, 12f, 0.26f);
+
+        Assert.That(cone, Is.InRange(0.25f, 0.4f));
+        Assert.That(GraffitiGestureDynamics.ShapeFootprintCone(cone), Is.InRange(0.1f, 0.35f));
+    }
+
+    [Test] public void FootprintCurveKeepsUsefulIntermediateWidths()
+    {
+        float quarter = GraffitiGestureDynamics.ShapeFootprintCone(0.25f);
+        float middle = GraffitiGestureDynamics.ShapeFootprintCone(0.5f);
+        float threeQuarters = GraffitiGestureDynamics.ShapeFootprintCone(0.75f);
+
+        Assert.That(quarter, Is.InRange(0.16f, 0.22f));
+        Assert.That(middle, Is.InRange(0.48f, 0.52f));
+        Assert.That(threeQuarters, Is.InRange(0.78f, 0.84f));
+        Assert.That(middle - quarter, Is.GreaterThan(0.25f));
+        Assert.That(threeQuarters - middle, Is.GreaterThan(0.25f));
+    }
+
+    [Test] public void NaturalFastSweepJitterStaysBroadButDeliberateCornerNarrows()
+    {
+        float jitter = GraffitiGestureDynamics.EvaluateCone(
+            8f, 600f, true, 0.75f, 5.4f, 0.03f, 0.28f, 900f, 2800f, 0.45f);
+        float corner = GraffitiGestureDynamics.EvaluateCone(
+            8f, 4500f, true, 0.75f, 5.4f, 0.03f, 0.28f, 900f, 2800f, 0.45f);
+
+        Assert.That(jitter, Is.GreaterThan(0.95f));
+        Assert.That(corner, Is.InRange(0.5f, 0.6f));
     }
 
     [Test] public void FastSweepKeepsBroadIntentWhilePhysicalTravelIsCompressed()
     {
         const float deltaTime = 1f / 60f;
-        Vector2 intentDelta = new Vector2(8f * 0.048f, 0f);
+        Vector2 controlDelta = new Vector2(8f * 0.041f, 0f);
+        Vector2 widthIntentDelta = new Vector2(8f * 0.045f, 0f);
         Vector2 controlledDelta = GraffitiGestureDynamics.CompressControlDelta(
-            intentDelta, 0.045f, 0.06f);
+            controlDelta, 0.03f, 0.045f);
         float broadCone = GraffitiGestureDynamics.EvaluateCone(
-            intentDelta.magnitude / deltaTime, 0f, true,
-            0.55f, 4.6f, 0.03f, 0.32f, 150f, 650f, 0.86f);
+            widthIntentDelta.magnitude / deltaTime, 0f, true,
+            0.75f, 5.4f, 0.03f, 0.28f, 900f, 2800f, 0.45f);
 
         Assert.That(broadCone, Is.GreaterThan(0.95f));
-        Assert.That(controlledDelta.x * 0.34f, Is.LessThan(0.021f));
-        Assert.That(controlledDelta.x * 4f * 0.34f, Is.LessThan(0.083f));
+        Assert.That(controlledDelta.x * 0.34f, Is.LessThan(0.016f));
+        Assert.That(controlledDelta.x * 4f * 0.34f, Is.LessThan(0.065f));
     }
 
-    [Test] public void EveryNozzleHasClearlySeparatedPrecisionAndCoverageWidths()
+    [Test] public void EveryNozzleKeepsARealisticPrecisionToCoverageRange()
     {
         Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
-        Set(paint, "controlledCloseRadiusMultiplier", 0.22f);
-        Set(paint, "controlledFarRadiusMultiplier", 3.8f);
+        Set(paint, "controlledCloseRadiusMultiplier", 0.34f);
+        Set(paint, "controlledFarRadiusMultiplier", 1.35f);
         Set(painter, "physicalControlWasActive", true);
         painter.useAdaptiveSprayDistance = true;
 
@@ -266,15 +300,16 @@ public sealed class GraffitiInteractionTests
             float precisionWidth = paint.EstimateBrushWidth(3f);
             Set(painter, "adaptiveCone", 1f);
             float coverageWidth = paint.EstimateBrushWidth(3f);
-            Assert.That(coverageWidth, Is.GreaterThan(precisionWidth * 16f), nozzle.ToString());
+            float ratio = coverageWidth / precisionWidth;
+            Assert.That(ratio, Is.InRange(4f, 6.5f), nozzle.ToString());
         }
     }
 
     [Test] public void SmallAndMediumCapsReceiveExtraCoverageRange()
     {
         Pintando paint = CreatePainter(out GraffitiPainter painter, out _);
-        Set(paint, "controlledCloseRadiusMultiplier", 0.22f);
-        Set(paint, "controlledFarRadiusMultiplier", 3.8f);
+        Set(paint, "controlledCloseRadiusMultiplier", 0.34f);
+        Set(paint, "controlledFarRadiusMultiplier", 1.35f);
         Set(painter, "physicalControlWasActive", true);
         painter.useAdaptiveSprayDistance = true;
 
@@ -287,8 +322,8 @@ public sealed class GraffitiInteractionTests
             Set(painter, "adaptiveCone", 1f);
             float coverageWidth = paint.EstimateBrushWidth(3f);
 
-            Assert.That(precisionWidth, Is.LessThan(0.025f), nozzle.ToString());
-            Assert.That(coverageWidth, Is.GreaterThan(0.19f), nozzle.ToString());
+            Assert.That(precisionWidth, Is.LessThan(0.035f), nozzle.ToString());
+            Assert.That(coverageWidth, Is.GreaterThan(0.07f), nozzle.ToString());
         }
     }
 

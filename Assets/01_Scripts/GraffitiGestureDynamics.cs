@@ -77,6 +77,41 @@ public static class GraffitiGestureDynamics
         return Mathf.Max(Mathf.Max(0f, smoothedSpeed), Mathf.Max(0f, immediateSpeed) * Mathf.Clamp01(immediateWeight));
     }
 
+    public static float AdvanceCone(
+        float currentCone,
+        float targetCone,
+        float deltaTime,
+        float expandResponse,
+        float precisionResponse,
+        float immediateAttack)
+    {
+        currentCone = Mathf.Clamp01(currentCone);
+        targetCone = Mathf.Clamp01(targetCone);
+        float response = targetCone > currentCone ? expandResponse : precisionResponse;
+        float blend = 1f - Mathf.Exp(-Mathf.Max(0.01f, response) * Mathf.Max(0f, deltaTime));
+        float nextCone = Mathf.Lerp(currentCone, targetCone, blend);
+
+        // Give quick sweeps an early response without snapping from a hairline
+        // to maximum coverage in one frame.
+        if (targetCone > currentCone && targetCone >= 0.9f)
+            nextCone = Mathf.Max(nextCone, Mathf.Lerp(currentCone, targetCone, Mathf.Clamp01(immediateAttack)));
+
+        return Mathf.Clamp01(nextCone);
+    }
+
+    public static float ShapeFootprintCone(float cone, float fullCoverageStart = 0.05f, float fullCoverageAt = 0.95f)
+    {
+        float start = Mathf.Clamp01(fullCoverageStart);
+        float full = Mathf.Clamp(fullCoverageAt, start + 0.01f, 1f);
+        float linear = Mathf.InverseLerp(start, full, Mathf.Clamp01(cone));
+        float eased = Mathf.SmoothStep(0f, 1f, linear);
+
+        // Speed intent is already eased in EvaluateCone. A second full smoothstep
+        // made most of the useful widths bunch up in the middle, so retain only a
+        // light ease here: responsive near precision, controlled near full coverage.
+        return Mathf.Lerp(linear, eased, 0.35f);
+    }
+
     public static float EvaluateCone(
         float gestureSpeed,
         float turnRateDegrees,

@@ -1,0 +1,20 @@
+ M Assets/01_Scripts/FPSController.cs
+ M Assets/01_Scripts/GraffitiGestureDynamics.cs
+ M Assets/01_Scripts/GraffitiPainter.cs
+ M Assets/01_Scripts/Pintando.cs
+ M Assets/02_Escenas/Gameplay.unity
+ M "Assets/05_Tipografias/SpaceGrotesk-Bold SDF.asset"
+ M "Assets/05_Tipografias/owned SDF.asset"
+ M Assets/07_StylizedRendering/FSSRS/Renderer/FSSRS_PC_Renderer.asset
+ M Assets/Editor/GraffitiInteractionTests.cs
+ M Assets/Editor/ParkourDetectionTests.cs
+ M Assets/Settings/PC_RPAsset.asset
+ M Assets/Settings/PC_Renderer.asset
+ M Packages/manifest.json
+ M Packages/packages-lock.json
+?? Assets/ArtDirection.meta
+?? Assets/ArtDirection/
+?? Assets/Temp.meta
+?? Assets/Temp/
+?? Documentation/
+?? ProjectSettings/Packages/com.unity.pipeline/

@@ -45,6 +45,7 @@ public sealed class RenderPoseController : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         if (listenForInput && Input.GetKeyDown(toggleKey))
         {
             if (!reserveFForGraffiti || movementController == null || !movementController.IsGraffitiMode())

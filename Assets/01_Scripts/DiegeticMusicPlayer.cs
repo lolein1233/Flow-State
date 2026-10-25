@@ -74,6 +74,7 @@ public class DiegeticMusicPlayer : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         bool canUseDevice = fps == null || (!fps.IsGraffitiMode() && !fps.IsClimbing());
 
         if (!canUseDevice && isOpen)

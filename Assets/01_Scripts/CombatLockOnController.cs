@@ -34,6 +34,7 @@ public class CombatLockOnController : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.GameplayInputBlocked) return;
         ResolveReferences();
 
         if (!CanUseLock())

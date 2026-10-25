@@ -12,6 +12,9 @@ Shader "FLOWSTATE/FSSRS/Player Comic Plate"
         _PulseAmount("Pulse Amount", Range(0, 0.5)) = 0.12
         _FlowSpeed("Flow Speed", Range(0.1, 2)) = 1
         _PanelMotion("Moving Comic Panels", Range(0, 1)) = 0.3
+        _BreathStrength("Breathing Strength", Range(0, 2)) = 1
+        _WaveStrength("Traveling Waves", Range(0, 2)) = 1
+        _WaveSpeed("Wave Tempo", Range(0.25, 2)) = 1
     }
 
     SubShader
@@ -52,6 +55,9 @@ Shader "FLOWSTATE/FSSRS/Player Comic Plate"
                 half _PulseAmount;
                 half _FlowSpeed;
                 half _PanelMotion;
+                half _BreathStrength;
+                half _WaveStrength;
+                half _WaveSpeed;
             CBUFFER_END
 
             struct Attributes
@@ -76,17 +82,36 @@ Shader "FLOWSTATE/FSSRS/Player Comic Plate"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
                 half energy = saturate(_FSSRS_EmotionEnergy);
-                half time = _Time.y * _FlowSpeed * lerp(0.75h, 1.45h, energy) + _AnimationPhase;
-                half steppedTime = floor(time * lerp(2.0h, 8.0h, energy)) * 0.125h;
+                // Shared timing gives the plates one readable inhale/exhale, with
+                // traveling ripples layered over the original fragmented drawing.
+                float motionTime = _Time.y * _WaveSpeed;
+                float breathPhase = motionTime * lerp(1.35, 1.75, energy);
+                half sharedBreath = (sin(breathPhase) + 0.18h * sin(breathPhase * 2.0 - 0.7)) / 1.18h;
+                float3 flowPosition = TransformObjectToWorld(input.positionOS.xyz) - TransformObjectToWorld(float3(0, 0, 0));
+                half risingWave = sin(flowPosition.y * 6.2 + flowPosition.x * 1.1 - motionTime * 3.1);
+                half returningWave = sin(flowPosition.y * 10.4 - flowPosition.z * 2.2 + motionTime * 2.15);
+                half travelingWave = risingWave * 0.72h + returningWave * 0.28h;
+                // The outer pigments carry the motion; ink retains a readable anchor.
+                half waveWeight = _PlateRole < 0.5h ? 0.42h : (_PlateRole < 1.5h ? 0.85h : (_PlateRole < 2.5h ? 0.20h : 1.15h));
+                // Preserve the original hand-drawn cadence, easing between its poses.
+                // Float phase keeps this motion stable during long play sessions.
+                float time = _Time.y * _FlowSpeed * lerp(0.75h, 1.45h, energy) + _AnimationPhase;
+                float tick = time * lerp(2.0h, 8.0h, energy);
+                float poseBlend = smoothstep(0.35, 1.0, frac(tick));
+                float steppedTime = (floor(tick) + poseBlend) * 0.125;
                 half edgeNoise = sin(dot(input.positionOS.xyz, float3(17.13, 29.71, 11.83)) + steppedTime);
                 half flowingWave = sin(dot(input.positionOS.xyz, float3(4.8, 7.1, 3.2)) - time * 2.4h);
                 half breath = sin(time * 1.35h + input.positionOS.y * 2.8h);
+                breath = lerp(breath, sharedBreath, 0.25h);
                 half panelTravel = 0.5h + 0.5h * sin(dot(input.positionOS.xyz, float3(3.7, 5.9, 4.3)) - time * 4.1h);
                 half panelRidge = panelTravel * panelTravel * panelTravel;
                 half animationWeight = lerp(0.4h, 1.0h, energy);
                 half widthScale = 1.0h + (edgeNoise * _JitterAmount + flowingWave * _JitterAmount * 0.25h + breath * _PulseAmount) * animationWeight;
                 widthScale += panelRidge * _PanelMotion * animationWeight * 0.42h;
-                half width = _ShellWidth * max(0.25h, widthScale);
+                half breathEnvelope = 1.0h + sharedBreath * 0.22h * _BreathStrength * lerp(0.72h, 1.0h, energy);
+                widthScale *= breathEnvelope;
+                widthScale += travelingWave * 0.24h * _WaveStrength * waveWeight * animationWeight;
+                half width = _ShellWidth * clamp(widthScale, 0.4h, 1.75h);
                 float3 positionOS = input.positionOS.xyz + normalize(input.normalOS) * width;
                 output.positionCS = TransformObjectToHClip(positionOS);
 
@@ -94,7 +119,8 @@ Shader "FLOWSTATE/FSSRS/Player Comic Plate"
                 float2 orbit = float2(sin(time * 1.17h), cos(time * 0.93h));
                 float2 registration = _RegistrationOffset.xy * lerp(0.82h, 1.18h, pulse * energy);
                 registration += orbit * (_PulseAmount * lerp(1.0h, 4.0h, energy));
-                output.positionCS.xy += registration * (2.0 / _ScreenParams.xy) * output.positionCS.w;
+                registration += float2(sharedBreath, travelingWave * 0.65h) * (_WaveStrength * waveWeight * 0.65h);
+                output.positionCS.xy += registration * (2.0 / _ScaledScreenParams.xy) * output.positionCS.w;
                 output.screenPosition = ComputeScreenPos(output.positionCS);
                 output.positionWS = TransformObjectToWorld(positionOS);
                 return output;
@@ -104,16 +130,21 @@ Shader "FLOWSTATE/FSSRS/Player Comic Plate"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                float2 pixelPosition = input.screenPosition.xy / input.screenPosition.w * _ScreenParams.xy;
+                float2 pixelPosition = input.screenPosition.xy / input.screenPosition.w * _ScaledScreenParams.xy;
                 half block = FSSRS_Hash21(floor(pixelPosition / 7.0h) + _FSSRS_EmotionIndex * 13.7h);
-                half time = _Time.y * _FlowSpeed + _AnimationPhase;
+                float time = _Time.y * _FlowSpeed + _AnimationPhase;
+                // Curve the moving print ribbons; breakup stays in its original screen cells.
+                float ribbonWave = sin(pixelPosition.y * 0.026 - _Time.y * _WaveSpeed * 1.85);
+                pixelPosition.x += ribbonWave * 10.0 * _WaveStrength;
                 half stripeWave = 0.5h + 0.5h * sin((pixelPosition.x + pixelPosition.y * 0.46h) * 0.12h - time * 3.4h + _FSSRS_EmotionIndex);
                 half crossWave = 0.5h + 0.5h * sin((pixelPosition.x * -0.31h + pixelPosition.y) * 0.075h + time * 2.1h);
                 half movingPanel = 0.5h + 0.5h * sin((pixelPosition.x + pixelPosition.y * 0.72h) * 0.04h - time * 4.2h);
                 half stripe = smoothstep(0.32h, 0.68h, stripeWave);
-                half cyclePosition = frac((pixelPosition.x + pixelPosition.y * 1.37h) * 0.007h - time * 0.32h);
-                half3 colorCycle = lerp(_FSSRS_AccentColor.rgb, _FSSRS_MidColor.rgb, smoothstep(0.0h, 0.5h, cyclePosition));
-                colorCycle = lerp(colorCycle, _FSSRS_HighlightColor.rgb, smoothstep(0.5h, 1.0h, cyclePosition));
+                float cyclePosition = frac((pixelPosition.x + pixelPosition.y * 1.37h) * 0.007h - time * 0.32h);
+                half3 colorCycle = lerp(_FSSRS_AccentColor.rgb, _FSSRS_MidColor.rgb, smoothstep(0.0, 0.40, cyclePosition));
+                colorCycle = lerp(colorCycle, _FSSRS_HighlightColor.rgb, smoothstep(0.40, 0.75, cyclePosition));
+                // Close the existing pigment cycle instead of snapping highlight back to accent.
+                colorCycle = lerp(colorCycle, _FSSRS_AccentColor.rgb, smoothstep(0.75, 1.0, cyclePosition));
 
                 half3 plateColor = _FSSRS_PaperColor.rgb;
                 half alpha = _Alpha;

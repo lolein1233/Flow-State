@@ -204,6 +204,50 @@ public sealed class ParkourDetectionTests
         Assert.That(walkableStep, Is.True);
     }
 
+    [TestCase(0.85f)]
+    [TestCase(1.10f)]
+    [TestCase(1.75f)]
+    public void ParkourModuleDoesNotMistakeUnderlyingFloorForWalkableStep(float obstacleHeight)
+    {
+        const float groundTop = 43500f;
+        int wallLayer = LayerMask.NameToLayer("Wall");
+        int defaultLayer = LayerMask.NameToLayer("Default");
+        FPSController controller = CreateController(new Vector3(0f, groundTop + 1f, 0f));
+        controller.movementCollisionMask = (1 << wallLayer) | (1 << defaultLayer);
+        controller.groundedStepOffset = 0.52f;
+        controller.stepHeightTolerance = 0.06f;
+        controller.stepSurfaceProbeInset = 0.16f;
+
+        GameObject floor = Create("Parkour module regression floor");
+        floor.layer = defaultLayer;
+        // Reproduce the real scene's small controller/ground overlap. Before the
+        // regression fix this 5 cm rise was accepted as the top of the obstacle.
+        floor.transform.position = new Vector3(0f, groundTop - 0.05f, 1f);
+        var floorCollider = floor.AddComponent<BoxCollider>();
+        floorCollider.size = new Vector3(8f, 0.2f, 8f);
+
+        GameObject obstacle = Create("Parkour module regression obstacle");
+        obstacle.layer = wallLayer;
+        obstacle.transform.position = new Vector3(0f, groundTop + obstacleHeight * 0.5f, 1f);
+        var obstacleCollider = obstacle.AddComponent<BoxCollider>();
+        obstacleCollider.size = new Vector3(6f, obstacleHeight, 0.8f);
+        obstacle.AddComponent<ClimbableSurface>();
+        Physics.SyncTransforms();
+
+        Vector3 probeOrigin = new Vector3(0f, groundTop + controller.wallCheckHeight, 0f);
+        Assert.That(
+            Physics.Raycast(probeOrigin, Vector3.forward, out RaycastHit wallHit, 2f, 1 << wallLayer),
+            Is.True,
+            "The parkour module must first be visible to the forward wall probe.");
+
+        bool walkableStep = (bool)Invoke(controller, "IsWalkableStepAhead", wallHit, Vector3.forward);
+
+        Assert.That(
+            walkableStep,
+            Is.False,
+            $"A {obstacleHeight:F2} m parkour module must not be rejected because the downward probe saw the floor beneath it.");
+    }
+
     [Test]
     public void FallingAnimationRequiresMeaningfulVerticalDrop()
     {
@@ -243,6 +287,24 @@ public sealed class ParkourDetectionTests
         controller.TeleportTo(new Vector3(2f, 45000f, 3f), Quaternion.identity);
 
         Assert.That((int)attempts.GetValue(controller), Is.EqualTo(12));
+    }
+
+    [Test]
+    public void TeleportInterruptedParkourRestoresDisabledCollisionComponents()
+    {
+        FPSController controller = CreateController(new Vector3(0f, 45500f, 0f));
+        CharacterController characterController = controller.GetComponent<CharacterController>();
+        CapsuleCollider capsuleCollider = controller.gameObject.AddComponent<CapsuleCollider>();
+        typeof(FPSController).GetField("legacyCapsuleCollider", PrivateInstance).SetValue(controller, capsuleCollider);
+        typeof(FPSController).GetField("isParkouring", PrivateInstance).SetValue(controller, true);
+        characterController.enabled = false;
+        capsuleCollider.enabled = false;
+
+        controller.TeleportTo(new Vector3(3f, 45500f, 4f), Quaternion.identity);
+
+        Assert.That(characterController.enabled, Is.True);
+        Assert.That(capsuleCollider.enabled, Is.True);
+        Assert.That(controller.IsParkouring(), Is.False);
     }
 }
 #endif

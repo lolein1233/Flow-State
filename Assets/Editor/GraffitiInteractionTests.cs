@@ -30,6 +30,28 @@ public sealed class GraffitiInteractionTests
     static void Set(object target, string field, object value) => target.GetType().GetField(field, Private).SetValue(target, value);
     static void Invoke(object target, string method, params object[] args) => target.GetType().GetMethod(method, Private).Invoke(target, args);
 
+    [Test] public void NozzleHintDiscoveryExcludesInactiveControlsMenu()
+    {
+        var menus = Create("Graffiti test pause menus");
+        menus.SetActive(false);
+        menus.AddComponent<PauseMenuController>();
+        var controls = Create("Graffiti test controls");
+        controls.transform.SetParent(menus.transform);
+        var controlsCanvas = controls.AddComponent<Canvas>();
+        var label = Create("Graffiti test help text");
+        label.transform.SetParent(controls.transform);
+        label.AddComponent<TMPro.TextMeshProUGUI>().text = "Elegir color o boquilla";
+
+        var painter = Create("Graffiti test UI discovery").AddComponent<GraffitiPainter>();
+        painter.enabled = false;
+        Invoke(painter, "CacheAutoGraffitiOnlyUI");
+        var discovered = (GameObject[])typeof(GraffitiPainter).GetField("autoGraffitiOnlyUI", Private).GetValue(painter);
+        CollectionAssert.DoesNotContain(discovered, controls);
+
+        var hintCanvas = typeof(GraffitiPainter).GetMethod("FindNozzleHintCanvas", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, null);
+        Assert.That(hintCanvas, Is.Not.SameAs(controlsCanvas));
+    }
+
     Pintando CreatePainter(out GraffitiPainter painter, out RaycastHit hit)
     {
         var owner = Create("Graffiti test painter");

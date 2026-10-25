@@ -340,7 +340,8 @@ public class GraffitiPainter : MonoBehaviour
         TMP_Text[] texts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (TMP_Text text in texts)
         {
-            if (text == null || string.IsNullOrEmpty(text.text))
+            if (text == null || string.IsNullOrEmpty(text.text) ||
+                text.GetComponentInParent<PauseMenuController>(true) != null)
                 continue;
 
             if (text.text.ToLowerInvariant().Contains("boquilla"))
@@ -1011,7 +1012,9 @@ public class GraffitiPainter : MonoBehaviour
 
         foreach (TMP_Text text in texts)
         {
-            if (text == null || text == paintText || text.gameObject == paintUI)
+            // Help pages mention nozzles too, but their visibility belongs to the pause menu.
+            if (text == null || text == paintText || text.gameObject == paintUI ||
+                text.GetComponentInParent<PauseMenuController>(true) != null)
                 continue;
 
             string value = text.text;

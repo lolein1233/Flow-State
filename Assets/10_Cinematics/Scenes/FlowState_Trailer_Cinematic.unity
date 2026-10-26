@@ -33107,11 +33107,10 @@ MonoBehaviour:
   initialStyle: {fileID: 11400000, guid: d35cffe6f2770b94397179851b9c7406, type: 2}
   targetVolume: {fileID: 888366251}
   initialEmotion: 3
-  neutralPalette: {fileID: 11400000, guid: bbdc80386d590f142832d1dc89ea39d2, type: 2}
-  doubtPalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
+  comicPalette: {fileID: 11400000, guid: bbdc80386d590f142832d1dc89ea39d2, type: 2}
+  neutralStatePalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
   angerPalette: {fileID: 11400000, guid: 94eddf2a7943f434496f1f5aebf354d1, type: 2}
   creativeFlowPalette: {fileID: 11400000, guid: 6d08c4c418b18764f9d8b3950b3793bf, type: 2}
-  clarityPalette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
   defaultTransitionDuration: 0.65
   transitionCurve:
     serializedVersion: 2

@@ -12,11 +12,10 @@ public sealed class DemoEmotionMenu : MonoBehaviour
 
     static readonly FlowEmotion[] Emotions =
     {
+        FlowEmotion.Comic,
         FlowEmotion.Neutral,
-        FlowEmotion.Doubt,
         FlowEmotion.Anger,
-        FlowEmotion.CreativeFlow,
-        FlowEmotion.Clarity
+        FlowEmotion.CreativeFlow
     };
 
     static readonly KeyCode[] EmotionKeys =
@@ -24,17 +23,15 @@ public sealed class DemoEmotionMenu : MonoBehaviour
         KeyCode.F2,
         KeyCode.F3,
         KeyCode.F4,
-        KeyCode.F5,
-        KeyCode.F6
+        KeyCode.F5
     };
 
     static readonly string[] EmotionLabels =
     {
+        "COMIC",
         "NEUTRAL",
-        "DUDA",
         "IRA",
-        "FLOW CREATIVO",
-        "CLARIDAD"
+        "FLOW CREATIVO"
     };
 
     Canvas runtimeCanvas;
@@ -127,7 +124,7 @@ public sealed class DemoEmotionMenu : MonoBehaviour
         panelRect.anchorMax = Vector2.one;
         panelRect.pivot = Vector2.one;
         panelRect.anchoredPosition = new Vector2(-28f, -28f);
-        panelRect.sizeDelta = new Vector2(380f, 326f);
+        panelRect.sizeDelta = new Vector2(380f, 284f);
 
         Image background = panel.GetComponent<Image>();
         background.color = new Color(0.075f, 0.025f, 0.09f, 0.94f);

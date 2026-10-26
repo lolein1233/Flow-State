@@ -33,14 +33,14 @@ public class FPSController : MonoBehaviour
     [Range(0f, 89f)] public float graffitiMaxPitch = 85f;
 
     [Header("Movimiento tercera persona")]
-    public float walkSpeed = 4.5f;
-    public float sprintSpeed = 8f;
-    public float acceleration = 16f;
-    public float deceleration = 22f;
+    public float walkSpeed = 1.8f;
+    public float sprintSpeed = 5.5f;
+    public float acceleration = 14f;
+    public float deceleration = 20f;
     public float airControl = 0.45f;
     public float airDeceleration = 1.4f;
     public float directionChangeBoost = 1.5f;
-    public float rotationSmoothTime = 0.08f;
+    public float rotationSmoothTime = 0.07f;
     public KeyCode sprintKey = KeyCode.LeftShift;
     public KeyCode jumpKey = KeyCode.Space;
     public float jumpHeight = 1.35f;
@@ -169,6 +169,10 @@ public class FPSController : MonoBehaviour
     public bool hideVisualInGraffitiMode = true;
     public bool useGroundContactShadow = true;
 
+    [Header("Ritmo de locomocion")]
+    [Min(0.1f)] public float walkAnimationReferenceSpeed = 1.1f;
+    [Min(0.1f)] public float runAnimationReferenceSpeed = 3.5f;
+
     [Header("Apoyo al suelo")]
     public bool alignFeetToGroundOnStart = true;
     public float controllerSkinWidthOnGround = 0.03f;
@@ -194,6 +198,7 @@ public class FPSController : MonoBehaviour
 
     CharacterController controller;
     GraffitiMenuDrawer graffitiMenu;
+    GraffitiQuickPainter quickGraffiti;
     CapsuleCollider legacyCapsuleCollider;
     PlayerGroundContactShadow groundContactShadow;
     Camera playerCamera;
@@ -229,6 +234,9 @@ public class FPSController : MonoBehaviour
     Vector3 cameraLookAhead;
     Vector3 cameraLookAheadVelocity;
     bool cameraStateInitialized;
+    bool cameraModeTransitioning;
+    Vector3 lastCameraWorldPosition;
+    Quaternion lastCameraWorldRotation;
     bool teleportTransitionActive;
     bool pauseInputSuspended;
     bool resumeJumpInputGuard;
@@ -262,6 +270,7 @@ public class FPSController : MonoBehaviour
     Vector3 combatLockPoint;
 
     static readonly int SpeedHash = Animator.StringToHash("Speed");
+    static readonly int LocomotionRateHash = Animator.StringToHash("LocomotionRate");
     static readonly int GroundedHash = Animator.StringToHash("Grounded");
     static readonly int VerticalSpeedHash = Animator.StringToHash("VerticalSpeed");
     static readonly int GraffitiModeHash = Animator.StringToHash("GraffitiMode");
@@ -283,6 +292,7 @@ public class FPSController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         graffitiMenu = GetComponentInChildren<GraffitiMenuDrawer>(true);
+        quickGraffiti = GetComponent<GraffitiQuickPainter>();
         legacyCapsuleCollider = GetComponent<CapsuleCollider>();
         ResolveReferences();
         CacheAnimatorParameters();
@@ -344,6 +354,8 @@ public class FPSController : MonoBehaviour
         HandleModeInput();
         UpdateCursorState();
         HandleLook();
+        if (!graffitiMode)
+            UpdateCameraOrbit(Time.deltaTime);
 
         if (isClimbing)
             HandleClimbing();
@@ -418,6 +430,7 @@ public class FPSController : MonoBehaviour
         climbAnimationInput = 0f;
         SetAnimatorFloat(ClimbInputHash, 0f);
         SetAnimatorFloat(SpeedHash, 0f);
+        SetAnimatorFloat(LocomotionRateHash, 1f);
         SetAnimatorFloat(VerticalSpeedHash, 0f);
 
         if (animator.isActiveAndEnabled)
@@ -564,6 +577,7 @@ public class FPSController : MonoBehaviour
     void HandleModeInput()
     {
         if (Input.GetKeyDown(exitGraffitiKey) && graffitiMode &&
+            (quickGraffiti == null || (!quickGraffiti.BookOpen && !quickGraffiti.MenuClosedThisFrame)) &&
             (graffitiMenu == null || (!graffitiMenu.IsMenuOpen && !graffitiMenu.ClosedThisFrame)))
         {
             ExitGraffitiMode();
@@ -590,8 +604,9 @@ public class FPSController : MonoBehaviour
 
     void HandleLook()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        // Mouse axes are deltas. Keep the previous 60 Hz sensitivity without scaling twice by time.
+        float mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity / 60f;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity / 60f;
 
         if (graffitiMode)
         {
@@ -641,6 +656,15 @@ public class FPSController : MonoBehaviour
 
     void HandleMovement()
     {
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        StepMovement(input, Input.GetKey(sprintKey), Input.GetKeyDown(jumpKey), Time.deltaTime);
+    }
+
+    void StepMovement(Vector2 input, bool sprintHeld, bool jumpPressed, float deltaTime)
+    {
+        if (deltaTime <= 0f)
+            return;
+
         bool grounded = RefreshStableGroundContact();
 
         if (grounded)
@@ -650,17 +674,15 @@ public class FPSController : MonoBehaviour
             if (verticalVelocity < 0f)
             {
                 float snapVelocity = hasStableGroundHit && stableGroundDistance > controller.skinWidth
-                    ? Mathf.Min(Mathf.Max(groundStickVelocity, groundSnapSpeed), stableGroundDistance / Mathf.Max(Time.deltaTime, 0.0001f))
+                    ? Mathf.Min(Mathf.Max(groundStickVelocity, groundSnapSpeed), stableGroundDistance / deltaTime)
                     : Mathf.Max(0.1f, groundStickVelocity);
                 verticalVelocity = -snapVelocity;
             }
         }
 
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector2 rawInput = Vector2.ClampMagnitude(new Vector2(h, v), 1f);
+        Vector2 rawInput = Vector2.ClampMagnitude(input, 1f);
 
-        if (Input.GetKeyDown(jumpKey))
+        if (jumpPressed && canMove)
         {
             bool startedAirRoll = TryStartAirRoll(grounded);
 
@@ -683,14 +705,56 @@ public class FPSController : MonoBehaviour
 
         if (hasMovementInput)
         {
-            targetSpeed = graffitiMode ? graffitiMoveSpeed : (Input.GetKey(sprintKey) ? sprintSpeed : Mathf.Max(speed, walkSpeed));
-
-            if (!graffitiMode && !hasCombatLockPoint)
-                RotateToward(moveDirection);
+            targetSpeed = (graffitiMode ? graffitiMoveSpeed : (sprintHeld ? sprintSpeed : walkSpeed)) * rawInput.magnitude;
         }
 
         if (!graffitiMode && hasCombatLockPoint)
             RotateTowardCombatLockPoint();
+
+        AdvancePlanarMovement(moveDirection, targetSpeed, hasMovementInput, grounded, deltaTime);
+
+        if (Time.time - jumpPressedTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime && canApplyInput && !graffitiMode)
+        {
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            jumpPressedTime = -999f;
+            lastJumpStartedTime = Time.time;
+            isAirRolling = false;
+            stableGrounded = false;
+            hasStableGroundHit = false;
+            SetControllerStepOffset(false);
+            TriggerAnimator(JumpHash);
+        }
+
+        verticalVelocity += gravity * deltaTime;
+        Vector3 positionBeforeMove = transform.position;
+        lastMovementCollisionFlags = controller.Move((currentPlanarVelocity + Vector3.up * verticalVelocity) * deltaTime);
+        Vector3 actualDisplacement = transform.position - positionBeforeMove;
+        actualDisplacement.y = 0f;
+        currentPlanarSpeed = actualDisplacement.magnitude / deltaTime;
+        UpdateGroundContactAfterMove();
+    }
+
+    void AdvancePlanarMovement(Vector3 moveDirection, float targetSpeed, bool hasMovementInput, bool grounded, float deltaTime)
+    {
+        // Ground locomotion follows the body's heading. Independently damping a velocity
+        // vector made the feet face one way while the character drifted another way.
+        if (!graffitiMode && !hasCombatLockPoint)
+        {
+            if (hasMovementInput)
+                RotateToward(moveDirection, deltaTime);
+
+            if (grounded)
+            {
+                float facing = hasMovementInput ? Vector3.Dot(transform.forward, moveDirection) : 1f;
+                float turnSpeed = targetSpeed * Mathf.InverseLerp(0f, 0.7f, facing);
+                float oldSpeed = currentPlanarVelocity.magnitude;
+                float response = turnSpeed > oldSpeed ? acceleration : deceleration;
+                float nextSpeed = Mathf.MoveTowards(oldSpeed, turnSpeed, Mathf.Max(0f, response) * deltaTime);
+                Vector3 heading = hasMovementInput || oldSpeed < 0.001f ? transform.forward : currentPlanarVelocity / oldSpeed;
+                currentPlanarVelocity = heading * nextSpeed;
+                return;
+            }
+        }
 
         Vector3 desiredPlanarVelocity = hasMovementInput ? moveDirection * targetSpeed : Vector3.zero;
         float planarResponse;
@@ -718,25 +782,8 @@ public class FPSController : MonoBehaviour
         currentPlanarVelocity = Vector3.MoveTowards(
             currentPlanarVelocity,
             desiredPlanarVelocity,
-            Mathf.Max(0f, planarResponse) * Time.deltaTime);
+            Mathf.Max(0f, planarResponse) * deltaTime);
         currentPlanarVelocity.y = 0f;
-        currentPlanarSpeed = currentPlanarVelocity.magnitude;
-
-        if (Time.time - jumpPressedTime <= jumpBufferTime && Time.time - lastGroundedTime <= coyoteTime && canApplyInput && !graffitiMode)
-        {
-            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            jumpPressedTime = -999f;
-            lastJumpStartedTime = Time.time;
-            isAirRolling = false;
-            stableGrounded = false;
-            hasStableGroundHit = false;
-            SetControllerStepOffset(false);
-            TriggerAnimator(JumpHash);
-        }
-
-        verticalVelocity += gravity * Time.deltaTime;
-        lastMovementCollisionFlags = controller.Move((currentPlanarVelocity + Vector3.up * verticalVelocity) * Time.deltaTime);
-        UpdateGroundContactAfterMove();
     }
 
     bool RefreshStableGroundContact()
@@ -872,19 +919,20 @@ public class FPSController : MonoBehaviour
 
     Vector3 GetPlanarCameraForward()
     {
-        Quaternion yawRotation = Quaternion.Euler(0f, orbitYaw, 0f);
+        Quaternion yawRotation = Quaternion.Euler(0f, cameraStateInitialized && !graffitiMode ? cameraYaw : orbitYaw, 0f);
         Vector3 forward = yawRotation * Vector3.forward;
         forward.y = 0f;
         return forward.sqrMagnitude > 0.001f ? forward.normalized : transform.forward;
     }
 
-    void RotateToward(Vector3 direction)
+    void RotateToward(Vector3 direction, float deltaTime)
     {
         if (direction.sqrMagnitude <= 0.001f)
             return;
 
         float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnVelocity, rotationSmoothTime);
+        float smoothAngle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnVelocity,
+            rotationSmoothTime, Mathf.Infinity, deltaTime);
         transform.rotation = Quaternion.Euler(0f, smoothAngle, 0f);
     }
 
@@ -1054,6 +1102,15 @@ public class FPSController : MonoBehaviour
         climbInput = 0f;
         climbAnimationInput = 0f;
         climbContactLostTimer = 0f;
+
+        isAirRolling = false;
+        landingAnimationQueued = false;
+        jumpPressedTime = -999f;
+        ResetAnimatorTrigger(JumpHash);
+        ResetAnimatorTrigger(RollHash);
+        ResetAnimatorTrigger(LandHash);
+        SetAnimatorBool(FallingHash, false);
+        SetAnimatorBool(ParkourHash, false);
 
         transform.rotation = Quaternion.LookRotation(-climbNormal, Vector3.up);
         if (snapToSurface)
@@ -1861,10 +1918,12 @@ public class FPSController : MonoBehaviour
         if (graffitiMode)
         {
             UpdateGraffitiCamera(deltaTime);
-            return;
         }
+        else
+            UpdateThirdPersonCamera(deltaTime);
 
-        UpdateThirdPersonCamera(deltaTime);
+        lastCameraWorldPosition = cameraTransform.position;
+        lastCameraWorldRotation = cameraTransform.rotation;
     }
 
     void UpdateGraffitiCamera(float deltaTime)
@@ -1873,8 +1932,10 @@ public class FPSController : MonoBehaviour
         Quaternion desiredRotation = Quaternion.Euler(pitch, transform.eulerAngles.y, 0f);
         float blend = 1f - Mathf.Exp(-cameraModeBlendSpeed * deltaTime);
 
-        cameraTransform.position = Vector3.Lerp(cameraTransform.position, desiredPosition, blend);
-        cameraTransform.rotation = Quaternion.Slerp(cameraTransform.rotation, desiredRotation, blend);
+        // The camera is a child of Player. Use the last presented world pose so a
+        // parent rotation is not applied again as part of the smoothing.
+        cameraTransform.position = Vector3.Lerp(lastCameraWorldPosition, desiredPosition, blend);
+        cameraTransform.rotation = Quaternion.Slerp(lastCameraWorldRotation, desiredRotation, blend);
         UpdateCameraFov(graffitiFov, deltaTime);
 
         cameraYaw = orbitYaw;
@@ -1897,12 +1958,16 @@ public class FPSController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, orbitYaw, 0f);
     }
 
-    void UpdateThirdPersonCamera(float deltaTime)
+    void UpdateCameraOrbit(float deltaTime)
     {
-        Vector3 target = GetDesiredThirdPersonTarget(deltaTime);
-
         cameraYaw = Mathf.SmoothDampAngle(cameraYaw, orbitYaw, ref cameraYawVelocity, thirdPersonYawSmoothTime, Mathf.Infinity, deltaTime);
         cameraPitch = Mathf.SmoothDamp(cameraPitch, pitch, ref cameraPitchVelocity, thirdPersonPitchSmoothTime, Mathf.Infinity, deltaTime);
+    }
+
+    void UpdateThirdPersonCamera(float deltaTime)
+    {
+        Vector3 playerDelta = transform.position - previousCameraPlayerPosition;
+        Vector3 target = GetDesiredThirdPersonTarget(deltaTime);
 
         Quaternion orbit = Quaternion.Euler(cameraPitch, cameraYaw, 0f);
         Vector3 offset = thirdPersonOffset + thirdPersonShoulderOffset;
@@ -1914,10 +1979,24 @@ public class FPSController : MonoBehaviour
             lookDirection = orbit * Vector3.forward;
 
         Quaternion desiredRotation = Quaternion.LookRotation(lookDirection.normalized, Vector3.up);
-        float rotationBlend = 1f - Mathf.Exp(-thirdPersonRotationSharpness * deltaTime);
-
-        cameraTransform.position = Vector3.SmoothDamp(cameraTransform.position, resolvedPosition, ref cameraPositionVelocity, thirdPersonPositionSmoothTime, Mathf.Infinity, deltaTime);
-        cameraTransform.rotation = Quaternion.Slerp(cameraTransform.rotation, desiredRotation, rotationBlend);
+        if (cameraModeTransitioning)
+        {
+            float rotationBlend = 1f - Mathf.Exp(-thirdPersonRotationSharpness * deltaTime);
+            Vector3 blendedPosition = Vector3.SmoothDamp(lastCameraWorldPosition + playerDelta,
+                resolvedPosition, ref cameraPositionVelocity, thirdPersonPositionSmoothTime, Mathf.Infinity, deltaTime);
+            // Smoothing a mode change must not place the camera beyond a wall.
+            Vector3 boom = blendedPosition - target;
+            cameraTransform.position = target + Vector3.ClampMagnitude(boom, Vector3.Distance(target, resolvedPosition));
+            cameraTransform.rotation = Quaternion.Slerp(lastCameraWorldRotation, desiredRotation, rotationBlend);
+            cameraModeTransitioning = Vector3.SqrMagnitude(cameraTransform.position - resolvedPosition) > 0.0001f ||
+                Quaternion.Angle(cameraTransform.rotation, desiredRotation) > 0.2f;
+        }
+        else
+        {
+            // Orbit angles and vertical follow are already filtered. A second world
+            // position/rotation filter causes sideways drag when steering at speed.
+            cameraTransform.SetPositionAndRotation(resolvedPosition, desiredRotation);
+        }
         UpdateCameraFov(GetTargetThirdPersonFov(), deltaTime);
     }
 
@@ -1927,8 +2006,11 @@ public class FPSController : MonoBehaviour
         previousCameraPlayerPosition = transform.position;
         playerDelta.y = 0f;
 
+        // Carry horizontal travel immediately; smooth only framing and vertical steps.
+        smoothedCameraTarget += playerDelta;
+
         Vector3 planarVelocity = playerDelta / deltaTime;
-        Vector3 desiredLookAhead = CalculateThirdPersonLookAhead(planarVelocity, orbitYaw);
+        Vector3 desiredLookAhead = CalculateThirdPersonLookAhead(planarVelocity, cameraYaw);
 
         cameraLookAhead = Vector3.SmoothDamp(cameraLookAhead, desiredLookAhead, ref cameraLookAheadVelocity, thirdPersonLookAheadSmoothTime, Mathf.Infinity, deltaTime);
 
@@ -1997,25 +2079,33 @@ public class FPSController : MonoBehaviour
             return desiredPosition;
 
         direction /= distance;
-        RaycastHit[] hits = Physics.SphereCastAll(target, cameraCollisionRadius, direction, distance, cameraCollisionMask, QueryTriggerInteraction.Ignore);
+        int hitCount = Physics.SphereCastNonAlloc(target, cameraCollisionRadius, direction, physicsHitBuffer,
+            distance, cameraCollisionMask, QueryTriggerInteraction.Ignore);
         float bestDistance = distance;
 
-        foreach (RaycastHit hit in hits)
+        for (int index = 0; index < hitCount; index++)
         {
+            RaycastHit hit = physicsHitBuffer[index];
             if (IsSelf(hit.collider))
                 continue;
 
             bestDistance = Mathf.Min(bestDistance, Mathf.Max(0.1f, hit.distance - cameraCollisionPadding));
         }
 
-        bestDistance = Mathf.Max(thirdPersonMinCameraDistance, bestDistance);
+        float minimumDistance = Mathf.Min(thirdPersonMinCameraDistance, bestDistance);
 
         if (cameraDistance < 0f)
             cameraDistance = bestDistance;
 
-        float smoothTime = bestDistance < cameraDistance ? cameraCollisionSnapSmoothTime : cameraCollisionReturnSmoothTime;
-        cameraDistance = Mathf.SmoothDamp(cameraDistance, bestDistance, ref cameraDistanceVelocity, smoothTime, Mathf.Infinity, deltaTime);
-        cameraDistance = Mathf.Clamp(cameraDistance, thirdPersonMinCameraDistance, distance);
+        if (bestDistance < cameraDistance)
+        {
+            cameraDistance = bestDistance;
+            cameraDistanceVelocity = 0f;
+        }
+        else
+            cameraDistance = Mathf.SmoothDamp(cameraDistance, bestDistance, ref cameraDistanceVelocity,
+                cameraCollisionReturnSmoothTime, Mathf.Infinity, deltaTime);
+        cameraDistance = Mathf.Clamp(cameraDistance, minimumDistance, bestDistance);
 
         return target + direction * cameraDistance;
     }
@@ -2050,6 +2140,8 @@ public class FPSController : MonoBehaviour
         }
 
         ResetCameraVelocities();
+        lastCameraWorldPosition = cameraTransform.position;
+        lastCameraWorldRotation = cameraTransform.rotation;
     }
 
     void InitializeCameraState()
@@ -2061,6 +2153,9 @@ public class FPSController : MonoBehaviour
         smoothedCameraTarget = transform.position + cameraTargetOffset;
         cameraDistance = -1f;
         cameraStateInitialized = true;
+        cameraModeTransitioning = false;
+        lastCameraWorldPosition = cameraTransform.position;
+        lastCameraWorldRotation = cameraTransform.rotation;
     }
 
     void ResetCameraVelocities()
@@ -2080,13 +2175,23 @@ public class FPSController : MonoBehaviour
             return;
 
         UpdateAirborneAnimator();
-        SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : currentPlanarSpeed);
+        SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : currentPlanarSpeed, isClimbing ? 0f : 0.08f);
+        SetAnimatorFloat(LocomotionRateHash, GetLocomotionPlaybackRate(currentPlanarSpeed), 0.12f);
         SetAnimatorFloat(VerticalSpeedHash, verticalVelocity);
         SetAnimatorBool(GroundedHash, stableGrounded);
         SetAnimatorBool(GraffitiModeHash, graffitiMode);
         SetAnimatorBool(ParkourHash, isParkouring);
         SetAnimatorBool(ClimbingHash, isClimbing);
         SetAnimatorFloat(ClimbInputHash, climbAnimationInput);
+    }
+
+    float GetLocomotionPlaybackRate(float actualSpeed)
+    {
+        float blend = Mathf.InverseLerp(walkSpeed, sprintSpeed, actualSpeed);
+        float referenceSpeed = Mathf.Lerp(walkAnimationReferenceSpeed, runAnimationReferenceSpeed, blend);
+        // Preserve the authored cadence instead of speeding up the entire pose to
+        // compensate for a faster capsule. Traversal speeds are tuned to these clips.
+        return Mathf.Clamp(actualSpeed / Mathf.Max(0.1f, referenceSpeed), 0.1f, 1.15f);
     }
 
     void UpdateAirborneAnimator()
@@ -2233,15 +2338,21 @@ public class FPSController : MonoBehaviour
         // marker owned by GraffitiPainter shows the actual nozzle hit instead.
         if (graffitiCursorCanvas != null && graffitiCursorCanvas.activeSelf)
             graffitiCursorCanvas.SetActive(false);
-        bool menuOpen = graffitiMenu != null && graffitiMenu.IsMenuOpen;
+        bool menuOpen = (graffitiMenu != null && graffitiMenu.IsMenuOpen) ||
+            (quickGraffiti != null && quickGraffiti.BookOpen);
         Cursor.lockState = graffitiMode && !menuOpen ? CursorLockMode.Locked : CursorLockMode.Confined;
         Cursor.visible = graffitiMode && menuOpen;
     }
 
-    void SetAnimatorFloat(int hash, float value)
+    void SetAnimatorFloat(int hash, float value, float dampTime = 0f)
     {
         if (animatorParameters.Contains(hash))
-            animator.SetFloat(hash, value);
+        {
+            if (dampTime > 0f && Time.deltaTime > 0f)
+                animator.SetFloat(hash, value, dampTime, Time.deltaTime);
+            else
+                animator.SetFloat(hash, value);
+        }
     }
 
     void SetAnimatorBool(int hash, bool value)
@@ -2408,6 +2519,7 @@ public class FPSController : MonoBehaviour
 
     public void EnterGraffitiMode()
     {
+        cameraModeTransitioning = false;
         bool enteringNewMode = !graffitiMode;
 
         if (isClimbing)
@@ -2428,6 +2540,7 @@ public class FPSController : MonoBehaviour
     public void ExitGraffitiMode()
     {
         graffitiMode = false;
+        cameraModeTransitioning = true;
         focusMode = false;
         canMove = true;
         orbitYaw = transform.eulerAngles.y;

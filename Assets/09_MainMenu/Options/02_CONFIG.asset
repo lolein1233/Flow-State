@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: CONFIG
   action: 2
   scenePath: Assets/02_Escenas/Game.unity
-  visualState: 4
-  palette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
+  visualState: 1
+  palette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
   wordMask: {fileID: 2800000, guid: 218b397b8671cf54299f844538ab9d81, type: 3}
   paintColor: {r: 0.82, g: 0.87, b: 1, a: 1}
   accentColor: {r: 0.24, g: 0.32, b: 0.88, a: 1}

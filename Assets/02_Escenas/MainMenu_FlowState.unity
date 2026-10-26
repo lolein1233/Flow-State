@@ -8420,15 +8420,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3661c5572eb42ef42b9ebdfb81bc4aaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialPalette: {fileID: 11400000, guid: 6d08c4c418b18764f9d8b3950b3793bf, type: 2}
+  initialPalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
   initialStyle: {fileID: 0}
   targetVolume: {fileID: 400904294}
-  initialEmotion: 3
-  neutralPalette: {fileID: 11400000, guid: bbdc80386d590f142832d1dc89ea39d2, type: 2}
-  doubtPalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
+  initialEmotion: 1
+  comicPalette: {fileID: 11400000, guid: bbdc80386d590f142832d1dc89ea39d2, type: 2}
+  neutralStatePalette: {fileID: 11400000, guid: d4ac238d4f3d6d749a8b757d5d41c825, type: 2}
   angerPalette: {fileID: 11400000, guid: 94eddf2a7943f434496f1f5aebf354d1, type: 2}
   creativeFlowPalette: {fileID: 11400000, guid: 6d08c4c418b18764f9d8b3950b3793bf, type: 2}
-  clarityPalette: {fileID: 11400000, guid: 09c58589aa5f5f84ebb8e6014b2eb8ad, type: 2}
   defaultTransitionDuration: 0.65
   transitionCurve:
     serializedVersion: 2

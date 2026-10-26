@@ -85,6 +85,8 @@ public class GraffitiAnimation : MonoBehaviour
     Vector3 graffitiControlPosition;
     Vector3 graffitiControlRotation;
     bool graffitiControlActive;
+    Vector2 quickPaintGesture;
+    bool quickPaintGestureActive;
 
     void Awake()
     {
@@ -204,7 +206,9 @@ public class GraffitiAnimation : MonoBehaviour
         float recoil = recoilTimer > 0f ? Mathf.Sin((recoilTimer / valveRecoilDuration) * Mathf.PI) * valveRecoilDistance : 0f;
         Vector3 shake = shaking ? Vector3.Scale(shakePositionAmplitude, new Vector3(shakeTravel, Mathf.Abs(shakeTravel), -Mathf.Abs(shakeTravel))) : Vector3.zero;
         Vector3 canChange = changingCan ? BuildCanChangePosition(canChangeProgress) : Vector3.zero;
-        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake + canChange + graffitiControlPosition;
+        Vector3 quickPosition = quickPaintGestureActive
+            ? new Vector3(quickPaintGesture.x * 0.11f, quickPaintGesture.y * 0.065f, 0f) : Vector3.zero;
+        return idle + sway + bob + (sprayOffset * sprayBlend) + drift + vibration + Vector3.back * recoil + shake + canChange + graffitiControlPosition + quickPosition;
     }
 
     Vector3 BuildRotationOffset(float time)
@@ -238,7 +242,9 @@ public class GraffitiAnimation : MonoBehaviour
 
         Vector3 shake = shaking ? Vector3.Scale(shakeRotationAmplitude, new Vector3(-shakeTravel, shakeTravel, -shakeTravel)) : Vector3.zero;
         Vector3 canChange = changingCan ? BuildCanChangeRotation(canChangeProgress) : Vector3.zero;
-        return idle + sway + bob + vibration + shake + canChange + graffitiControlRotation;
+        Vector3 quickRotation = quickPaintGestureActive
+            ? new Vector3(-quickPaintGesture.y * 9f, quickPaintGesture.x * 14f, -quickPaintGesture.x * 7f) : Vector3.zero;
+        return idle + sway + bob + vibration + shake + canChange + graffitiControlRotation + quickRotation;
     }
 
     Vector3 BuildCanChangePosition(float progress)
@@ -319,6 +325,12 @@ public class GraffitiAnimation : MonoBehaviour
         spraying = false;
         shaking = false;
         shakeTravel = 0f;
+    }
+
+    public void SetQuickPaintGesture(Vector2 gesture, bool active)
+    {
+        quickPaintGesture = gesture;
+        quickPaintGestureActive = active;
     }
 
     public void SetGraffitiControl(Vector3 positionOffset, Vector3 rotationOffset, bool active)

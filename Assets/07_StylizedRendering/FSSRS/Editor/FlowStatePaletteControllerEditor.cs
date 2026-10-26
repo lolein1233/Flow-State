@@ -9,16 +9,16 @@ namespace FlowState.Rendering.Editor
     {
         private static readonly GUIContent[] PreviewLabels =
         {
-            new("Normal", "Look vivo principal"),
-            new("B/N", "Estado neutro o momento bajo"),
+            new("Neutral", "Look principal, antes Duda"),
+            new("Comic", "Blanco y negro"),
             new("Ira", "Rojo de alta intensidad"),
             new("Flow max", "Paleta multicolor al máximo")
         };
 
         private static readonly FlowEmotion[] PreviewEmotions =
         {
-            FlowEmotion.Clarity,
             FlowEmotion.Neutral,
+            FlowEmotion.Comic,
             FlowEmotion.Anger,
             FlowEmotion.CreativeFlow
         };

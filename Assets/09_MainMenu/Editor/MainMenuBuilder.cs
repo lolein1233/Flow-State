@@ -111,12 +111,11 @@ namespace FlowState.Menu.Editor
             ConfigureOptics(profile);
             var vol=Node("Menu Print Volume",root.transform).AddComponent<Volume>();vol.isGlobal=true;vol.sharedProfile=profile;
             var palettes=root.AddComponent<FlowStatePaletteController>();
-            var neutral=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Neutral_Unfinished.asset");
-            var doubt=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Doubt.asset");
+            var comic=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Comic.asset");
+            var neutral=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Neutral.asset");
             var anger=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Anger.asset");
             var flow=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_CreativeFlow.asset");
-            var clarity=Asset<FlowPaletteProfile>(Fssrs+"/Palettes/FP_Clarity.asset");
-            palettes.Configure(flow,null,vol);palettes.ConfigureEmotionPalettes(neutral,doubt,anger,flow,clarity,FlowEmotion.CreativeFlow);
+            palettes.Configure(neutral,null,vol);palettes.ConfigureEmotionPalettes(comic,neutral,anger,flow,FlowEmotion.Neutral);
 
             var canRig=Node("Can · inertia pivot",root.transform);
             var instance=(GameObject)PrefabUtility.InstantiatePrefab(model);instance.transform.SetParent(canRig.transform,false);
@@ -148,7 +147,7 @@ namespace FlowState.Menu.Editor
             foreach(var source in new[]{audio.metal,audio.aerosol,audio.music}){source.playOnAwake=false;source.spatialBlend=0;}
             audio.music.clip=Asset<AudioClip>("Assets/08_Musica/Neon Dust.mp3");audio.music.loop=true;audio.music.volume=.13f;audio.music.playOnAwake=true;
 
-            var opts=new MenuOptionData[4];string[] words={"JUGAR","GALERÍA","CONFIG","SALIR"};var emotions=new[]{FlowEmotion.CreativeFlow,FlowEmotion.Anger,FlowEmotion.Clarity,FlowEmotion.Neutral};var profiles=new[]{flow,anger,clarity,neutral};
+            var opts=new MenuOptionData[4];string[] words={"JUGAR","GALERÍA","CONFIG","SALIR"};var emotions=new[]{FlowEmotion.CreativeFlow,FlowEmotion.Anger,FlowEmotion.Neutral,FlowEmotion.Comic};var profiles=new[]{flow,anger,neutral,comic};
             var accents=new[]{new Color(1,.55f,.04f),new Color(.93f,.15f,.10f),new Color(.24f,.32f,.88f),new Color(.22f,.25f,.26f)};
             for(int i=0;i<4;i++)
             {

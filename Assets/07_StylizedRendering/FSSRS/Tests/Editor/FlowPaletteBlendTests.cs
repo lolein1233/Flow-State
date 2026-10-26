@@ -29,14 +29,47 @@ namespace FlowState.Rendering.Tests
         }
 
         [Test]
-        public void EmotionEnergy_PutsDoubtBelowFlowAndAnger()
+        public void EmotionEnergy_PutsNeutralBelowFlowAndAnger()
         {
-            float doubt = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.Doubt);
+            float neutral = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.Neutral);
             float flow = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.CreativeFlow);
             float anger = FlowStatePaletteController.GetEmotionEnergy(FlowEmotion.Anger);
 
-            Assert.That(doubt, Is.LessThan(flow));
+            Assert.That(neutral, Is.LessThan(flow));
             Assert.That(flow, Is.LessThan(anger));
+        }
+
+        [Test]
+        public void AvailableLooksPreserveShaderIndicesAndExcludeClarity()
+        {
+            Assert.That((int)FlowEmotion.Comic, Is.EqualTo(0));
+            Assert.That((int)FlowEmotion.Neutral, Is.EqualTo(1));
+            Assert.That(System.Enum.GetNames(typeof(FlowEmotion)), Is.EqualTo(
+                new[] { "Comic", "Neutral", "Anger", "CreativeFlow" }));
+        }
+
+        [Test]
+        public void PaletteMappingKeepsComicAndNeutralDistinct()
+        {
+            var owner = new GameObject("Palette mapping test");
+            owner.SetActive(false);
+            var comic = ScriptableObject.CreateInstance<FlowPaletteProfile>();
+            var neutral = ScriptableObject.CreateInstance<FlowPaletteProfile>();
+            try
+            {
+                var controller = owner.AddComponent<FlowStatePaletteController>();
+                controller.ConfigureEmotionPalettes(comic, neutral, null, null, FlowEmotion.Neutral);
+                Assert.That(controller.CurrentEmotion, Is.EqualTo(FlowEmotion.Neutral));
+                Assert.That(controller.PaletteFor(FlowEmotion.Comic), Is.SameAs(comic));
+                Assert.That(controller.PaletteFor(FlowEmotion.Neutral), Is.SameAs(neutral));
+                Assert.That(controller.PaletteFor((FlowEmotion)4), Is.SameAs(neutral));
+            }
+            finally
+            {
+                Object.DestroyImmediate(owner);
+                Object.DestroyImmediate(comic);
+                Object.DestroyImmediate(neutral);
+            }
         }
 
         private static FlowPaletteState Solid(Color color)

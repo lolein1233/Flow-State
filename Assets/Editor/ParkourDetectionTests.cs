@@ -46,6 +46,35 @@ public sealed class ParkourDetectionTests
         return method.Invoke(controller, arguments);
     }
 
+    [TestCase("Jump")]
+    [TestCase("Falling")]
+    [TestCase("AirRoll")]
+    [TestCase("FallLanding")]
+    public void AirbornePoseCanBecomeHangAndThenClimb(string initialState)
+    {
+        var animator = Create("Parkour test animator").AddComponent<Animator>();
+        animator.runtimeAnimatorController = UnityEditor.AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
+            "Assets/06_Modelos/MAIKOL/MAIKOL.controller");
+        Assert.That(animator.runtimeAnimatorController, Is.Not.Null);
+        animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        animator.Rebind();
+        animator.Play(initialState, 0, 0.3f);
+        animator.Update(0f);
+        animator.SetBool("Grounded", false);
+        animator.SetBool("Climbing", true);
+        for (int i = 0; i < 15; i++) animator.Update(0.02f);
+        Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Hang"), Is.True, initialState);
+
+        animator.SetFloat("ClimbInput", 1f);
+        for (int i = 0; i < 15; i++) animator.Update(0.02f);
+        Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("ClimbUp"), Is.True);
+
+        animator.SetBool("Climbing", false);
+        animator.SetFloat("ClimbInput", 0f);
+        for (int i = 0; i < 15; i++) animator.Update(0.02f);
+        Assert.That(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"), Is.True);
+    }
+
     [Test]
     public void ClimbDetectionAcceptsExplicitTriggerSensor()
     {

@@ -34,13 +34,21 @@ public class GraffitiMenuDrawer : MonoBehaviour
     GraffitiColorValueSlider currentValueSlider;
     bool previousCanMove;
     int closedFrame = -1;
+    GraffitiQuickPainter quickPainter;
 
     public bool IsMenuOpen => currentMenu != null;
     public bool ClosedThisFrame => closedFrame == Time.frameCount;
 
+    void Awake() => quickPainter = GetComponentInParent<GraffitiQuickPainter>();
+
     void Update()
     {
         if (PauseMenuController.GameplayInputBlocked) return;
+        if (quickPainter != null && quickPainter.IsQuickMode)
+        {
+            if (currentMenu != null) CloseMenu();
+            return;
+        }
         if (currentMenu != null && fps != null && !fps.IsGraffitiMode())
         {
             CloseMenu();

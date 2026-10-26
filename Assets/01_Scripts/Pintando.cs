@@ -77,7 +77,7 @@ public class Pintando : MonoBehaviour
             return;
         }
 
-        if (mainPainter.menuOpen || mainPainter.useDecalMode || !mainPainter.IsPainting || !Input.GetMouseButton(0))
+        if (mainPainter.menuOpen || mainPainter.IsQuickMode || mainPainter.useDecalMode || !mainPainter.IsPainting || !Input.GetMouseButton(0))
         {
             ResetStroke();
             return;

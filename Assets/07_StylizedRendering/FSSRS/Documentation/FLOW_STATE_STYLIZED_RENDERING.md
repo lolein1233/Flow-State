@@ -51,7 +51,7 @@ Do not use Punk as a permanent global state. It is intentionally designed for sh
 ## Extension points
 
 - Gameplay calls `FlowStatePaletteController.SetEmotion(FlowEmotion emotion)` when an emotional state changes. This updates the world palette and player border together.
-- The controller Inspector exposes four live preview buttons: `Normal`, `B/N`, `Ira`, and `Flow max`. The selected preview is stored in the scene and is also used as the starting state in Play Mode.
+- The controller Inspector exposes four live preview buttons: `Neutral`, `Comic`, `Ira`, and `Flow max`. Neutral is the former Doubt palette and is the default look. Comic keeps the former Neutral black-and-white treatment. Clarity has been removed. F1 opens the runtime menu; F2–F5 select Comic, Neutral, Ira, and Flow creativo.
 - Parameterless methods `SetNormalState`, `SetMonochromeState`, `SetAngerState`, and `SetFlowMaximumState` can be connected directly to UnityEvents, animation events, or gameplay triggers.
 - The player border uses compact paper, color, ink, and broken chromatic echo plates. The echo grows in traveling bands around the silhouette instead of separating the whole border from the mesh.
 - Ink flecks and halftone dots are disabled in the current art direction; hatching and material breakup remain available without the scattered point noise.
@@ -60,7 +60,8 @@ Do not use Punk as a permanent global state. It is intentionally designed for sh
 - Graffiti response and the proposed Ink Debt effect should remain separate render modules.
 
 ```csharp
-paletteController.SetEmotion(FlowEmotion.Doubt);
+paletteController.SetEmotion(FlowEmotion.Neutral);
+paletteController.SetEmotion(FlowEmotion.Comic);
 paletteController.SetEmotion(FlowEmotion.Anger, 0.2f);
 paletteController.SetEmotion(FlowEmotion.CreativeFlow, 0.65f);
 ```

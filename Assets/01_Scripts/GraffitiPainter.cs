@@ -123,6 +123,7 @@ public class GraffitiPainter : MonoBehaviour
     int nozzleIndex;
     GameObject[] autoGraffitiOnlyUI = new GameObject[0];
     Pintando freePainter;
+    GraffitiQuickPainter quickPainter;
     Vector2 targetHandPosition;
     Vector2 smoothedHandPosition;
     float targetDepth;
@@ -135,12 +136,13 @@ public class GraffitiPainter : MonoBehaviour
     bool physicalControlWasActive;
 
     public bool IsPainting => isPainting;
+    public bool IsQuickMode => quickPainter != null && quickPainter.IsQuickMode;
     public bool CanEmitPaint => isPainting && emissionAllowed && sprayResources != null && sprayResources.HasPaint && !sprayResources.IsShaking && !sprayResources.IsChangingCan;
     public float MinimumStampExposure => Mathf.Max(1f, minimumStampExposure);
     public float SprayCone01 => usePhysicalSprayControl && physicalControlWasActive
         ? useAdaptiveSprayDistance ? adaptiveCone : Mathf.SmoothStep(0f, 1f, (1f - smoothedDepth) * 0.5f)
         : 0.5f;
-    public bool SurfaceCapacityReached => freePainter != null && freePainter.CapacityReached;
+    public bool SurfaceCapacityReached => !IsQuickMode && freePainter != null && freePainter.CapacityReached;
     public float MaximumPaintDistance => freePainter != null && !useDecalMode
         ? Mathf.Min(freePainter.distance, raycastUI != null ? raycastUI.distance : freePainter.distance)
         : raycastUI != null ? raycastUI.distance : 3f;
@@ -186,6 +188,7 @@ public class GraffitiPainter : MonoBehaviour
         RefreshPhysicalSprayRay();
         if (raycastUI != null)
             raycastUI.RefreshSurface();
+        if (quickPainter != null) quickPainter.RefreshPreview();
         UpdateWallCursor();
         UpdateSprayPresentation();
         UpdateUIFade();
@@ -245,7 +248,7 @@ public class GraffitiPainter : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (!IsQuickMode && Input.GetKeyDown(KeyCode.Tab))
         {
             if (tabCyclesNozzles)
                 CycleNozzle();
@@ -292,6 +295,8 @@ public class GraffitiPainter : MonoBehaviour
 
         if (freePainter == null)
             freePainter = GetComponent<Pintando>();
+        if (quickPainter == null)
+            quickPainter = GetComponent<GraffitiQuickPainter>();
 
         if (wallCursor == null)
             wallCursor = GetComponentInChildren<GraffitiWallCursor>(true);
@@ -341,6 +346,7 @@ public class GraffitiPainter : MonoBehaviour
         foreach (TMP_Text text in texts)
         {
             if (text == null || string.IsNullOrEmpty(text.text) ||
+                text.GetComponentInParent<QuickGraffitiBook>(true) != null ||
                 text.GetComponentInParent<PauseMenuController>(true) != null)
                 continue;
 
@@ -357,6 +363,7 @@ public class GraffitiPainter : MonoBehaviour
             return;
 
         RaycastHit hit = raycastUI.GetHit();
+        if (IsQuickMode && !quickPainter.TryBegin(hit)) return;
         SetGraffitiToolVisible(true);
 
         if (fps != null)
@@ -370,7 +377,7 @@ public class GraffitiPainter : MonoBehaviour
         raycastUI.isPainting = true;
         targetAlpha = 0f;
 
-        if (useDecalMode && decalPrefab != null)
+        if (!IsQuickMode && useDecalMode && decalPrefab != null)
         {
             Vector3 position = hit.point + hit.normal * 0.01f;
             Quaternion rotation = Quaternion.LookRotation(-hit.normal);
@@ -392,7 +399,7 @@ public class GraffitiPainter : MonoBehaviour
         emissionAllowed = sprayResources.CanEmitAt(Time.time);
         SetParticleEmission(emissionAllowed);
 
-        if (!useDecalMode && emissionAllowed && freePainter != null)
+        if (!IsQuickMode && !useDecalMode && emissionAllowed && freePainter != null)
             freePainter.BeginStrokeImmediately(hit);
 
         if (sprayCan != null)
@@ -403,6 +410,12 @@ public class GraffitiPainter : MonoBehaviour
     {
         emissionAllowed = sprayResources == null || sprayResources.TickSpray(Time.deltaTime, currentNozzleShape);
         SetParticleEmission(emissionAllowed);
+
+        if (IsQuickMode)
+        {
+            if (emissionAllowed && quickPainter.Advance(Time.deltaTime)) StopPainting();
+            return;
+        }
 
         if (!useDecalMode || currentGraffiti == null || !emissionAllowed)
             return;
@@ -417,6 +430,7 @@ public class GraffitiPainter : MonoBehaviour
 
     void StopPainting()
     {
+        if (quickPainter != null) quickPainter.StopStroke();
         isPainting = false;
         emissionAllowed = false;
 
@@ -587,6 +601,11 @@ public class GraffitiPainter : MonoBehaviour
 
     void UpdatePhysicalSprayControl(bool active)
     {
+        if (IsQuickMode && quickPainter.StrokeActive)
+        {
+            if (sprayCan != null) sprayCan.SetGraffitiControl(Vector3.zero, Vector3.zero, false);
+            return;
+        }
         if (!usePhysicalSprayControl || cam == null || sprayCan == null)
         {
             physicalControlWasActive = false;
@@ -644,7 +663,7 @@ public class GraffitiPainter : MonoBehaviour
                 // for a broad cap even though the hand and camera no longer jump.
                 if (useAdaptiveSprayDistance)
                     UpdateAdaptiveSprayDistance(rawMouse);
-                else
+                else if (!IsQuickMode)
                     targetDepth = Mathf.Clamp(targetDepth + Input.GetAxisRaw("Mouse ScrollWheel") * depthSensitivity * 10f, -1f, 1f);
             }
         }
@@ -761,12 +780,14 @@ public class GraffitiPainter : MonoBehaviour
             ? Mathf.Clamp01(sprayResources.OutputDensity * sprayResources.OutputOpacity)
             : 1f;
         Vector3 nozzleUp = sprayCan != null ? sprayCan.GetNozzleUp() : (cam != null ? cam.transform.up : Vector3.up);
-        sprayVFX.UpdatePresentation(sprayRay, targetDistance, SprayCone01, currentSprayColor,
-            currentNozzleShape, resourcePressure, nozzleUp);
+        Color color = IsQuickMode && quickPainter.Selected != null ? quickPainter.Selected.sprayColor : currentSprayColor;
+        sprayVFX.UpdatePresentation(sprayRay, targetDistance, IsQuickMode ? 0.18f : SprayCone01, color,
+            IsQuickMode ? GraffitiNozzleShape.SoftRound : currentNozzleShape, resourcePressure, nozzleUp);
     }
 
     public Ray GetSprayRay()
     {
+        if (isPainting && IsQuickMode && quickPainter.StrokeActive) return quickPainter.StrokeRay();
         if (usePhysicalSprayControl && hasSprayRay)
             return currentSprayRay;
 
@@ -892,7 +913,7 @@ public class GraffitiPainter : MonoBehaviour
         if (wallCursor == null || raycastUI == null)
             return;
 
-        bool visible = IsGraffitiModeActive() && !menuOpen &&
+        bool visible = !IsQuickMode && IsGraffitiModeActive() && !menuOpen &&
             sprayResources != null && !sprayResources.IsShaking && !sprayResources.IsChangingCan &&
             raycastUI.CanDetectGraffitiSurface();
         RaycastHit hit = visible ? raycastUI.GetHit() : default;
@@ -1014,6 +1035,7 @@ public class GraffitiPainter : MonoBehaviour
         {
             // Help pages mention nozzles too, but their visibility belongs to the pause menu.
             if (text == null || text == paintText || text.gameObject == paintUI ||
+                text.GetComponentInParent<QuickGraffitiBook>(true) != null ||
                 text.GetComponentInParent<PauseMenuController>(true) != null)
                 continue;
 

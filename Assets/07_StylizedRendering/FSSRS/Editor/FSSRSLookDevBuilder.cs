@@ -164,11 +164,10 @@ namespace FlowState.Rendering.Editor
         {
             return new Dictionary<string, FlowPaletteProfile>
             {
-                ["Neutral"] = CreatePalette("FP_Neutral_Unfinished", "F5F3EC", "08080A", "242429", "85858C", "F7F7F2", "C8C8CE"),
-                ["Doubt"] = CreatePalette("FP_Doubt", "E9E6E1", "0A0910", "25263B", "6556A9", "8AD5E0", "D93683"),
+                ["Comic"] = CreatePalette("FP_Comic", "F5F3EC", "08080A", "242429", "85858C", "F7F7F2", "C8C8CE"),
+                ["Neutral"] = CreatePalette("FP_Neutral", "E9E6E1", "0A0910", "25263B", "6556A9", "8AD5E0", "D93683"),
                 ["Anger"] = CreatePalette("FP_Anger", "F1D9DA", "0A0508", "300711", "C90C2E", "FF3B47", "FF003C"),
-                ["CreativeFlow"] = CreatePalette("FP_CreativeFlow", "F7F2DD", "08070C", "281244", "00BBD4", "F5E61B", "F01883"),
-                ["Clarity"] = CreatePalette("FP_Clarity", "F8F4E6", "080B10", "14313D", "19C6C1", "F7EA58", "FF4A54")
+                ["CreativeFlow"] = CreatePalette("FP_CreativeFlow", "F7F2DD", "08070C", "281244", "00BBD4", "F5E61B", "F01883")
             };
         }
 
@@ -430,14 +429,13 @@ namespace FlowState.Rendering.Editor
             FlowStatePaletteController controller = root.GetComponent<FlowStatePaletteController>();
             if (controller == null)
                 controller = root.AddComponent<FlowStatePaletteController>();
-            controller.Configure(palettes["CreativeFlow"], preset, volume);
+            controller.Configure(palettes["Neutral"], preset, volume);
             controller.ConfigureEmotionPalettes(
+                palettes["Comic"],
                 palettes["Neutral"],
-                palettes["Doubt"],
                 palettes["Anger"],
                 palettes["CreativeFlow"],
-                palettes["Clarity"],
-                FlowEmotion.Clarity);
+                FlowEmotion.Neutral);
 
             GameObject playerVisual = GameObject.Find("MAIKOL_Visual");
             if (playerVisual != null)

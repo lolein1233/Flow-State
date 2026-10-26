@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7dd14c808afbe704683430684cb4a66f, type: 3}
-  m_Name: FP_Neutral_Unfinished
+  m_Name: FP_Comic
   m_EditorClassIdentifier: 
   paper: {r: 0.9607843, g: 0.9529412, b: 0.9254902, a: 1}
   ink: {r: 0.03137255, g: 0.03137255, b: 0.039215688, a: 1}

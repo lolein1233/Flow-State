@@ -611,13 +611,15 @@ public sealed class PauseMenuController : MonoBehaviour
         AddControlsColumn(controlsPages[0].transform, bodyFont, "02 / DEJA TU MARCA", 1, new string[,]
         {
             { graffiti + " / PARED", "Entrar al modo graffiti" },
-            { graffiti + " OTRA VEZ", "Abrir / cerrar colores y boquillas" },
-            { "CLIC IZQUIERDO", "Mantener para pintar" },
-            { KeyLabel(drawer != null ? drawer.selectKey : KeyCode.E) + " / CLIC", "Elegir color o boquilla en el menú" },
-            { "TAB", "Cambiar de boquilla" },
+            { "E", "Alternar graffiti libre / rápido" },
+            { graffiti + " OTRA VEZ", "Colores (libre) / libreta (rápido)" },
+            { "MANTÉN CLIC", "Pintar; suelta para pausar la pieza" },
+            { KeyLabel(drawer != null ? drawer.selectKey : KeyCode.E) + " / CLIC", "Elegir dibujo, color o boquilla" },
+            { "← / →", "Pasar páginas de la libreta" },
+            { "TAB", "Cambiar boquilla en modo libre" },
             { shake, "Agitar y recuperar la mezcla" },
             { can, "Cambiar la lata cuando esté vacía" },
-            { "RUEDA MOUSE", "Acercar / alejar la lata" },
+            { "RUEDA MOUSE", "Cambiar tamaño del graffiti rápido" },
             { "ESC", "Cerrar menú; otra vez: salir de graffiti" },
             { "B", "Abrir / cerrar esta ayuda" }
         });
@@ -636,8 +638,8 @@ public sealed class PauseMenuController : MonoBehaviour
             { "F7", "Volver a Lugar 1" },
             { "F8", "Ir a Lugar 2" },
             { "F1", "Abrir / cerrar menú de emociones" },
-            { "F2 / F3 / F4", "Neutral / duda / ira (menú abierto)" },
-            { "F5 / F6", "Flow creativo / claridad (menú abierto)" },
+            { "F2 / F3 / F4", "Comic / neutral / ira (menú abierto)" },
+            { "F5", "Flow creativo (menú abierto)" },
             { "B / ESC", "Cerrar esta ayuda y volver al juego" }
         });
         var note = CreateText("ContextNote", controlsPages[1].transform, bodyFont,
@@ -658,7 +660,7 @@ public sealed class PauseMenuController : MonoBehaviour
         SetRect(section.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(left, -284f), new Vector2(left + 650f, -244f));
         for (int i = 0; i < rows.GetLength(0); i++)
         {
-            float y = -316f - i * 47f;
+            float y = -316f - i * (rows.GetLength(0) > 10 ? 39f : 47f);
             var key = CreateRect("Key" + i, parent, new Vector2(0f, 1f), new Vector2(0f, 1f),
                 new Vector2(left + 112f, y), new Vector2(224f, 37f));
             key.gameObject.AddComponent<UnityEngine.UI.Image>().color = Ink;

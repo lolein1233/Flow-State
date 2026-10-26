@@ -1,15 +1,16 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace FlowState.Rendering
 {
     public enum FlowEmotion
     {
-        Neutral,
-        Doubt,
-        Anger,
-        CreativeFlow,
-        Clarity
+        // Keep the serialized and shader indices of the existing looks.
+        Comic = 0,
+        Neutral = 1,
+        Anger = 2,
+        CreativeFlow = 3
     }
 
     [ExecuteAlways]
@@ -19,12 +20,11 @@ namespace FlowState.Rendering
         [SerializeField] private FlowPaletteProfile initialPalette;
         [SerializeField] private FSSRSStylePreset initialStyle;
         [SerializeField] private Volume targetVolume;
-        [SerializeField] private FlowEmotion initialEmotion = FlowEmotion.CreativeFlow;
-        [SerializeField] private FlowPaletteProfile neutralPalette;
-        [SerializeField] private FlowPaletteProfile doubtPalette;
+        [SerializeField] private FlowEmotion initialEmotion = FlowEmotion.Neutral;
+        [SerializeField, FormerlySerializedAs("neutralPalette")] private FlowPaletteProfile comicPalette;
+        [SerializeField, FormerlySerializedAs("doubtPalette"), InspectorName("Neutral Palette")] private FlowPaletteProfile neutralStatePalette;
         [SerializeField] private FlowPaletteProfile angerPalette;
         [SerializeField] private FlowPaletteProfile creativeFlowPalette;
-        [SerializeField] private FlowPaletteProfile clarityPalette;
         [SerializeField, Min(0.01f)] private float defaultTransitionDuration = 0.65f;
         [SerializeField] private AnimationCurve transitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
@@ -39,6 +39,7 @@ namespace FlowState.Rendering
 
         private void OnEnable()
         {
+            NormalizeInitialEmotion();
             CurrentEmotion = initialEmotion;
             FlowPaletteProfile emotionPalette = PaletteFor(CurrentEmotion);
             if (emotionPalette != null)
@@ -59,6 +60,7 @@ namespace FlowState.Rendering
             if (Application.isPlaying)
                 return;
 
+            NormalizeInitialEmotion();
             CurrentEmotion = initialEmotion;
             FlowPaletteProfile previewPalette = PaletteFor(CurrentEmotion);
             if (previewPalette != null)
@@ -126,6 +128,8 @@ namespace FlowState.Rendering
 
         public void SetEmotion(FlowEmotion emotion, float duration)
         {
+            if (!System.Enum.IsDefined(typeof(FlowEmotion), emotion))
+                emotion = FlowEmotion.Neutral;
             CurrentEmotion = emotion;
             ApplyEmotion(emotion);
             SetPalette(PaletteFor(emotion), duration);
@@ -133,12 +137,12 @@ namespace FlowState.Rendering
 
         public void SetNormalState()
         {
-            SetEmotion(FlowEmotion.Clarity);
+            SetEmotion(FlowEmotion.Neutral);
         }
 
         public void SetMonochromeState()
         {
-            SetEmotion(FlowEmotion.Neutral);
+            SetEmotion(FlowEmotion.Comic);
         }
 
         public void SetAngerState()
@@ -170,18 +174,16 @@ namespace FlowState.Rendering
         }
 
         public void ConfigureEmotionPalettes(
+            FlowPaletteProfile comic,
             FlowPaletteProfile neutral,
-            FlowPaletteProfile doubt,
             FlowPaletteProfile anger,
             FlowPaletteProfile creativeFlow,
-            FlowPaletteProfile clarity,
             FlowEmotion startingEmotion)
         {
-            neutralPalette = neutral;
-            doubtPalette = doubt;
+            comicPalette = comic;
+            neutralStatePalette = neutral;
             angerPalette = anger;
             creativeFlowPalette = creativeFlow;
-            clarityPalette = clarity;
             initialEmotion = startingEmotion;
             CurrentEmotion = startingEmotion;
 
@@ -197,12 +199,11 @@ namespace FlowState.Rendering
         {
             return emotion switch
             {
-                FlowEmotion.Neutral => neutralPalette,
-                FlowEmotion.Doubt => doubtPalette,
+                FlowEmotion.Comic => comicPalette,
+                FlowEmotion.Neutral => neutralStatePalette,
                 FlowEmotion.Anger => angerPalette,
                 FlowEmotion.CreativeFlow => creativeFlowPalette,
-                FlowEmotion.Clarity => clarityPalette,
-                _ => initialPalette
+                _ => neutralStatePalette != null ? neutralStatePalette : initialPalette
             };
         }
 
@@ -210,13 +211,19 @@ namespace FlowState.Rendering
         {
             return emotion switch
             {
-                FlowEmotion.Doubt => 0.22f,
-                FlowEmotion.Neutral => 0.42f,
-                FlowEmotion.Clarity => 0.62f,
+                FlowEmotion.Neutral => 0.22f,
+                FlowEmotion.Comic => 0.42f,
                 FlowEmotion.CreativeFlow => 0.86f,
                 FlowEmotion.Anger => 1f,
                 _ => 0.42f
             };
+        }
+
+        private void NormalizeInitialEmotion()
+        {
+            // Old scenes may still serialize the removed Clarity value (4).
+            if (!System.Enum.IsDefined(typeof(FlowEmotion), initialEmotion))
+                initialEmotion = FlowEmotion.Neutral;
         }
 
         private static void Apply(in FlowPaletteState state)

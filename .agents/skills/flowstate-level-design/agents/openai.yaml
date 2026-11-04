@@ -1,0 +1,4 @@
+interface:
+  display_name: "FLOWSTATE Level Design"
+  short_description: "Métricas, rutas y greyboxes de FLOWSTATE"
+  default_prompt: "Usa $flowstate-level-design para analizar este espacio de FLOWSTATE con métricas verificables, rutas, recuperación y playtests; distingue propuesta, prototipo autorizado y nivel aprobado."

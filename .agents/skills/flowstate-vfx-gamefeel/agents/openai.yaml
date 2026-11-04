@@ -1,0 +1,6 @@
+interface:
+  display_name: "FLOWSTATE VFX & Game Feel"
+  short_description: "Efectos y feedback jugable de FLOWSTATE"
+  default_prompt: "Usa $flowstate-vfx-gamefeel para evaluar este efecto de FLOWSTATE con eventos reales, legibilidad, accesibilidad y criterios visuales y de rendimiento; implementa solo lo autorizado."
+policy:
+  allow_implicit_invocation: true

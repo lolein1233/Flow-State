@@ -1,0 +1,6 @@
+interface:
+  display_name: "FLOWSTATE Animation"
+  short_description: "Animación, contactos y cámaras de FLOWSTATE"
+  default_prompt: "Usa $flowstate-animation para analizar esta animación o cámara de FLOWSTATE con rig verificado, función jugable, contactos y criterios de validación; implementa solo lo autorizado."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,1192 @@
+{
+  "date": "2026-10-28",
+  "source": "Unity MCP execute_code; explicit read-only properties; Edit Mode",
+  "instance": "FLOWSTATE@3a6232501f358c97",
+  "scene": {
+    "path": "Assets/02_Escenas/Gameplay.unity",
+    "isDirty": false,
+    "playing": false
+  },
+  "camera": {
+    "name": "MainCamera",
+    "fieldOfView": 62,
+    "allowHDR": true,
+    "post": true,
+    "volumeMask": 1,
+    "rendererIndex": 1,
+    "antialiasing": "SubpixelMorphologicalAntiAliasing",
+    "renderer": "Assets/07_StylizedRendering/FSSRS/Renderer/FSSRS_PC_Renderer.asset",
+    "renderMode": "ForwardPlus",
+    "features": [
+      {
+        "name": "ScreenSpaceAmbientOcclusion",
+        "type": "ScreenSpaceAmbientOcclusion",
+        "active": true
+      },
+      {
+        "name": "DecalRendererFeature",
+        "type": "DecalRendererFeature",
+        "active": true
+      },
+      {
+        "name": "FSSRS Print Composite",
+        "type": "FSSRSRendererFeature",
+        "active": true
+      }
+    ]
+  },
+  "pipeline": {
+    "path": "Assets/Settings/PC_RPAsset.asset",
+    "quality": "PC",
+    "settings": {
+      "m_ShadowDistance": 55,
+      "m_ShadowCascadeCount": 2,
+      "m_MainLightShadowmapResolution": 2048,
+      "m_AdditionalLightsShadowmapResolution": 1024,
+      "m_MSAA": 1,
+      "m_RenderScale": 1,
+      "m_UseSRPBatcher": true,
+      "m_RequireDepthTexture": true,
+      "m_RequireOpaqueTexture": true,
+      "m_SupportsHDR": true
+    }
+  },
+  "volumes": [
+    {
+      "name": "FSSRS LookDev",
+      "active": false,
+      "isGlobal": true,
+      "priority": 100,
+      "weight": 1,
+      "layer": 0,
+      "profile": "Assets/07_StylizedRendering/FSSRS/Profiles/FSSRS_LookDev_Profile.asset",
+      "effects": [
+        {
+          "name": "FSSRSVolumeComponent",
+          "active": true,
+          "values": {
+            "enabledEffect": {
+              "overridden": true,
+              "value": true
+            },
+            "outlineIntensity": {
+              "overridden": true,
+              "value": 0.92
+            },
+            "outlineThickness": {
+              "overridden": true,
+              "value": 1.45
+            },
+            "posterizeSteps": {
+              "overridden": true,
+              "value": 5
+            },
+            "inkFleckIntensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "halftoneIntensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "hatchIntensity": {
+              "overridden": true,
+              "value": 0.18
+            },
+            "paletteInfluence": {
+              "overridden": true,
+              "value": 0.56
+            },
+            "paperLift": {
+              "overridden": true,
+              "value": 0.36
+            },
+            "colorSaturation": {
+              "overridden": true,
+              "value": 0.36
+            },
+            "accentBoost": {
+              "overridden": true,
+              "value": 0.46
+            }
+          }
+        },
+        {
+          "name": "Bloom",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.28
+            },
+            "threshold": {
+              "overridden": true,
+              "value": 0.9
+            }
+          }
+        },
+        {
+          "name": "MotionBlur",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "mode": {
+              "overridden": true,
+              "value": "Camera Only"
+            }
+          }
+        },
+        {
+          "name": "ChromaticAberration",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0
+            }
+          }
+        },
+        {
+          "name": "FilmGrain",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0
+            }
+          }
+        },
+        {
+          "name": "Vignette",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.035
+            }
+          }
+        },
+        {
+          "name": "ColorAdjustments",
+          "active": true,
+          "values": {
+            "postExposure": {
+              "overridden": true,
+              "value": 0.5
+            },
+            "contrast": {
+              "overridden": true,
+              "value": 9
+            },
+            "saturation": {
+              "overridden": true,
+              "value": 22
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "FLOWSTATE · Cinematic Blockout Lighting",
+      "active": false,
+      "isGlobal": true,
+      "priority": 110,
+      "weight": 1,
+      "layer": 0,
+      "profile": "Assets/07_StylizedRendering/FSSRS/Profiles/Gameplay_Cinematic_Blockout_Profile.asset",
+      "effects": [
+        {
+          "name": "ColorAdjustments",
+          "active": true,
+          "values": {
+            "postExposure": {
+              "overridden": true,
+              "value": 0.45
+            },
+            "contrast": {
+              "overridden": true,
+              "value": 10
+            },
+            "saturation": {
+              "overridden": true,
+              "value": -3
+            }
+          }
+        },
+        {
+          "name": "Bloom",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.16
+            },
+            "threshold": {
+              "overridden": true,
+              "value": 1.1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "FLOWSTATE | INDUSTRIAL DUSK",
+      "active": true,
+      "isGlobal": true,
+      "priority": 200,
+      "weight": 1,
+      "layer": 0,
+      "profile": "Assets/ArtDirection/IndustrialDusk/Gameplay_IndustrialDusk.asset",
+      "effects": [
+        {
+          "name": "Tonemapping",
+          "active": true,
+          "values": {
+            "mode": {
+              "overridden": true,
+              "value": "ACES"
+            }
+          }
+        },
+        {
+          "name": "Bloom",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.2
+            },
+            "threshold": {
+              "overridden": true,
+              "value": 1.1
+            }
+          }
+        },
+        {
+          "name": "ColorAdjustments",
+          "active": true,
+          "values": {
+            "postExposure": {
+              "overridden": true,
+              "value": 0.25
+            },
+            "contrast": {
+              "overridden": true,
+              "value": 12
+            },
+            "saturation": {
+              "overridden": true,
+              "value": 2
+            }
+          }
+        },
+        {
+          "name": "WhiteBalance",
+          "active": true,
+          "values": {}
+        },
+        {
+          "name": "Vignette",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.17
+            }
+          }
+        },
+        {
+          "name": "SplitToning",
+          "active": true,
+          "values": {}
+        },
+        {
+          "name": "FilmGrain",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.055
+            }
+          }
+        },
+        {
+          "name": "MotionBlur",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "mode": {
+              "overridden": true,
+              "value": "Camera Only"
+            }
+          }
+        },
+        {
+          "name": "DepthOfField",
+          "active": true,
+          "values": {
+            "mode": {
+              "overridden": true,
+              "value": "Off"
+            }
+          }
+        },
+        {
+          "name": "ChromaticAberration",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0
+            }
+          }
+        },
+        {
+          "name": "FSSRSVolumeComponent",
+          "active": true,
+          "values": {
+            "enabledEffect": {
+              "overridden": true,
+              "value": true
+            },
+            "outlineIntensity": {
+              "overridden": true,
+              "value": 0.92
+            },
+            "outlineThickness": {
+              "overridden": true,
+              "value": 1.45
+            },
+            "posterizeSteps": {
+              "overridden": true,
+              "value": 5
+            },
+            "inkFleckIntensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "halftoneIntensity": {
+              "overridden": true,
+              "value": 0
+            },
+            "hatchIntensity": {
+              "overridden": true,
+              "value": 0.18
+            },
+            "paletteInfluence": {
+              "overridden": true,
+              "value": 0.7
+            },
+            "paperLift": {
+              "overridden": true,
+              "value": 0.36
+            },
+            "colorSaturation": {
+              "overridden": true,
+              "value": 0.4
+            },
+            "accentBoost": {
+              "overridden": true,
+              "value": 0.52
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Global Volume",
+      "active": false,
+      "isGlobal": true,
+      "priority": 0,
+      "weight": 1,
+      "layer": 0,
+      "profile": "Assets/Settings/SampleSceneProfile.asset",
+      "effects": [
+        {
+          "name": "Tonemapping",
+          "active": true,
+          "values": {
+            "mode": {
+              "overridden": true,
+              "value": "ACES"
+            }
+          }
+        },
+        {
+          "name": "Bloom",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 1.09
+            },
+            "threshold": {
+              "overridden": true,
+              "value": 0.2
+            }
+          }
+        },
+        {
+          "name": "MotionBlur",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.5
+            },
+            "mode": {
+              "overridden": false,
+              "value": "Camera Only"
+            }
+          }
+        },
+        {
+          "name": "Vignette",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.433
+            }
+          }
+        },
+        {
+          "name": "ChromaticAberration",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.328
+            }
+          }
+        },
+        {
+          "name": "FilmGrain",
+          "active": true,
+          "values": {
+            "intensity": {
+              "overridden": true,
+              "value": 0.426
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "lights": {
+    "total": 106,
+    "active": 56,
+    "shadowEnabled": 6,
+    "directional": [
+      {
+        "name": "Scene Shadow Key Light · cool moon",
+        "type": "Directional",
+        "intensity": 1.05,
+        "color": [
+          1,
+          0.87,
+          0.69
+        ],
+        "shadows": "Soft",
+        "shadowStrength": 0.82,
+        "rotation": [
+          18,
+          65,
+          -8.977107e-7
+        ]
+      },
+      {
+        "name": "SKY | Late afternoon open-sky fill",
+        "type": "Directional",
+        "intensity": 0.65,
+        "color": [
+          0.64,
+          0.73,
+          0.9
+        ],
+        "shadows": "None",
+        "shadowStrength": 1,
+        "rotation": [
+          58,
+          219.999985,
+          0
+        ]
+      }
+    ]
+  },
+  "reflectionProbes": [
+    {
+      "name": "PROBE | Industrial bay",
+      "active": true,
+      "mode": "Custom",
+      "resolution": 128,
+      "boxProjection": true,
+      "intensity": 0.6,
+      "texture": "Assets/ArtDirection/IndustrialDusk/Reflection_1.exr"
+    },
+    {
+      "name": "PROBE | Hero street",
+      "active": true,
+      "mode": "Custom",
+      "resolution": 128,
+      "boxProjection": true,
+      "intensity": 0.6,
+      "texture": "Assets/ArtDirection/IndustrialDusk/Reflection_0.exr"
+    }
+  ],
+  "lightProbes": {
+    "groups": 0,
+    "bakedCount": 0,
+    "lightmaps": 0
+  },
+  "environment": {
+    "fog": true,
+    "fogMode": "Exponential",
+    "fogDensity": 0.0016,
+    "fogColor": [
+      0.22,
+      0.265,
+      0.35
+    ],
+    "ambientMode": "Flat",
+    "ambientIntensity": 1,
+    "sky": "Assets/ArtDirection/IndustrialDusk/IndustrialDusk_Sky.mat"
+  },
+  "materials": [
+    {
+      "target": "00_Test_Floor",
+      "renderer": "00_Test_Floor",
+      "type": "MeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "pared",
+          "path": "Assets/04_Materiales e Imagenes/textures/textures/pared.mat",
+          "shader": "Universal Render Pipeline/Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_Color": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "_BumpScale": 1,
+            "_Smoothness": 0.5
+          }
+        }
+      ]
+    },
+    {
+      "target": "00_Vault_Low_065",
+      "renderer": "00_Vault_Low_065",
+      "type": "MeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "pared",
+          "path": "Assets/04_Materiales e Imagenes/textures/pared.mat",
+          "shader": "Universal Render Pipeline/Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_Color": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "_BumpScale": 8,
+            "_Smoothness": 0
+          }
+        }
+      ]
+    },
+    {
+      "target": "01_Vault_Medium_085",
+      "renderer": "01_Vault_Medium_085",
+      "type": "MeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "pared",
+          "path": "Assets/04_Materiales e Imagenes/textures/pared.mat",
+          "shader": "Universal Render Pipeline/Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_Color": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "_BumpScale": 8,
+            "_Smoothness": 0
+          }
+        }
+      ]
+    },
+    {
+      "target": "05_Climb_Wall_600",
+      "renderer": "05_Climb_Wall_600",
+      "type": "MeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "pared",
+          "path": "Assets/04_Materiales e Imagenes/textures/pared.mat",
+          "shader": "Universal Render Pipeline/Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_Color": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              1
+            ],
+            "_BumpScale": 8,
+            "_Smoothness": 0
+          }
+        }
+      ]
+    },
+    {
+      "target": "Player",
+      "renderer": "Player",
+      "type": "MeshRenderer",
+      "active": false,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "ZAPATOS TEXTURE Base Color_36971be9_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/ZAPATOS TEXTURE Base Color_36971be9_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 0,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "target": "Player",
+      "renderer": "Spray Test update (1)",
+      "type": "MeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "LATA_f865e23c_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/LATA_f865e23c_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 0,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        }
+      ]
+    },
+    {
+      "target": "Player",
+      "renderer": "PANTALON PRUEBA",
+      "type": "SkinnedMeshRenderer",
+      "active": true,
+      "shadow": "On",
+      "receiveShadows": true,
+      "mats": [
+        {
+          "name": "PANTALON TEXTURE_dde89ad1_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/PANTALON TEXTURE_dde89ad1_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "0e01920c-37eb-441e-9e7c-d41404949042 1_c6a242bb_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/0e01920c-37eb-441e-9e7c-d41404949042 1_c6a242bb_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "ZAPATOS TEXTURE_512669fe_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/ZAPATOS TEXTURE_512669fe_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "TORSO TEXTURE_9cfefaec_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/TORSO TEXTURE_9cfefaec_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "d54fe4fe-0ef2-46bb-9e85-222efb8e5723_67d3521a_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/d54fe4fe-0ef2-46bb-9e85-222efb8e5723_67d3521a_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "CABEZA TEXTURE_78f4ae9b_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/CABEZA TEXTURE_78f4ae9b_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "GORRO TEXTURE_36238133_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/GORRO TEXTURE_36238133_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "MASCARA TEXTURE_9b3f5d8f_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/MASCARA TEXTURE_9b3f5d8f_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        },
+        {
+          "name": "MANOS TEXTURE_bf069f8c_FSSRS",
+          "path": "Assets/07_StylizedRendering/FSSRS/Materials/LookDev/Characters/MANOS TEXTURE_bf069f8c_FSSRS.mat",
+          "shader": "FLOWSTATE/FSSRS/Stylized Lit",
+          "queue": 2000,
+          "props": {
+            "_BaseColor": [
+              0.9063317,
+              0.9063317,
+              0.9063317,
+              1
+            ],
+            "_EmissionColor": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "_BandCount": 3,
+            "_PaletteInfluence": 0.88,
+            "_AmbientStrength": 0.74,
+            "_LightColorStrength": 0.38,
+            "_RimStrength": 0.82,
+            "_HatchStrength": 0.18,
+            "_InkBreakup": 0.06,
+            "_PrintRefinement": 1,
+            "_BumpScale": 1,
+            "_Smoothness": 0.2
+          }
+        }
+      ]
+    }
+  ],
+  "canvases": [
+    {
+      "name": "Canvas (2)",
+      "renderMode": 2,
+      "active": true,
+      "images": 1,
+      "parent": "Parkour_Test_Blockout"
+    }
+  ],
+  "captures": {
+    "mainCamera": {
+      "file": "Captures/Gameplay-MainCamera-Edit-2026-10-28.png",
+      "before": {
+        "position": [
+          114.380127,
+          3.61859846,
+          -128.335663
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fieldOfView": 62,
+        "pixelWidth": 1920,
+        "pixelHeight": 1080,
+        "aspect": 1.77777779,
+        "targetTexture": 0,
+        "dirty": false
+      },
+      "after": {
+        "position": [
+          114.380127,
+          3.61859846,
+          -128.335663
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "fieldOfView": 62,
+        "pixelWidth": 1920,
+        "pixelHeight": 1080,
+        "aspect": 1.77777779,
+        "targetTexture": 0,
+        "dirty": false
+      },
+      "mode": "Edit; direct camera render, may exclude Screen Space Overlay UI; no runtime initialization"
+    },
+    "sceneViewInitial": {
+      "pivot": [
+        1514.8667,
+        135.83522,
+        0.005405029
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "size": 471.4034,
+      "orthographic": true,
+      "in2DMode": true,
+      "sceneLighting": true,
+      "drawGizmos": true,
+      "fx": {
+        "showFog": true,
+        "showImageEffects": true,
+        "showSkybox": true
+      },
+      "sceneDirty": false
+    },
+    "city": {
+      "pivot": [
+        98,
+        19,
+        -363
+      ],
+      "rotation": [
+        0.132731751,
+        0.297779351,
+        -0.0418501571,
+        0.9444354
+      ],
+      "size": 18,
+      "orthographic": false,
+      "in2DMode": false,
+      "drawGizmos": false,
+      "sceneLighting": true,
+      "fx": {
+        "showFog": true,
+        "showImageEffects": true,
+        "showSkybox": true
+      },
+      "camera": {
+        "position": [
+          78.1511459,
+          28.9229469,
+          -391.3471
+        ],
+        "rotation": [
+          0.132731766,
+          0.297779381,
+          -0.04185016,
+          0.9444355
+        ],
+        "fieldOfView": 60.0000038,
+        "pixelWidth": 737,
+        "pixelHeight": 619
+      }
+    },
+    "comparison": "Auxiliary views are different poses/pipelines, not before/after changes"
+  }
+}

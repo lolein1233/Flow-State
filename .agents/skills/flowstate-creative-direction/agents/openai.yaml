@@ -1,0 +1,4 @@
+interface:
+  display_name: "FLOWSTATE Creative Direction"
+  short_description: "Dirección creativa y coherencia de FLOWSTATE"
+  default_prompt: "Usa $flowstate-creative-direction para evaluar esta propuesta de FLOWSTATE con evidencia, compromisos y criterios verificables, sin implementar cambios."

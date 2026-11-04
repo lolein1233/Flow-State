@@ -1,0 +1,1458 @@
+{
+  "date": "2026-10-28",
+  "mode": "Unity Editor Edit Mode, read-only queries; no clip sampling, Play Mode, Timeline evaluation or game writes",
+  "instance": "FLOWSTATE@3a6232501f358c97",
+  "animators": {
+    "scene": "Assets/02_Escenas/Gameplay.unity",
+    "dirty": false,
+    "playing": false,
+    "animators": [
+      {
+        "path": "manolo@Happy Idle",
+        "enabled": true,
+        "active": true,
+        "controller": "Assets/06_Modelos/MAIKOL/enemigos.controller",
+        "avatar": null,
+        "applyRootMotion": false,
+        "updateMode": "Normal",
+        "culling": "AlwaysAnimate",
+        "skins": [
+          {
+            "name": "PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          }
+        ]
+      },
+      {
+        "path": "manolo@Happy Idle (1)",
+        "enabled": true,
+        "active": true,
+        "controller": "Assets/06_Modelos/MAIKOL/enemigos.controller",
+        "avatar": null,
+        "applyRootMotion": false,
+        "updateMode": "Normal",
+        "culling": "AlwaysAnimate",
+        "skins": [
+          {
+            "name": "PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          }
+        ]
+      },
+      {
+        "path": "Player/MAIKOL_Visual",
+        "enabled": true,
+        "active": true,
+        "controller": "Assets/06_Modelos/MAIKOL/MAIKOL.controller",
+        "avatar": null,
+        "applyRootMotion": false,
+        "updateMode": "Normal",
+        "culling": "AlwaysAnimate",
+        "skins": [
+          {
+            "name": "PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          },
+          {
+            "name": "Echo Plate - PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          },
+          {
+            "name": "Paper Plate - PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          },
+          {
+            "name": "Emotion Plate - PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          },
+          {
+            "name": "Ink Plate - PANTALON PRUEBA",
+            "bones": 52,
+            "root": "mixamorig:Hips"
+          }
+        ]
+      }
+    ]
+  },
+  "controller": {
+    "parameters": [
+      {
+        "name": "Speed",
+        "type": "Float"
+      },
+      {
+        "name": "Grounded",
+        "type": "Bool"
+      },
+      {
+        "name": "VerticalSpeed",
+        "type": "Float"
+      },
+      {
+        "name": "GraffitiMode",
+        "type": "Bool"
+      },
+      {
+        "name": "Parkour",
+        "type": "Bool"
+      },
+      {
+        "name": "Climbing",
+        "type": "Bool"
+      },
+      {
+        "name": "ClimbInput",
+        "type": "Float"
+      },
+      {
+        "name": "Paint",
+        "type": "Bool"
+      },
+      {
+        "name": "Jump",
+        "type": "Trigger"
+      },
+      {
+        "name": "Hang",
+        "type": "Trigger"
+      },
+      {
+        "name": "TopOut",
+        "type": "Trigger"
+      },
+      {
+        "name": "VaultLow",
+        "type": "Trigger"
+      },
+      {
+        "name": "VaultMedium",
+        "type": "Trigger"
+      },
+      {
+        "name": "VaultHigh",
+        "type": "Trigger"
+      },
+      {
+        "name": "Falling",
+        "type": "Bool"
+      },
+      {
+        "name": "Land",
+        "type": "Trigger"
+      },
+      {
+        "name": "Roll",
+        "type": "Trigger"
+      },
+      {
+        "name": "LocomotionRate",
+        "type": "Float"
+      }
+    ],
+    "layers": [
+      {
+        "name": "Base Layer",
+        "weight": 0,
+        "blend": "Override",
+        "mask": "",
+        "iKPass": false,
+        "defaultState": "Idle",
+        "states": [
+          {
+            "name": "Idle",
+            "speed": 0.9,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/Happy Idle.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Walk",
+                "isExit": false,
+                "duration": 0.1,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Speed",
+                    "mode": "Greater",
+                    "threshold": 0.12
+                  }
+                ]
+              },
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.1,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Jump",
+                "isExit": false,
+                "duration": 0.05,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Jump",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Walk",
+            "speed": 1,
+            "speedParameter": "LocomotionRate",
+            "speedParameterActive": true,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/MAIKOL.controller",
+            "blend": {
+              "blendParameter": "Speed",
+              "blendParameterY": "Blend",
+              "type": "Simple1D",
+              "children": [
+                {
+                  "threshold": 1.8,
+                  "timeScale": 1,
+                  "motion": "Assets/06_Modelos/MAIKOL/Walking.anim"
+                },
+                {
+                  "threshold": 5.5,
+                  "timeScale": 1,
+                  "motion": "Assets/06_Modelos/MAIKOL/Running.anim"
+                }
+              ]
+            },
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.1,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Speed",
+                    "mode": "Less",
+                    "threshold": 0.12
+                  }
+                ]
+              },
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.1,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Jump",
+                "isExit": false,
+                "duration": 0.05,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Jump",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Jump",
+            "speed": 1.08,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/MAIKOL_Jump_Quick.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.14,
+                "hasExitTime": true,
+                "exitTime": 0.72,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Grounded",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.06,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Hang",
+            "speed": 1,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/Hanging Idle.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Jump",
+                "isExit": false,
+                "duration": 0.04,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Jump",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "ClimbUp",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "ClimbInput",
+                    "mode": "Greater",
+                    "threshold": 0.1
+                  }
+                ]
+              },
+              {
+                "destination": "ClimbDown",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "ClimbInput",
+                    "mode": "Less",
+                    "threshold": -0.1
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.12,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "IfNot",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ClimbUp",
+            "speed": 1,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/Climbing Up Wall.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "ClimbInput",
+                    "mode": "Less",
+                    "threshold": 0.1
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.12,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "IfNot",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ClimbDown",
+            "speed": 1,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/Climbing Down Wall.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "ClimbInput",
+                    "mode": "Greater",
+                    "threshold": -0.1
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.12,
+                "hasExitTime": false,
+                "exitTime": 0.75,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "IfNot",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "LedgeTopOut",
+            "speed": 2.35,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/MAIKOL_Ledge_TopOut.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": true,
+                "exitTime": 0.95,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "name": "VaultLow",
+            "speed": 2.33,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_Low.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.07,
+                "hasExitTime": true,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "name": "VaultMedium",
+            "speed": 2.26,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_Medium.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.07,
+                "hasExitTime": true,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "name": "VaultHigh",
+            "speed": 2.82,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_High.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.07,
+                "hasExitTime": true,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "name": "Falling",
+            "speed": 0.72,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Falling_Loop.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Grounded",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "FallLanding",
+            "speed": 1.2,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Fall_Landing.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.1,
+                "hasExitTime": true,
+                "exitTime": 0.92,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": []
+              }
+            ]
+          },
+          {
+            "name": "AirRoll",
+            "speed": 1.25,
+            "speedParameter": "",
+            "speedParameterActive": false,
+            "writeDefaultValues": true,
+            "iKOnFeet": false,
+            "motion": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Air_Roll.anim",
+            "blend": null,
+            "transitions": [
+              {
+                "destination": "Hang",
+                "isExit": false,
+                "duration": 0.08,
+                "hasExitTime": false,
+                "exitTime": 0.9,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Climbing",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Falling",
+                "isExit": false,
+                "duration": 0.18,
+                "hasExitTime": true,
+                "exitTime": 0.94,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Grounded",
+                    "mode": "IfNot",
+                    "threshold": 0
+                  }
+                ]
+              },
+              {
+                "destination": "Idle",
+                "isExit": false,
+                "duration": 0.18,
+                "hasExitTime": true,
+                "exitTime": 0.94,
+                "hasFixedDuration": true,
+                "interrupt": "None",
+                "orderedInterruption": true,
+                "conditions": [
+                  {
+                    "parameter": "Grounded",
+                    "mode": "If",
+                    "threshold": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "anyTransitions": [
+          {
+            "destination": "VaultLow",
+            "duration": 0.05,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "VaultLow",
+                "mode": "If",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "VaultMedium",
+            "duration": 0.05,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "VaultMedium",
+                "mode": "If",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "VaultHigh",
+            "duration": 0.05,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "VaultHigh",
+                "mode": "If",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "LedgeTopOut",
+            "duration": 0.05,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "TopOut",
+                "mode": "If",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "FallLanding",
+            "duration": 0.12,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "Land",
+                "mode": "If",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "Falling",
+            "duration": 0.16,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "Falling",
+                "mode": "If",
+                "threshold": 0
+              },
+              {
+                "parameter": "Parkour",
+                "mode": "IfNot",
+                "threshold": 0
+              },
+              {
+                "parameter": "Climbing",
+                "mode": "IfNot",
+                "threshold": 0
+              }
+            ]
+          },
+          {
+            "destination": "AirRoll",
+            "duration": 0.12,
+            "hasExitTime": false,
+            "conditions": [
+              {
+                "parameter": "Roll",
+                "mode": "If",
+                "threshold": 0
+              },
+              {
+                "parameter": "Parkour",
+                "mode": "IfNot",
+                "threshold": 0
+              },
+              {
+                "parameter": "Climbing",
+                "mode": "IfNot",
+                "threshold": 0
+              },
+              {
+                "parameter": "Grounded",
+                "mode": "IfNot",
+                "threshold": 0
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "clips": [
+      {
+        "name": "Happy Idle",
+        "path": "Assets/06_Modelos/MAIKOL/Happy Idle.anim",
+        "length": 2,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "Walking",
+        "path": "Assets/06_Modelos/MAIKOL/Walking.anim",
+        "length": 1.03333342,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "Running",
+        "path": "Assets/06_Modelos/MAIKOL/Running.anim",
+        "length": 0.6333334,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Jump_Quick",
+        "path": "Assets/06_Modelos/MAIKOL/MAIKOL_Jump_Quick.anim",
+        "length": 1.06,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "Hanging Idle",
+        "path": "Assets/06_Modelos/MAIKOL/Hanging Idle.anim",
+        "length": 2.33333349,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "Climbing Up Wall",
+        "path": "Assets/06_Modelos/MAIKOL/Climbing Up Wall.anim",
+        "length": 2,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "Climbing Down Wall",
+        "path": "Assets/06_Modelos/MAIKOL/Climbing Down Wall.anim",
+        "length": 2,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": true,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 355,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Ledge_TopOut",
+        "path": "Assets/06_Modelos/MAIKOL/MAIKOL_Ledge_TopOut.anim",
+        "length": 3.83333349,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Vault_Low",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_Low.anim",
+        "length": 1.16666675,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Vault_Medium",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_Medium.anim",
+        "length": 1.4000001,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Vault_High",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Vault_High.anim",
+        "length": 2.36666679,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Falling_Loop",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Falling_Loop.anim",
+        "length": 0.700000048,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": true,
+        "loopTime": true,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Fall_Landing",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Fall_Landing.anim",
+        "length": 1.06666672,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      },
+      {
+        "name": "MAIKOL_Air_Roll",
+        "path": "Assets/06_Modelos/MAIKOL/ParkourAnimations/MAIKOL_Air_Roll.anim",
+        "length": 1.16666675,
+        "frameRate": 30,
+        "legacy": false,
+        "humanMotion": false,
+        "isLooping": false,
+        "loopTime": false,
+        "loopBlend": false,
+        "keepOriginalPositionXZ": false,
+        "keepOriginalPositionY": true,
+        "keepOriginalOrientation": false,
+        "bindings": 340,
+        "paths": 52,
+        "missingPaths": [],
+        "events": 0
+      }
+    ],
+    "importers": [
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/caida de salto.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/Saltar caja.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/saltar por encima.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/X Bot@Falling Idle.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/X Bot@Falling To Landing.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/Animacion/X Bot@Sitting Idle (1).fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Climbing Down Wall.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Climbing Up Wall.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Hanging Idle.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Happy Idle 1.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Happy Idle.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Jumping.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Running.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Sprint To Wall Climb.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/manolo@Walking.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/X Bot@Braced Hang To Crouch.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      },
+      {
+        "path": "Assets/06_Modelos/MAIKOL/X Bot@Climbing.fbx",
+        "type": "Generic",
+        "avatarSetup": "NoAvatar",
+        "sourceAvatar": "",
+        "importAnimation": true,
+        "optimizeGameObjects": false
+      }
+    ]
+  },
+  "movement": {
+    "fps": {
+      "animator": {
+        "name": "MAIKOL_Visual",
+        "path": ""
+      },
+      "visualRoot": {
+        "name": "MAIKOL_Visual",
+        "path": ""
+      },
+      "cameraOverride": null,
+      "walkSpeed": 3,
+      "sprintSpeed": 6,
+      "walkAnimationReferenceSpeed": 1.1,
+      "runAnimationReferenceSpeed": 3.5,
+      "lowVaultDuration": 0.5,
+      "vaultDuration": 0.62,
+      "highVaultDuration": 0.84,
+      "climbDuration": 0.72,
+      "wallTopOutDuration": 1.55,
+      "wallJumpDuration": 0.58,
+      "airRollDuration": 0.8,
+      "landingAnimationLeadTime": 0.34,
+      "climbMoveSpeed": 2.15,
+      "climbSideSpeed": 1.65,
+      "climbAnimationResponse": 10,
+      "climbSurfaceOffset": 0.45,
+      "wallTopOutVerticalStart": 0.36,
+      "wallTopOutVerticalEnd": 0.82,
+      "wallTopOutForwardStart": 0.68,
+      "wallTopOutForwardEnd": 0.95,
+      "cameraModeBlendSpeed": 13.5,
+      "cameraCollisionRadius": 0.28,
+      "cameraCollisionPadding": 0.18,
+      "thirdPersonTargetSmoothTime": 0.075,
+      "thirdPersonPositionSmoothTime": 0.055,
+      "cameraCollisionSnapSmoothTime": 0.025,
+      "cameraCollisionReturnSmoothTime": 0.18,
+      "thirdPersonFov": 62,
+      "sprintFov": 65,
+      "graffitiFov": 60,
+      "hideVisualInGraffitiMode": true
+    },
+    "selectedComponents": [
+      {
+        "type": "RenderPoseController",
+        "path": "Player",
+        "active": true,
+        "enabled": true
+      },
+      {
+        "type": "UnityEngine.Camera",
+        "path": "Player/CameraHolder/MainCamera",
+        "active": true,
+        "enabled": true
+      }
+    ]
+  },
+  "timelines": [
+    {
+      "path": "Assets/10_Cinematics/Timelines/FlowState_Trailer_25s_98s.playable",
+      "duration": 73,
+      "tracks": [
+        {
+          "name": "Master Cinematic Camera Motion",
+          "type": "UnityEngine.Timeline.AnimationTrack",
+          "muted": false,
+          "clips": [
+            {
+              "displayName": "Nine-shot cinematic camera choreography",
+              "start": 0,
+              "duration": 73,
+              "clipIn": 0,
+              "timeScale": 1,
+              "type": "UnityEngine.Timeline.AnimationPlayableAsset"
+            }
+          ]
+        },
+        {
+          "name": "Made You Look - 00:25 to 01:38",
+          "type": "UnityEngine.Timeline.AudioTrack",
+          "muted": false,
+          "clips": [
+            {
+              "displayName": "Made You Look [00:25-01:38]",
+              "start": 0,
+              "duration": 73,
+              "clipIn": 25,
+              "timeScale": 1,
+              "type": "UnityEngine.Timeline.AudioPlayableAsset"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Assets/09_MainMenu/IntroPrototype/ThreeTraces.playable",
+      "duration": 5.1,
+      "tracks": [
+        {
+          "name": "Spray → six diorama panels",
+          "type": "FlowState.Menu.IntroPaintTrack",
+          "muted": false,
+          "clips": [
+            {
+              "displayName": "A · two panels",
+              "start": 0.45,
+              "duration": 1.5499999523162842,
+              "clipIn": 0,
+              "timeScale": 1,
+              "type": "FlowState.Menu.IntroPaintClip"
+            },
+            {
+              "displayName": "B · two panels",
+              "start": 0.9,
+              "duration": 1.4500000476837158,
+              "clipIn": 0,
+              "timeScale": 1,
+              "type": "FlowState.Menu.IntroPaintClip"
+            },
+            {
+              "displayName": "C · two panels",
+              "start": 1.35,
+              "duration": 1.5,
+              "clipIn": 0,
+              "timeScale": 1,
+              "type": "FlowState.Menu.IntroPaintClip"
+            },
+            {
+              "displayName": "Mini Camera Push",
+              "start": 4.2,
+              "duration": 0.65,
+              "clipIn": 0,
+              "timeScale": 1,
+              "type": "FlowState.Menu.IntroPaintClip"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "cinematicScene": {
+    "scene": "Assets/10_Cinematics/Scenes/FlowState_Trailer_Cinematic.unity",
+    "source": "static YAML, unopened scene",
+    "selectedComponents": [
+      {
+        "id": 330585549,
+        "type": "CinemachineBrain",
+        "gameObjectId": 330585543,
+        "gameObjectName": "MainCamera"
+      },
+      {
+        "id": 515634349,
+        "type": "CinemachineBrain",
+        "gameObjectId": 515634347,
+        "gameObjectName": "MainCamera"
+      },
+      {
+        "id": 940662500,
+        "type": "PlayableDirector",
+        "gameObjectId": 940662498,
+        "gameObjectName": "CINEMATIC_ROOT"
+      },
+      {
+        "id": 2030401246,
+        "type": "CinemachineCamera",
+        "gameObjectId": 2030401244,
+        "gameObjectName": "CM_Hero_Master"
+      }
+    ]
+  },
+  "tools": {
+    "blender": "health_check connected=false; bridge unavailable",
+    "animationRigging": "not declared in manifest/lock; no rigging component found in loaded Gameplay"
+  }
+}

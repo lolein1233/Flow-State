@@ -1,0 +1,6 @@
+interface:
+  display_name: "FLOWSTATE UI/UX"
+  short_description: "Interfaces, navegación y accesibilidad de FLOWSTATE"
+  default_prompt: "Usa $flowstate-ui-ux para evaluar esta interfaz de FLOWSTATE con evidencia, estados, controles y criterios visuales y funcionales verificables."
+policy:
+  allow_implicit_invocation: true

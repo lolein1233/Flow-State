@@ -1,0 +1,1599 @@
+{
+  "revisionDate": "2026-10-28",
+  "mode": "Read-only Editor queries; no Play Mode or traversal test; in-memory C# query compilation only",
+  "player": {
+    "scene": "Assets/02_Escenas/Gameplay.unity",
+    "dirty": false,
+    "playing": false,
+    "playerPosition": [
+      114.37,
+      1.6230402,
+      -129.57
+    ],
+    "scale": [
+      1.51304018,
+      1.51304018,
+      1.51304018
+    ],
+    "controller": {
+      "enabled": true,
+      "height": 2,
+      "radius": 0.5,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "stepOffset": 0.3,
+      "skinWidth": 0.03,
+      "slopeLimit": 45,
+      "worldHeight": 3.02608037,
+      "worldRadius": 0.7565201,
+      "boundsMin": [
+        113.61348,
+        0.110000014,
+        -130.326523
+      ],
+      "boundsMax": [
+        115.126526,
+        3.13608027,
+        -128.813492
+      ]
+    },
+    "fps": {
+      "gravity": -18,
+      "walkSpeed": 3,
+      "sprintSpeed": 6,
+      "graffitiMoveSpeed": 9.16,
+      "acceleration": 14,
+      "deceleration": 20,
+      "jumpHeight": 2.02,
+      "coyoteTime": 0.12,
+      "jumpBufferTime": 0.12,
+      "wallCheckDistance": 1.45,
+      "wallCheckHeight": 0.52,
+      "vaultMaxHeight": 1.15,
+      "climbMaxHeight": 2.6,
+      "vaultForwardDistance": 1.35,
+      "vaultDuration": 0.62,
+      "lowVaultMaxHeight": 0.65,
+      "mediumVaultMaxHeight": 0.95,
+      "lowVaultDuration": 0.5,
+      "highVaultDuration": 0.84,
+      "lowVaultArcHeight": 0.32,
+      "vaultArcHeight": 0.55,
+      "highVaultArcHeight": 0.78,
+      "wallTopOutDuration": 1.55,
+      "wallTopOutForwardOffset": 0.85,
+      "climbDetectDistance": 1.15,
+      "climbMoveSpeed": 2.15,
+      "climbSideSpeed": 1.65,
+      "climbSurfaceOffset": 0.45,
+      "climbContactGraceTime": 0.28,
+      "wallJumpDistance": 4.25,
+      "wallJumpDuration": 0.58,
+      "wallJumpArcHeight": 0.72,
+      "wallJumpVerticalRise": 0.2,
+      "wallJumpSideSteer": 0.55,
+      "wallJumpProbeRadius": 0.2,
+      "landingClearance": 0.06,
+      "minimumGroundNormal": 0.55,
+      "groundedStepOffset": 0.52,
+      "airborneStepOffset": 0,
+      "groundSnapDistance": 0.52,
+      "groundSnapSpeed": 13,
+      "thirdPersonFov": 62,
+      "sprintFov": 65,
+      "graffitiFov": 60,
+      "cameraCollisionRadius": 0.28,
+      "cameraCollisionPadding": 0.18,
+      "cameraCollisionReturnSmoothTime": 0.18,
+      "landingAnimationLeadTime": 0.34,
+      "landingAnimationProbeDistance": 4,
+      "requireClimbableMarker": true,
+      "enableClimbing": true,
+      "enableWallJump": true,
+      "enableAirRoll": true,
+      "parkourMask": 264,
+      "movementCollisionMask": 265,
+      "cameraCollisionMask": -1
+    }
+  },
+  "blockout": {
+    "rootPosition": [
+      84.4,
+      0,
+      -113.7
+    ],
+    "children": 48,
+    "items": [
+      {
+        "name": "00_Test_Floor",
+        "active": true,
+        "pos": [
+          113.099,
+          -0.2,
+          -65.244
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          113.099,
+          -0.2,
+          -65.244
+        ],
+        "size": [
+          68.07,
+          0.5,
+          155.741
+        ],
+        "climb": null
+      },
+      {
+        "name": "01_Vault_Medium_085",
+        "active": true,
+        "pos": [
+          114.4,
+          0.425,
+          -110.79
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          0.425,
+          -110.79
+        ],
+        "size": [
+          6,
+          0.85,
+          0.7
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "02_Vault_High_110",
+        "active": true,
+        "pos": [
+          114.4,
+          0.55,
+          -103.48
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          0.55,
+          -103.48
+        ],
+        "size": [
+          6,
+          1.1,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "04_Mantle_High_250",
+        "active": true,
+        "pos": [
+          114.4,
+          2.25,
+          -94.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          2.25,
+          -94.7
+        ],
+        "size": [
+          6,
+          4.5,
+          3.2
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "05_Climb_Wall_600",
+        "active": true,
+        "pos": [
+          114.4,
+          6.602,
+          -84.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          6.602,
+          -84.7
+        ],
+        "size": [
+          10,
+          13.205,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "05_Climb_Wall_600 (1)",
+        "active": true,
+        "pos": [
+          114.4,
+          6.71,
+          -89.88
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          6.71,
+          -89.88
+        ],
+        "size": [
+          10,
+          13.213,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "05_TopOut_Deck",
+        "active": true,
+        "pos": [
+          114.4,
+          12.97,
+          -79.32
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          12.97,
+          -79.32
+        ],
+        "size": [
+          12,
+          0.5,
+          10.4
+        ],
+        "climb": null
+      },
+      {
+        "name": "06_Descent_Step_400",
+        "active": true,
+        "pos": [
+          114.4,
+          4.242,
+          -70.75
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          4.242,
+          -70.75
+        ],
+        "size": [
+          7,
+          8.484,
+          3
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "06_Descent_Step_200",
+        "active": true,
+        "pos": [
+          114.4,
+          1,
+          -66.75
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          1,
+          -66.75
+        ],
+        "size": [
+          7,
+          2,
+          3
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "07_SeamWall_Left",
+        "active": true,
+        "pos": [
+          109.9,
+          4.882,
+          -58.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          109.9,
+          4.882,
+          -58.7
+        ],
+        "size": [
+          4.5,
+          9.764,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "07_SeamWall_Center",
+        "active": true,
+        "pos": [
+          114.4,
+          4.882,
+          -58.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          4.882,
+          -58.7
+        ],
+        "size": [
+          4.5,
+          9.764,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "07_SeamWall_Right",
+        "active": true,
+        "pos": [
+          118.9,
+          4.882,
+          -58.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          118.9,
+          4.882,
+          -58.7
+        ],
+        "size": [
+          4.5,
+          9.764,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "07_Lateral_TopOut_Deck",
+        "active": true,
+        "pos": [
+          114.4,
+          9.275,
+          -54.5
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          9.275,
+          -54.5
+        ],
+        "size": [
+          15,
+          0.976,
+          7.6
+        ],
+        "climb": null
+      },
+      {
+        "name": "08_Descent_Step_250",
+        "active": true,
+        "pos": [
+          114.4,
+          2.021,
+          -49.2
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          2.021,
+          -49.2
+        ],
+        "size": [
+          8,
+          4.043,
+          3
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "09_Control_NoSide",
+        "active": true,
+        "pos": [
+          114.4,
+          4.934,
+          -41.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          4.934,
+          -41.7
+        ],
+        "size": [
+          5,
+          9.867,
+          0.8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": false,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "09_Final_TopOut_Deck",
+        "active": true,
+        "pos": [
+          114.4,
+          9.251,
+          -38.2
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          9.251,
+          -38.2
+        ],
+        "size": [
+          22,
+          1.233,
+          6.2
+        ],
+        "climb": null
+      },
+      {
+        "name": "11_WallJump_Left",
+        "active": true,
+        "pos": [
+          111.9,
+          8.871,
+          -22.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          111.9,
+          8.871,
+          -22.7
+        ],
+        "size": [
+          0.5,
+          17.741,
+          8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "11_WallJump_Right",
+        "active": true,
+        "pos": [
+          116.9,
+          8.871,
+          -22.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          116.9,
+          8.871,
+          -22.7
+        ],
+        "size": [
+          0.5,
+          17.741,
+          8
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "11_WallJump_SafetyFloor",
+        "active": true,
+        "pos": [
+          114.4,
+          -0.25,
+          -22.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          -0.25,
+          -22.7
+        ],
+        "size": [
+          14,
+          0.5,
+          18
+        ],
+        "climb": null
+      },
+      {
+        "name": "00_Vault_Low_065",
+        "active": true,
+        "pos": [
+          114.4,
+          0.47,
+          -117.44
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          0.47,
+          -117.44
+        ],
+        "size": [
+          6,
+          0.65,
+          0.65
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "12_WallJump_ExitDeck",
+        "active": true,
+        "pos": [
+          114.4,
+          17.57,
+          -15.2
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.4,
+          17.57,
+          -15.2
+        ],
+        "size": [
+          8,
+          0.5,
+          7
+        ],
+        "climb": null
+      },
+      {
+        "name": "13_Fall_Landing_550",
+        "active": true,
+        "pos": [
+          114.094,
+          2.13,
+          -5.7
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.094,
+          2.13,
+          -5.7
+        ],
+        "size": [
+          13.388,
+          4.323,
+          12
+        ],
+        "climb": null
+      },
+      {
+        "name": "Canvas (2)",
+        "active": true,
+        "pos": [
+          131.2,
+          41.7,
+          146.4
+        ],
+        "solid": 0,
+        "triggers": 0,
+        "layers": [],
+        "center": null,
+        "size": null,
+        "climb": null
+      },
+      {
+        "name": "Cube (20)",
+        "active": true,
+        "pos": [
+          146.4,
+          4.534,
+          -71.5
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.4,
+          4.534,
+          -71.5
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (21)",
+        "active": true,
+        "pos": [
+          146.278,
+          4.534,
+          -55.851
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.278,
+          4.534,
+          -55.851
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (22)",
+        "active": true,
+        "pos": [
+          146.162,
+          4.534,
+          -40.912
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.162,
+          4.534,
+          -40.912
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (23)",
+        "active": true,
+        "pos": [
+          146.037,
+          4.534,
+          -24.789
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.037,
+          4.534,
+          -24.789
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (24)",
+        "active": true,
+        "pos": [
+          145.928,
+          4.5,
+          -7.987
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          145.928,
+          4.5,
+          -7.987
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (28)",
+        "active": true,
+        "pos": [
+          145.828,
+          4.6,
+          6.613
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          145.828,
+          4.6,
+          6.613
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (25)",
+        "active": true,
+        "pos": [
+          146.769,
+          4.534,
+          -119.041
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.769,
+          4.534,
+          -119.041
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (29)",
+        "active": true,
+        "pos": [
+          146.888,
+          4.534,
+          -133.977
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.888,
+          4.534,
+          -133.977
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (26)",
+        "active": true,
+        "pos": [
+          146.653,
+          4.534,
+          -104.103
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.653,
+          4.534,
+          -104.103
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (27)",
+        "active": true,
+        "pos": [
+          146.528,
+          4.534,
+          -87.979
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          146.528,
+          4.534,
+          -87.979
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (30)",
+        "active": true,
+        "pos": [
+          81.638,
+          4.534,
+          -71.988
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.638,
+          4.534,
+          -71.988
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (31)",
+        "active": true,
+        "pos": [
+          81.516,
+          4.534,
+          -56.338
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.516,
+          4.534,
+          -56.338
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (32)",
+        "active": true,
+        "pos": [
+          81.4,
+          4.534,
+          -41.4
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.4,
+          4.534,
+          -41.4
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (33)",
+        "active": true,
+        "pos": [
+          81.275,
+          4.534,
+          -25.276
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.275,
+          4.534,
+          -25.276
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (34)",
+        "active": true,
+        "pos": [
+          81.165,
+          4.5,
+          -8.475
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.165,
+          4.5,
+          -8.475
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (35)",
+        "active": true,
+        "pos": [
+          81.065,
+          4.6,
+          6.125
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.065,
+          4.6,
+          6.125
+        ],
+        "size": [
+          1.274,
+          10.264,
+          11.636
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (36)",
+        "active": true,
+        "pos": [
+          82.007,
+          4.534,
+          -119.529
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          82.007,
+          4.534,
+          -119.529
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (37)",
+        "active": true,
+        "pos": [
+          82.125,
+          4.534,
+          -134.465
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          82.125,
+          4.534,
+          -134.465
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (38)",
+        "active": true,
+        "pos": [
+          81.891,
+          4.534,
+          -104.591
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.891,
+          4.534,
+          -104.591
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "Cube (39)",
+        "active": true,
+        "pos": [
+          81.766,
+          4.534,
+          -88.467
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          81.766,
+          4.534,
+          -88.467
+        ],
+        "size": [
+          1.276,
+          10.254,
+          11.629
+        ],
+        "climb": {
+          "canClimb": true,
+          "allowSideways": true,
+          "speedMultiplier": 1
+        }
+      },
+      {
+        "name": "FSSRS LookDev",
+        "active": true,
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "solid": 0,
+        "triggers": 0,
+        "layers": [],
+        "center": null,
+        "size": null,
+        "climb": null
+      },
+      {
+        "name": "Luz pene",
+        "active": true,
+        "pos": [
+          107.568,
+          89.186,
+          -121.619
+        ],
+        "solid": 0,
+        "triggers": 0,
+        "layers": [],
+        "center": null,
+        "size": null,
+        "climb": null
+      },
+      {
+        "name": "Luz pene (1)",
+        "active": true,
+        "pos": [
+          106.735,
+          121.079,
+          -14.325
+        ],
+        "solid": 0,
+        "triggers": 0,
+        "layers": [],
+        "center": null,
+        "size": null,
+        "climb": null
+      },
+      {
+        "name": "concrete_wall_toppe (1)",
+        "active": true,
+        "pos": [
+          90.5,
+          -0.3,
+          -222.6
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.611,
+          5.404,
+          -141.012
+        ],
+        "size": [
+          30.116,
+          12.372,
+          1.878
+        ],
+        "climb": null
+      },
+      {
+        "name": "concrete_wall_toppe (2)",
+        "active": true,
+        "pos": [
+          90.6,
+          -0.3,
+          -70.8
+        ],
+        "solid": 1,
+        "triggers": 0,
+        "layers": [
+          3
+        ],
+        "center": [
+          114.711,
+          5.404,
+          11.432
+        ],
+        "size": [
+          30.116,
+          12.372,
+          1.878
+        ],
+        "climb": null
+      }
+    ],
+    "zones": [
+      {
+        "name": "Envioriment",
+        "active": false,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "CAMPO DE GRAFFITI",
+        "active": false,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "Blocking_HQ",
+        "active": false,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "Sewer_TP_Network",
+        "active": false,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "Scenario_FS (1)",
+        "active": true,
+        "solid": 409,
+        "center": [
+          -28.244,
+          41.469,
+          -523.103
+        ],
+        "size": [
+          710.074,
+          82.939,
+          518.762
+        ]
+      },
+      {
+        "name": "GRAFFITIS",
+        "active": true,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "GRAFFITIS (3)",
+        "active": true,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "GRAFFITIS (1)",
+        "active": true,
+        "solid": 0,
+        "center": null,
+        "size": null
+      },
+      {
+        "name": "GRAFFITIS (2)",
+        "active": true,
+        "solid": 0,
+        "center": null,
+        "size": null
+      }
+    ]
+  },
+  "paint": {
+    "wallLayer": 8,
+    "detectionDistance": 9,
+    "rayPaintDistance": 6,
+    "freePaintDistance": 6,
+    "staticRayTests": [
+      {
+        "origin": [
+          114.4,
+          1.8,
+          -138
+        ],
+        "hit": true,
+        "target": "01",
+        "distance": 2.072474,
+        "normal": [
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "origin": [
+          114.4,
+          1.8,
+          -108
+        ],
+        "hit": false,
+        "target": null,
+        "distance": 0,
+        "normal": null
+      },
+      {
+        "origin": [
+          114.4,
+          1.8,
+          -97.5
+        ],
+        "hit": true,
+        "target": "04_Mantle_High_250",
+        "distance": 1.200003,
+        "normal": [
+          0,
+          0,
+          -1
+        ]
+      }
+    ]
+  },
+  "wallJump": {
+    "kind": "static hypothetical cast only; not a played wall jump",
+    "gap": 4.5,
+    "worldRadius": 0.7565201,
+    "climbOffset": 0.786520064,
+    "sourceRoot": [
+      112.936523,
+      5,
+      -22.7
+    ],
+    "targetFound": true,
+    "target": "11_WallJump_Right",
+    "castDistance": 3.46347523,
+    "sceneDirty": false
+  },
+  "camera": {
+  "firstPersonOffsetLocal": [
+    0,
+    1.55,
+    0.1
+  ],
+  "firstPersonTargetWorld": [
+    114.37,
+    3.96825242,
+    -129.4187
+  ],
+  "firstPersonHeightAboveRoot": 2.34521222,
+  "thirdPersonOffset": [
+    0,
+    0.38,
+    -4.55
+  ],
+  "thirdPersonShoulder": [
+    0.46,
+    0.06,
+    0
+  ],
+  "currentEditCameraWorld": [
+    114.380127,
+    3.61859846,
+    -128.335663
+  ],
+  "nearClipPlane": 0.08,
+  "farClipPlane": 1000,
+  "status": "Edit pose and calculated target only, not graffiti camera played or visibility tested"
+},
+  "derived": {
+  "idealJump": {
+    "launchSpeed": 8.527602242131136,
+    "timeToApex": 0.47375568011839647,
+    "equalHeightFlightTime": 0.9475113602367929,
+    "walkConstantSpeedRange": 2.842534080710379,
+    "sprintConstantSpeedRange": 5.685068161420758,
+    "status": "Analytic only; no collisions/acceleration; not tested reach"
+  },
+  "floorTop": 0.04999999999999999,
+  "wallJumpFaceGapX": 4.5,
+  "climbWallPairFaceGapZ": 4.379999999999993,
+  "exitDeckToLandingDrop": 13.528500000000001
+},
+  "limitations": [
+    "Collider bounds are world AABBs, not proof of traversability or exact mesh openings.",
+    "Values read in Edit Mode do not prove runtime reach, reliable movement, safety or approved design metrics.",
+    "Static ray and sphere casts use hypothetical origins without moving the player; they do not validate a full action."
+  ]
+}

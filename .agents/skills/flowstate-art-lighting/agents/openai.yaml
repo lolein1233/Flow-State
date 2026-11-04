@@ -1,0 +1,6 @@
+interface:
+  display_name: "FLOWSTATE Art & Lighting"
+  short_description: "Iluminación, materiales y rendering de FLOWSTATE"
+  default_prompt: "Usa $flowstate-art-lighting para evaluar la iluminación y los materiales de FLOWSTATE con evidencia visual y una propuesta verificable."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,4 @@
+interface:
+  display_name: "FLOWSTATE Game Design"
+  short_description: "Mecánicas, bucles y playtests de FLOWSTATE"
+  default_prompt: "Usa $flowstate-game-design para diseñar o evaluar esta mecánica de FLOWSTATE con reglas, alternativas, prototipo reversible y criterios de playtest; no implementes cambios sin autorización."

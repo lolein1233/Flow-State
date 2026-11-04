@@ -138,7 +138,7 @@ public class GraffitiPainter : MonoBehaviour
     public bool IsPainting => isPainting;
     public bool IsQuickMode => quickPainter != null && quickPainter.IsQuickMode;
     public bool CanEmitPaint => isPainting && emissionAllowed && sprayResources != null && sprayResources.HasPaint && !sprayResources.IsShaking && !sprayResources.IsChangingCan;
-    public float MinimumStampExposure => Mathf.Max(1f, minimumStampExposure);
+    public float MinimumStampExposure => Mathf.Clamp(minimumStampExposure, 0.25f, 1f);
     public float SprayCone01 => usePhysicalSprayControl && physicalControlWasActive
         ? useAdaptiveSprayDistance ? adaptiveCone : Mathf.SmoothStep(0f, 1f, (1f - smoothedDepth) * 0.5f)
         : 0.5f;

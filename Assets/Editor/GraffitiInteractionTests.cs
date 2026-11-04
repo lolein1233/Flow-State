@@ -30,6 +30,20 @@ public sealed class GraffitiInteractionTests
     static void Set(object target, string field, object value) => target.GetType().GetField(field, Private).SetValue(target, value);
     static void Invoke(object target, string method, params object[] args) => target.GetType().GetMethod(method, Private).Invoke(target, args);
 
+    [TestCase(0f, 0.25f)]
+    [TestCase(0.25f, 0.25f)]
+    [TestCase(0.68f, 0.68f)]
+    [TestCase(1f, 1f)]
+    [TestCase(2f, 1f)]
+    public void MinimumStampExposureRespectsConfiguredRange(float configured, float expected)
+    {
+        var painter = Create("Graffiti test stamp exposure").AddComponent<GraffitiPainter>();
+        painter.enabled = false;
+        Set(painter, "minimumStampExposure", configured);
+
+        Assert.That(painter.MinimumStampExposure, Is.EqualTo(expected).Within(0.000001f));
+    }
+
     [Test] public void NozzleHintDiscoveryExcludesInactiveControlsMenu()
     {
         var menus = Create("Graffiti test pause menus");

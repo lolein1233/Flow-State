@@ -1,0 +1,186 @@
+{
+  "date": "2026-10-28",
+  "mode": "Edit Mode; explicit read-only Unity MCP queries; no Bind, Play, Emit, Simulate or runtime preview invoked",
+  "instance": "FLOWSTATE@3a6232501f358c97",
+  "editor": {
+    "scene": "Assets/02_Escenas/Gameplay.unity",
+    "dirty": false,
+    "playing": false,
+    "particles": [
+      {
+        "path": "FLOWSTATE | INDUSTRIAL DUSK/04 | Atmosphere/DUST | Cyan street",
+        "active": true,
+        "isPlaying": false,
+        "particleCount": 0,
+        "simulation": "World",
+        "useUnscaledTime": false,
+        "loop": true,
+        "playOnAwake": true,
+        "maxParticles": 80,
+        "lifetime": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 18
+        },
+        "emission": true,
+        "rate": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 3
+        },
+        "burstCount": 0,
+        "noise": false,
+        "collision": false,
+        "renderer": {
+          "enabled": true,
+          "renderMode": "Billboard",
+          "sortingOrder": 0,
+          "material": "Assets/ArtDirection/IndustrialDusk/Dust_Cold.mat",
+          "shader": "Universal Render Pipeline/Particles/Unlit"
+        },
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      {
+        "path": "Particle System",
+        "active": false,
+        "isPlaying": false,
+        "particleCount": 0,
+        "simulation": "World",
+        "useUnscaledTime": false,
+        "loop": true,
+        "playOnAwake": true,
+        "maxParticles": 400,
+        "lifetime": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 64.8
+        },
+        "emission": true,
+        "rate": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 10
+        },
+        "burstCount": 0,
+        "noise": false,
+        "collision": false,
+        "renderer": {
+          "enabled": true,
+          "renderMode": "Billboard",
+          "sortingOrder": 0,
+          "material": "Packages/com.unity.render-pipelines.universal/Runtime/Materials/ParticlesUnlit.mat",
+          "shader": "Universal Render Pipeline/Particles/Unlit"
+        },
+        "scale": [
+          0.22218,
+          0.22218,
+          0.22218
+        ]
+      },
+      {
+        "path": "FLOWSTATE | INDUSTRIAL DUSK/04 | Atmosphere/DUST | Industrial bay",
+        "active": true,
+        "isPlaying": false,
+        "particleCount": 0,
+        "simulation": "World",
+        "useUnscaledTime": false,
+        "loop": true,
+        "playOnAwake": true,
+        "maxParticles": 80,
+        "lifetime": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 18
+        },
+        "emission": true,
+        "rate": {
+          "mode": "Constant",
+          "min": 0,
+          "max": 3
+        },
+        "burstCount": 0,
+        "noise": false,
+        "collision": false,
+        "renderer": {
+          "enabled": true,
+          "renderMode": "Billboard",
+          "sortingOrder": 0,
+          "material": "Assets/ArtDirection/IndustrialDusk/Dust_Cold.mat",
+          "shader": "Universal Render Pipeline/Particles/Unlit"
+        },
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    ],
+    "components": [],
+    "painter": {
+      "primaryParticle": "Particle System",
+      "resource": null,
+      "useDecalMode": true
+    }
+  },
+  "support": {
+    "shaderFound": true,
+    "shaderSupported": true,
+    "rendererIndex": 1,
+    "graffitiVfxComponents": 0,
+    "vfxAssets": 0
+  },
+  "packages": {
+    "unity": "6000.0.41f1",
+    "urp": "17.0.4",
+    "visualEffectGraph": "17.0.4",
+    "shaderGraph": "17.0.4"
+  },
+  "sourcePresets": {
+    "source": "Assets/01_Scripts/GraffitiSprayVFX.cs ConfigureSystems/ApplyDynamicProfile/EmitStartBurst",
+    "classification": "CODE_CONFIGURATION; not instantiated or observed in this audit",
+    "layers": [
+      {
+        "name": "Pigment",
+        "capacity": 220,
+        "baseRate": 420
+      },
+      {
+        "name": "Air Cloud",
+        "capacity": 110,
+        "baseRate": 115
+      },
+      {
+        "name": "Ink Microdroplets",
+        "capacity": 60,
+        "baseRate": 36
+      },
+      {
+        "name": "Valve Comic Pop",
+        "capacity": 12,
+        "baseRate": 0
+      }
+    ],
+    "capacitySum": 402,
+    "startBurst": {
+      "pigment": 20,
+      "air": 8,
+      "droplets": 4,
+      "splatterDroplets": 7,
+      "valve": 2
+    },
+    "valveIntervalSeconds": {
+      "minimum": 0.068,
+      "maximum": 0.095
+    },
+    "wallClearance": 0.035,
+    "travelLifetimeClamp": [
+      0.045,
+      0.46
+    ],
+    "warning": "Constants and configuration are not measurements or approved budgets"
+  }
+}

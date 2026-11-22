@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FlowState.BodyFlow;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -201,6 +202,7 @@ public class FPSController : MonoBehaviour
     GraffitiQuickPainter quickGraffiti;
     CapsuleCollider legacyCapsuleCollider;
     PlayerGroundContactShadow groundContactShadow;
+    BodyFlowController bodyFlow;
     Camera playerCamera;
     Transform cameraTransform;
     readonly HashSet<int> animatorParameters = new HashSet<int>();
@@ -224,6 +226,9 @@ public class FPSController : MonoBehaviour
     float verticalVelocity;
     float currentPlanarSpeed;
     Vector3 currentPlanarVelocity;
+    Vector3 actualBodyFlowVelocity;
+    int bodyFlowMovementFrame = -1;
+    BodyFlowTraversal bodyFlowTraversal;
     float lastGroundedTime = -999f;
     float jumpPressedTime = -999f;
     int groundAlignmentFramesRemaining;
@@ -291,6 +296,7 @@ public class FPSController : MonoBehaviour
     void Awake()
     {
         controller = GetComponent<CharacterController>();
+        bodyFlow = GetComponent<BodyFlowController>();
         graffitiMenu = GetComponentInChildren<GraffitiMenuDrawer>(true);
         quickGraffiti = GetComponent<GraffitiQuickPainter>();
         legacyCapsuleCollider = GetComponent<CapsuleCollider>();
@@ -731,6 +737,8 @@ public class FPSController : MonoBehaviour
         Vector3 actualDisplacement = transform.position - positionBeforeMove;
         actualDisplacement.y = 0f;
         currentPlanarSpeed = actualDisplacement.magnitude / deltaTime;
+        actualBodyFlowVelocity = actualDisplacement / deltaTime;
+        bodyFlowMovementFrame = Time.frameCount;
         UpdateGroundContactAfterMove();
     }
 
@@ -1018,7 +1026,7 @@ public class FPSController : MonoBehaviour
             landing = groundPoint;
 
             SelectVaultProfile(obstacleHeight, out float duration, out float arcHeight, out int triggerHash);
-            StartCoroutine(ParkourMove(landing, duration, arcHeight, triggerHash, desiredForward));
+            StartCoroutine(ParkourMove(landing, duration, arcHeight, triggerHash, desiredForward, wallHit));
             return true;
         }
 
@@ -1032,7 +1040,7 @@ public class FPSController : MonoBehaviour
 
             topProbe = climbPoint;
 
-            StartCoroutine(TopOutMove(topProbe, desiredForward));
+            StartCoroutine(TopOutMove(topProbe, desiredForward, wallHit.collider, wallHit.normal));
             return true;
         }
 
@@ -1382,26 +1390,33 @@ public class FPSController : MonoBehaviour
 
     void HandleClimbing()
     {
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        StepClimbing(input, Input.GetKeyDown(jumpKey), Time.deltaTime);
+    }
+
+    void StepClimbing(Vector2 input, bool jumpPressed, float deltaTime)
+    {
         if (graffitiMode || !enableClimbing)
         {
             ExitClimb(false);
             return;
         }
 
-        float h = ApplyClimbDeadZone(Input.GetAxisRaw("Horizontal"));
-        float v = ApplyClimbDeadZone(Input.GetAxisRaw("Vertical"));
+        float h = ApplyClimbDeadZone(input.x);
+        float v = ApplyClimbDeadZone(input.y);
         climbInput = Mathf.Clamp(v, -1f, 1f);
         float requestedSideInput = climbAllowSideways ? Mathf.Clamp(h, -1f, 1f) : 0f;
         float requestedAnimationInput = Mathf.Abs(climbInput) > 0f ? climbInput : Mathf.Abs(requestedSideInput);
-        climbAnimationInput = Mathf.MoveTowards(climbAnimationInput, requestedAnimationInput, climbAnimationResponse * Time.deltaTime);
+        climbAnimationInput = Mathf.MoveTowards(climbAnimationInput, requestedAnimationInput, climbAnimationResponse * deltaTime);
 
-        if (Input.GetKeyDown(jumpKey))
+        if (jumpPressed)
         {
             if (TryFindClimbTop(out Vector3 topOutPoint))
             {
                 Vector3 topOutForward = -climbNormal;
+                Collider surface = climbCollider;
                 ExitClimb(false);
-                StartCoroutine(TopOutMove(topOutPoint, topOutForward));
+                StartCoroutine(TopOutMove(topOutPoint, topOutForward, surface, -topOutForward));
                 return;
             }
 
@@ -1416,8 +1431,9 @@ public class FPSController : MonoBehaviour
         if (climbInput > climbAutoTopOutInput && TryFindClimbTop(out Vector3 autoTopOutPoint))
         {
             Vector3 topOutForward = -climbNormal;
+            Collider surface = climbCollider;
             ExitClimb(false);
-            StartCoroutine(TopOutMove(autoTopOutPoint, topOutForward));
+            StartCoroutine(TopOutMove(autoTopOutPoint, topOutForward, surface, -topOutForward));
             return;
         }
 
@@ -1426,7 +1442,7 @@ public class FPSController : MonoBehaviour
             climbSide.Normalize();
 
         float sideInput = requestedSideInput;
-        Vector3 sideDisplacement = climbSide * (sideInput * climbSideSpeed * climbSpeedMultiplier * Time.deltaTime);
+        Vector3 sideDisplacement = climbSide * (sideInput * climbSideSpeed * climbSpeedMultiplier * deltaTime);
 
         if (sideDisplacement.sqrMagnitude > 0.000001f)
         {
@@ -1439,24 +1455,24 @@ public class FPSController : MonoBehaviour
             Vector3.up * (climbInput * climbMoveSpeed * climbSpeedMultiplier) +
             climbSide * (sideInput * climbSideSpeed * climbSpeedMultiplier);
 
-        controller.Move(climbVelocity * Time.deltaTime);
+        controller.Move(climbVelocity * deltaTime);
 
         if (!TryFindClimbSurface(transform.position + Vector3.up * wallCheckHeight, transform.forward, out RaycastHit surfaceHit, out ClimbableSurface climbable))
         {
-            climbContactLostTimer += Time.deltaTime;
+            climbContactLostTimer += deltaTime;
             if (climbContactLostTimer >= climbContactGraceTime)
                 ExitClimb(false);
             return;
         }
 
         climbContactLostTimer = 0f;
-        climbNormal = Vector3.Slerp(climbNormal, surfaceHit.normal, 1f - Mathf.Exp(-climbSnapSpeed * Time.deltaTime));
+        climbNormal = Vector3.Slerp(climbNormal, surfaceHit.normal, 1f - Mathf.Exp(-climbSnapSpeed * deltaTime));
         climbCollider = surfaceHit.collider;
         climbAllowSideways = climbable == null || climbable.allowSideways;
         climbSpeedMultiplier = climbable != null ? Mathf.Max(0.1f, climbable.speedMultiplier) : 1f;
 
         Quaternion targetRotation = Quaternion.LookRotation(-climbNormal, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1f - Mathf.Exp(-climbSnapSpeed * Time.deltaTime));
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1f - Mathf.Exp(-climbSnapSpeed * deltaTime));
         SnapToClimbSurface(surfaceHit.point, false);
 
         SetAnimatorBool(ClimbingHash, true);
@@ -1552,6 +1568,7 @@ public class FPSController : MonoBehaviour
 
         ExitClimb(false);
         isParkouring = true;
+        bodyFlowTraversal = new BodyFlowTraversal(BodyFlowAction.WallJump, targetHit.collider, targetHit.normal, endPosition);
         SetAnimatorBool(ParkourHash, true);
         TriggerAnimator(JumpHash);
         controller.enabled = false;
@@ -1564,6 +1581,7 @@ public class FPSController : MonoBehaviour
         {
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / Mathf.Max(0.01f, wallJumpDuration));
+            bodyFlowTraversal.Progress = t;
             float eased = SmoothStep01(t);
             float rotationT = SmoothStep01(Mathf.InverseLerp(0.18f, 0.82f, t));
             Vector3 arc = Vector3.up * Mathf.Sin(eased * Mathf.PI) * wallJumpArcHeight;
@@ -1582,6 +1600,7 @@ public class FPSController : MonoBehaviour
             legacyCapsuleCollider.enabled = capsuleWasEnabled;
 
         isParkouring = false;
+        bodyFlowTraversal = default;
         SetAnimatorBool(ParkourHash, false);
         EnterClimb(targetHit, targetClimbable, false);
     }
@@ -1762,9 +1781,10 @@ public class FPSController : MonoBehaviour
             controller.Move(climbNormal * 0.25f);
     }
 
-    IEnumerator TopOutMove(Vector3 endPosition, Vector3 facingDirection)
+    IEnumerator TopOutMove(Vector3 endPosition, Vector3 facingDirection, Collider surface, Vector3 normal)
     {
         isParkouring = true;
+        bodyFlowTraversal = new BodyFlowTraversal(BodyFlowAction.TopOut, surface, normal, endPosition);
         SetAnimatorBool(ParkourHash, true);
         TriggerAnimator(TopOutHash);
 
@@ -1789,6 +1809,7 @@ public class FPSController : MonoBehaviour
         {
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / Mathf.Max(0.01f, wallTopOutDuration));
+            bodyFlowTraversal.Progress = t;
             float verticalT = SmoothStep01(Mathf.InverseLerp(wallTopOutVerticalStart, wallTopOutVerticalEnd, t));
             float forwardT = SmoothStep01(Mathf.InverseLerp(wallTopOutForwardStart, wallTopOutForwardEnd, t));
             Vector3 position = startPosition + horizontalTravel * forwardT;
@@ -1821,6 +1842,7 @@ public class FPSController : MonoBehaviour
         SetAnimatorBool(FallingHash, false);
         ResetAnimatorTrigger(LandHash);
         isParkouring = false;
+        bodyFlowTraversal = default;
         SetAnimatorBool(ParkourHash, false);
     }
 
@@ -1849,9 +1871,11 @@ public class FPSController : MonoBehaviour
         return value * value * (3f - 2f * value);
     }
 
-    IEnumerator ParkourMove(Vector3 endPosition, float duration, float arcHeight, int triggerHash, Vector3 facingDirection)
+    IEnumerator ParkourMove(Vector3 endPosition, float duration, float arcHeight, int triggerHash, Vector3 facingDirection,
+        RaycastHit surface)
     {
         isParkouring = true;
+        bodyFlowTraversal = new BodyFlowTraversal(BodyFlowAction.Vault, surface.collider, surface.normal, endPosition);
         SetAnimatorBool(ParkourHash, true);
         TriggerAnimator(triggerHash);
 
@@ -1872,6 +1896,7 @@ public class FPSController : MonoBehaviour
         {
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / Mathf.Max(0.01f, duration));
+            bodyFlowTraversal.Progress = t;
             float eased = t * t * (3f - 2f * t);
             Vector3 arc = Vector3.up * Mathf.Sin(eased * Mathf.PI) * arcHeight;
 
@@ -1897,6 +1922,7 @@ public class FPSController : MonoBehaviour
         currentPlanarSpeed = 0f;
         currentPlanarVelocity = Vector3.zero;
         isParkouring = false;
+        bodyFlowTraversal = default;
         SetAnimatorBool(ParkourHash, false);
     }
 
@@ -2175,7 +2201,9 @@ public class FPSController : MonoBehaviour
             return;
 
         UpdateAirborneAnimator();
-        SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : currentPlanarSpeed, isClimbing ? 0f : 0.08f);
+        float locomotionSpeed = bodyFlow ? bodyFlow.LocomotionBlendSpeed(currentPlanarSpeed, walkSpeed, sprintSpeed) :
+            currentPlanarSpeed;
+        SetAnimatorFloat(SpeedHash, isClimbing ? Mathf.Abs(climbAnimationInput) : locomotionSpeed, isClimbing ? 0f : 0.08f);
         SetAnimatorFloat(LocomotionRateHash, GetLocomotionPlaybackRate(currentPlanarSpeed), 0.12f);
         SetAnimatorFloat(VerticalSpeedHash, verticalVelocity);
         SetAnimatorBool(GroundedHash, stableGrounded);
@@ -2388,6 +2416,7 @@ public class FPSController : MonoBehaviour
 
         ExitClimb(false);
         isParkouring = false;
+        bodyFlowTraversal = default;
         ResetMovementAnimator();
     }
 
@@ -2454,6 +2483,7 @@ public class FPSController : MonoBehaviour
         ExitClimb(false);
         isParkouring = false;
         isAirRolling = false;
+        bodyFlowTraversal = default;
         airRollEndTime = -999f;
         verticalVelocity = 0f;
         currentPlanarSpeed = 0f;
@@ -2558,6 +2588,24 @@ public class FPSController : MonoBehaviour
             EnterGraffitiMode();
         else
             ExitGraffitiMode();
+    }
+
+    public BodyFlowMotionIntent ReadBodyFlowIntent()
+    {
+        bool freshMovement = bodyFlowMovementFrame == Time.frameCount;
+        bool eligible = isActiveAndEnabled && canMove && controller != null && !graffitiMode &&
+            !teleportTransitionActive && !pauseInputSuspended && groundAlignmentFramesRemaining <= 0 &&
+            (freshMovement || isClimbing || isParkouring);
+        bool grounded = freshMovement && stableGrounded && !isClimbing && !isParkouring;
+        BodyFlowTraversal traversal = bodyFlowTraversal;
+        if (isClimbing)
+            traversal = new BodyFlowTraversal(BodyFlowAction.Climb, climbCollider, climbNormal, Vector3.zero);
+        else if (!isParkouring)
+            traversal.Action = isAirRolling ? BodyFlowAction.AirRoll : landingAnimationQueued ? BodyFlowAction.Landing :
+                grounded ? BodyFlowAction.Ground : BodyFlowAction.Airborne;
+
+        return new BodyFlowMotionIntent(eligible, grounded, freshMovement ? actualBodyFlowVelocity : Vector3.zero,
+            verticalVelocity, eligible ? GetControllerBottomY() : 0f, traversal);
     }
 
     public bool IsGraffitiMode()

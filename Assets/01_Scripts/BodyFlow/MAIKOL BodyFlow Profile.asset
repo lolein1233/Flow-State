@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 407d05a1e29de1b4383483e857bf0950, type: 3}
+  m_Name: MAIKOL BodyFlow Profile
+  m_EditorClassIdentifier:
+  walking:
+    clip: {fileID: 7400000, guid: 9c49df27649099f4d8d5c04fe7a85b0b, type: 2}
+    leftSupport: {x: 0.36, y: 0.87}
+    rightSupport: {x: 0.86, y: 0.39}
+  running:
+    clip: {fileID: 7400000, guid: 034a31619d242574eacdd99ebde8a9cd, type: 2}
+    leftSupport: {x: 0.25, y: 0.61}
+    rightSupport: {x: 0.75, y: 0.115}
+  walkingBlendKey: 1.8
+  runningBlendKey: 5.5
+  phaseFeather: 0.06
+  groundProbeRange: 0.32
+  handProbeRange: 0.24
+  wallProbeRange: 0.48
+  footCorrection: 0.10
+  handCorrection: 0.12
+  horizontalAnchor: 0.035
+  solePadding: 0.008
+  pelvisCorrection: 0.055
+  soleTilt: 10
+  climbDownRootOffset: 1.03
+  topOutSettleLimit: 1.1
+  kneeExtension: 3
+  extraBend: 16
+  maxJointCorrection: 15
+  response: 19
+  blendSeconds: 0.15

@@ -104,3 +104,13 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# FLOWSTATE website and deployment packages (kept locally, outside game history)
+/Deliverables/FLOWSTATE-Web/
+/Deliverables/FLOWSTATE-Web-Cloudflare/
+/Deliverables/FLOWSTATE-Web-*.zip
+/Deliverables/FLOWSTATE-Web-Animaciones.mp4
+/Deliverables/FLOWSTATE-Archivos-R2.zip
+/Deliverables/FLOWSTATE-Cloudflare-Pages.zip
+/Deliverables/FLOWSTATE-Instrucciones-Cloudflare.md
+/.playwright-mcp/
